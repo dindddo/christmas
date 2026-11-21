@@ -1,0 +1,2982 @@
+[
+ {
+  "input": {
+   "solar": "1989-3-18",
+   "time": "13:00",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1989,
+   "m": 3,
+   "d": 18,
+   "time": "13:00",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기사",
+   "month": "정묘",
+   "day": "정축",
+   "hour": "병오"
+  },
+  "ilju": "정축",
+  "elements": [
+   1,
+   5,
+   2,
+   0,
+   0
+  ],
+  "loveState": "none",
+  "gyeok": "편인",
+  "ratio": 0.7,
+  "doors": [
+   {
+    "mo": 7,
+    "score": 6,
+    "type": "slam"
+   },
+   {
+    "mo": 2,
+    "score": 5,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 11,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 5,
+     "j": 7
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1991~1993년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1993-8-25",
+   "time": "07:20",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1993,
+   "m": 8,
+   "d": 25,
+   "time": "07:20",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "계유",
+   "month": "경신",
+   "day": "무인",
+   "hour": "을묘"
+  },
+  "ilju": "무인",
+  "elements": [
+   3,
+   0,
+   1,
+   3,
+   1
+  ],
+  "loveState": "many",
+  "gyeok": "식신",
+  "ratio": 0,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "key"
+   },
+   {
+    "mo": 8,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "half"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 17,
+    "s": 3,
+    "wd": 4,
+    "X": {
+     "g": 1,
+     "j": 1
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 12,
+    "s": 0,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1993년생 전후",
+   "동갑이거나 딱 한 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1960-6-1",
+   "time": "23:40",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1960,
+   "m": 6,
+   "d": 1,
+   "time": "23:10",
+   "shift": -30
+  },
+  "pillars": {
+   "year": "경자",
+   "month": "신사",
+   "day": "경신",
+   "hour": "정해"
+  },
+  "ilju": "경신",
+  "elements": [
+   0,
+   2,
+   0,
+   4,
+   2
+  ],
+  "loveState": "mixed",
+  "gyeok": "편관",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 5,
+    "score": 9,
+    "type": "half"
+   },
+   {
+    "mo": 2,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 9,
+    "score": 8,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 9,
+    "s": 6,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 18,
+    "s": 1,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1959~1961년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1987-7-15",
+   "time": "12:10",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1987,
+   "m": 7,
+   "d": 15,
+   "time": "11:10",
+   "shift": -60
+  },
+  "pillars": {
+   "year": "정묘",
+   "month": "정미",
+   "day": "을축",
+   "hour": "신사"
+  },
+  "ilju": "을축",
+  "elements": [
+   2,
+   3,
+   2,
+   1,
+   0
+  ],
+  "loveState": "clean",
+  "gyeok": "편재",
+  "ratio": 0.1,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 9,
+    "type": "key"
+   },
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 11,
+    "s": 1,
+    "wd": 5,
+    "X": {
+     "g": 5,
+     "j": 7
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1986~1988년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1988-5-20",
+   "time": null,
+   "sex": "여자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1988,
+   "m": 5,
+   "d": 20,
+   "time": "",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "무진",
+   "month": "정사",
+   "day": "을해",
+   "hour": null
+  },
+  "ilju": "을해",
+  "elements": [
+   1,
+   2,
+   2,
+   0,
+   1
+  ],
+  "loveState": "clean",
+  "gyeok": "상관",
+  "ratio": 0.25,
+  "doors": [
+   {
+    "mo": 2,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   },
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 0,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1983~1985년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2000-2-4",
+   "time": "05:00",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2000,
+   "m": 2,
+   "d": 4,
+   "time": "05:00",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기묘",
+   "month": "정축",
+   "day": "임진",
+   "hour": "임인"
+  },
+  "ilju": "임진",
+  "elements": [
+   2,
+   1,
+   3,
+   0,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "정관",
+  "ratio": 0.1,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 11,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 13,
+    "s": 5,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 14,
+    "s": 0,
+    "wd": 1,
+    "X": {
+     "g": 8,
+     "j": 10
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1999~2001년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1961-8-9",
+   "time": "09:00",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1961,
+   "m": 8,
+   "d": 9,
+   "time": "09:30",
+   "shift": 30
+  },
+  "pillars": {
+   "year": "신축",
+   "month": "병신",
+   "day": "갑술",
+   "hour": "기사"
+  },
+  "ilju": "갑술",
+  "elements": [
+   1,
+   2,
+   3,
+   2,
+   0
+  ],
+  "loveState": "mixed",
+  "gyeok": "편관",
+  "ratio": 0,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 11,
+    "type": "half"
+   },
+   {
+    "mo": 9,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 19,
+    "s": 5,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 8,
+    "s": 0,
+    "wd": 2,
+    "X": {
+     "g": 2,
+     "j": 4
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1956~1958년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1989-4-16",
+   "time": "16:31",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1989,
+   "m": 4,
+   "d": 16,
+   "time": "16:31",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기사",
+   "month": "무진",
+   "day": "병오",
+   "hour": "병신"
+  },
+  "ilju": "병오",
+  "elements": [
+   0,
+   4,
+   3,
+   1,
+   0
+  ],
+  "loveState": "clean",
+  "gyeok": "식신",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "knock"
+   },
+   {
+    "mo": 7,
+    "score": 4,
+    "type": "half"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 23,
+    "s": 6,
+    "wd": 3,
+    "X": {
+     "g": 7,
+     "j": 7
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 16,
+    "s": 2,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1991~1993년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2002-11-3",
+   "time": "05:11",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2002,
+   "m": 11,
+   "d": 3,
+   "time": "05:11",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "임오",
+   "month": "경술",
+   "day": "을해",
+   "hour": "무인"
+  },
+  "ilju": "을해",
+  "elements": [
+   2,
+   1,
+   2,
+   1,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "정재",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 2,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   },
+   {
+    "mo": 8,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 0,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2001~2003년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2008-1-11",
+   "time": null,
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2008,
+   "m": 1,
+   "d": 11,
+   "time": "",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "정해",
+   "month": "계축",
+   "day": "경술",
+   "hour": null
+  },
+  "ilju": "경술",
+  "elements": [
+   0,
+   1,
+   2,
+   1,
+   2
+  ],
+  "loveState": "none",
+  "gyeok": "정인",
+  "ratio": 0.625,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 12,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 7,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 19,
+    "s": 5,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 8,
+    "s": 0,
+    "wd": 2,
+    "X": {
+     "g": 2,
+     "j": 4
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2010~2012년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1963-9-26",
+   "time": "17:03",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1963,
+   "m": 9,
+   "d": 26,
+   "time": "17:03",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "계묘",
+   "month": "신유",
+   "day": "임신",
+   "hour": "무신"
+  },
+  "ilju": "임신",
+  "elements": [
+   1,
+   0,
+   1,
+   4,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "정인",
+  "ratio": 0.8,
+  "doors": [
+   {
+    "mo": 1,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 5,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 9,
+    "score": 3,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 21,
+    "s": 6,
+    "wd": 1,
+    "X": {
+     "g": 5,
+     "j": 5
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 18,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1965~1967년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1990-6-6",
+   "time": "01:48",
+   "sex": "남자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1990,
+   "m": 6,
+   "d": 6,
+   "time": "01:48",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "경오",
+   "month": "신사",
+   "day": "임인",
+   "hour": "신축"
+  },
+  "ilju": "임인",
+  "elements": [
+   1,
+   2,
+   1,
+   3,
+   1
+  ],
+  "loveState": "many",
+  "gyeok": "편재",
+  "ratio": 0.3,
+  "doors": [
+   {
+    "mo": 11,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 1,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 8,
+    "score": 7,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 19,
+    "s": 5,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 12,
+    "s": 0,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1985~1987년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1967-1-21",
+   "time": "20:49",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1967,
+   "m": 1,
+   "d": 21,
+   "time": "20:49",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "병오",
+   "month": "신축",
+   "day": "을유",
+   "hour": "병술"
+  },
+  "ilju": "을유",
+  "elements": [
+   1,
+   3,
+   2,
+   2,
+   0
+  ],
+  "loveState": "sharp",
+  "gyeok": "편재",
+  "ratio": 0,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 10,
+    "type": "slam"
+   },
+   {
+    "mo": 8,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 12,
+    "s": 3,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 19,
+    "s": 2,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1966~1968년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2000-9-2",
+   "time": "03:39",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2000,
+   "m": 9,
+   "d": 2,
+   "time": "03:39",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "경진",
+   "month": "갑신",
+   "day": "계해",
+   "hour": "갑인"
+  },
+  "ilju": "계해",
+  "elements": [
+   3,
+   0,
+   1,
+   2,
+   2
+  ],
+  "loveState": "none",
+  "gyeok": "정인",
+  "ratio": 0.6,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 7,
+    "type": "knock"
+   },
+   {
+    "mo": 2,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 5,
+    "score": 7,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 18,
+    "s": 6,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 1,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2002~2004년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1978-4-23",
+   "time": "20:33",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1978,
+   "m": 4,
+   "d": 23,
+   "time": "20:33",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "무오",
+   "month": "병진",
+   "day": "을묘",
+   "hour": "병술"
+  },
+  "ilju": "을묘",
+  "elements": [
+   2,
+   3,
+   3,
+   0,
+   0
+  ],
+  "loveState": "none",
+  "gyeok": "정재",
+  "ratio": 0.2,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 7,
+    "type": "slam"
+   },
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "knock"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 13,
+    "s": 1,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1973~1975년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1969-6-17",
+   "time": "07:50",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1969,
+   "m": 6,
+   "d": 17,
+   "time": "07:50",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기유",
+   "month": "경오",
+   "day": "계해",
+   "hour": "병진"
+  },
+  "ilju": "계해",
+  "elements": [
+   0,
+   2,
+   2,
+   2,
+   2
+  ],
+  "loveState": "mixed",
+  "gyeok": "편재",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 8,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 2,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 5,
+    "score": 6,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 18,
+    "s": 6,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 1,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1968~1970년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1989-5-21",
+   "time": "09:34",
+   "sex": "여자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1989,
+   "m": 5,
+   "d": 21,
+   "time": "09:34",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기사",
+   "month": "기사",
+   "day": "신사",
+   "hour": "계사"
+  },
+  "ilju": "신사",
+  "elements": [
+   0,
+   4,
+   2,
+   1,
+   1
+  ],
+  "loveState": "many",
+  "gyeok": "정관",
+  "ratio": 0.2,
+  "doors": [
+   {
+    "mo": 8,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 15,
+    "s": 0,
+    "wd": 2,
+    "X": {
+     "g": 9,
+     "j": 11
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1984~1986년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1971-2-17",
+   "time": "10:17",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1971,
+   "m": 2,
+   "d": 17,
+   "time": "10:17",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "신해",
+   "month": "경인",
+   "day": "계유",
+   "hour": "정사"
+  },
+  "ilju": "계유",
+  "elements": [
+   1,
+   2,
+   0,
+   3,
+   2
+  ],
+  "loveState": "mixed",
+  "gyeok": "상관",
+  "ratio": 0.5,
+  "doors": [
+   {
+    "mo": 4,
+    "score": 7,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   },
+   {
+    "mo": 8,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 8,
+    "s": 6,
+    "wd": 2,
+    "X": {
+     "g": 2,
+     "j": 4
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 19,
+    "s": 1,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1973~1975년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1982-1-22",
+   "time": "02:51",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1982,
+   "m": 1,
+   "d": 22,
+   "time": "02:51",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "신유",
+   "month": "신축",
+   "day": "을사",
+   "hour": "정축"
+  },
+  "ilju": "을사",
+  "elements": [
+   1,
+   2,
+   2,
+   3,
+   0
+  ],
+  "loveState": "many",
+  "gyeok": "편재",
+  "ratio": 0,
+  "doors": [
+   {
+    "mo": 8,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 2,
+    "score": 4,
+    "type": "knock"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 12,
+    "s": 6,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 15,
+    "s": 0,
+    "wd": 2,
+    "X": {
+     "g": 9,
+     "j": 11
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1977~1979년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1989-8-27",
+   "time": "11:23",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1989,
+   "m": 8,
+   "d": 27,
+   "time": "11:23",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기사",
+   "month": "임신",
+   "day": "기미",
+   "hour": "기사"
+  },
+  "ilju": "기미",
+  "elements": [
+   0,
+   2,
+   4,
+   1,
+   1
+  ],
+  "loveState": "clean",
+  "gyeok": "상관",
+  "ratio": 0.6,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 7,
+    "type": "half"
+   },
+   {
+    "mo": 1,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 4,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 17,
+    "s": 0,
+    "wd": 4,
+    "X": {
+     "g": 1,
+     "j": 1
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1988~1990년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1990-9-7",
+   "time": "14:00",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1990,
+   "m": 9,
+   "d": 7,
+   "time": "14:00",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "경오",
+   "month": "갑신",
+   "day": "을해",
+   "hour": "계미"
+  },
+  "ilju": "을해",
+  "elements": [
+   2,
+   1,
+   1,
+   2,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "정관",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 2,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 5,
+    "type": "key"
+   },
+   {
+    "mo": 8,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 0,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1985~1987년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1973-10-22",
+   "time": "08:30",
+   "sex": "남자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1973,
+   "m": 10,
+   "d": 22,
+   "time": "08:30",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "계축",
+   "month": "임술",
+   "day": "신묘",
+   "hour": "임진"
+  },
+  "ilju": "신묘",
+  "elements": [
+   1,
+   0,
+   3,
+   1,
+   3
+  ],
+  "loveState": "clean",
+  "gyeok": "정인",
+  "ratio": 0.5,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 9,
+    "type": "slam"
+   },
+   {
+    "mo": 2,
+    "score": 5,
+    "type": "wrong"
+   },
+   {
+    "mo": 6,
+    "score": 9,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 13,
+    "s": 0,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1973년생 전후",
+   "동갑이거나 딱 한 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1972-4-24",
+   "time": "14:03",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1972,
+   "m": 4,
+   "d": 24,
+   "time": "14:03",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "임자",
+   "month": "갑진",
+   "day": "을유",
+   "hour": "계미"
+  },
+  "ilju": "을유",
+  "elements": [
+   2,
+   0,
+   2,
+   1,
+   3
+  ],
+  "loveState": "clean",
+  "gyeok": "정재",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "slam"
+   },
+   {
+    "mo": 9,
+    "score": 5,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 12,
+    "s": 3,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 19,
+    "s": 0,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1972년생 전후",
+   "동갑이거나 딱 한 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2002-9-13",
+   "time": "19:17",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2002,
+   "m": 9,
+   "d": 13,
+   "time": "19:17",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "임오",
+   "month": "기유",
+   "day": "갑신",
+   "hour": "계유"
+  },
+  "ilju": "갑신",
+  "elements": [
+   1,
+   1,
+   1,
+   3,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "정관",
+  "ratio": 0.2,
+  "doors": [
+   {
+    "mo": 1,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 3,
+    "score": 5,
+    "type": "key"
+   },
+   {
+    "mo": 5,
+    "score": 4,
+    "type": "half"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 21,
+    "s": 6,
+    "wd": 1,
+    "X": {
+     "g": 5,
+     "j": 5
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 18,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2001~2003년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1970-6-22",
+   "time": "00:25",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1970,
+   "m": 6,
+   "d": 22,
+   "time": "00:25",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "경술",
+   "month": "임오",
+   "day": "계유",
+   "hour": "임자"
+  },
+  "ilju": "계유",
+  "elements": [
+   0,
+   1,
+   1,
+   2,
+   4
+  ],
+  "loveState": "clean",
+  "gyeok": "편재",
+  "ratio": 0.6,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "slam"
+   },
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 20,
+    "s": 6,
+    "wd": 0,
+    "X": {
+     "g": 4,
+     "j": 4
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 19,
+    "s": 2,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1965~1967년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1965-12-8",
+   "time": "14:53",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1965,
+   "m": 12,
+   "d": 8,
+   "time": "14:53",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "을사",
+   "month": "무자",
+   "day": "병신",
+   "hour": "을미"
+  },
+  "ilju": "병신",
+  "elements": [
+   2,
+   2,
+   2,
+   1,
+   1
+  ],
+  "loveState": "clean",
+  "gyeok": "정관",
+  "ratio": 0.3,
+  "doors": [
+   {
+    "mo": 2,
+    "score": 9,
+    "type": "slam"
+   },
+   {
+    "mo": 5,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 9,
+    "score": 7,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 13,
+    "s": 5,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 18,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1965년생 전후",
+   "동갑이거나 딱 한 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1995-12-8",
+   "time": "11:23",
+   "sex": "여자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1995,
+   "m": 12,
+   "d": 8,
+   "time": "11:23",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "을해",
+   "month": "무자",
+   "day": "계유",
+   "hour": "정사"
+  },
+  "ilju": "계유",
+  "elements": [
+   1,
+   2,
+   1,
+   1,
+   3
+  ],
+  "loveState": "many",
+  "gyeok": "비견",
+  "ratio": 0.6,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 8,
+    "type": "key"
+   },
+   {
+    "mo": 4,
+    "score": 6,
+    "type": "half"
+   },
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 20,
+    "s": 6,
+    "wd": 0,
+    "X": {
+     "g": 4,
+     "j": 4
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 19,
+    "s": 1,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1994~1996년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1998-7-27",
+   "time": "12:54",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1998,
+   "m": 7,
+   "d": 27,
+   "time": "12:54",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "무인",
+   "month": "기미",
+   "day": "을해",
+   "hour": "임오"
+  },
+  "ilju": "을해",
+  "elements": [
+   2,
+   1,
+   3,
+   0,
+   2
+  ],
+  "loveState": "many",
+  "gyeok": "편재",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 7,
+    "type": "key"
+   },
+   {
+    "mo": 2,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 10,
+    "s": 5,
+    "wd": 4,
+    "X": {
+     "g": 4,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 9,
+    "s": 0,
+    "wd": 3,
+    "X": {
+     "g": 3,
+     "j": 5
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1993~1995년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1979-8-25",
+   "time": "08:44",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1979,
+   "m": 8,
+   "d": 25,
+   "time": "08:44",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기미",
+   "month": "임신",
+   "day": "갑자",
+   "hour": "무진"
+  },
+  "ilju": "갑자",
+  "elements": [
+   1,
+   0,
+   4,
+   1,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "편관",
+  "ratio": 0.3,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 9,
+    "type": "slam"
+   },
+   {
+    "mo": 3,
+    "score": 4,
+    "type": "knock"
+   },
+   {
+    "mo": 9,
+    "score": 7,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 13,
+    "s": 5,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 10,
+    "s": 2,
+    "wd": 4,
+    "X": {
+     "g": 4,
+     "j": 6
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1978~1980년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2004-11-6",
+   "time": "08:02",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2004,
+   "m": 11,
+   "d": 6,
+   "time": "08:02",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "갑신",
+   "month": "갑술",
+   "day": "기축",
+   "hour": "무진"
+  },
+  "ilju": "기축",
+  "elements": [
+   2,
+   0,
+   5,
+   1,
+   0
+  ],
+  "loveState": "none",
+  "gyeok": "겁재",
+  "ratio": 0.7,
+  "doors": [
+   {
+    "mo": 4,
+    "score": 7,
+    "type": "knock"
+   },
+   {
+    "mo": 7,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 9,
+    "score": 3,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 11,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 5,
+     "j": 7
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2006~2008년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1966-8-23",
+   "time": "13:17",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1966,
+   "m": 8,
+   "d": 23,
+   "time": "13:17",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "병오",
+   "month": "병신",
+   "day": "갑인",
+   "hour": "경오"
+  },
+  "ilju": "갑인",
+  "elements": [
+   2,
+   4,
+   0,
+   2,
+   0
+  ],
+  "loveState": "sharp",
+  "gyeok": "편관",
+  "ratio": 0.2,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 8,
+    "type": "knock"
+   },
+   {
+    "mo": 8,
+    "score": 6,
+    "type": "slam"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "half"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 23,
+    "s": 3,
+    "wd": 3,
+    "X": {
+     "g": 7,
+     "j": 7
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 12,
+    "s": 1,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1965~1967년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1969-8-18",
+   "time": "21:14",
+   "sex": "남자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 1969,
+   "m": 8,
+   "d": 18,
+   "time": "21:14",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "기유",
+   "month": "임신",
+   "day": "을축",
+   "hour": "병술"
+  },
+  "ilju": "을축",
+  "elements": [
+   1,
+   1,
+   3,
+   2,
+   1
+  ],
+  "loveState": "many",
+  "gyeok": "정관",
+  "ratio": 0.1,
+  "doors": [
+   {
+    "mo": 10,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 7,
+    "score": 6,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 16,
+    "s": 5,
+    "wd": 3,
+    "X": {
+     "g": 0,
+     "j": 0
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 11,
+    "s": 1,
+    "wd": 5,
+    "X": {
+     "g": 5,
+     "j": 7
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1964~1966년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1993-2-24",
+   "time": "07:41",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1993,
+   "m": 2,
+   "d": 24,
+   "time": "07:41",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "계유",
+   "month": "갑인",
+   "day": "병자",
+   "hour": "임진"
+  },
+  "ilju": "병자",
+  "elements": [
+   2,
+   1,
+   1,
+   1,
+   3
+  ],
+  "loveState": "many",
+  "gyeok": "편인",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 1,
+    "score": 6,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 17,
+    "s": 3,
+    "wd": 4,
+    "X": {
+     "g": 1,
+     "j": 1
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 10,
+    "s": 0,
+    "wd": 4,
+    "X": {
+     "g": 4,
+     "j": 6
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1988~1990년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1965-11-10",
+   "time": "14:28",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1965,
+   "m": 11,
+   "d": 10,
+   "time": "14:28",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "을사",
+   "month": "정해",
+   "day": "무진",
+   "hour": "기미"
+  },
+  "ilju": "무진",
+  "elements": [
+   1,
+   2,
+   4,
+   0,
+   1
+  ],
+  "loveState": "clean",
+  "gyeok": "편재",
+  "ratio": 0.6,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 7,
+    "type": "half"
+   },
+   {
+    "mo": 11,
+    "score": 6,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 13,
+    "s": 5,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 14,
+    "s": 1,
+    "wd": 1,
+    "X": {
+     "g": 8,
+     "j": 10
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1964~1966년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1987-12-13",
+   "time": "01:35",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1987,
+   "m": 12,
+   "d": 13,
+   "time": "01:35",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "정묘",
+   "month": "임자",
+   "day": "병신",
+   "hour": "기축"
+  },
+  "ilju": "병신",
+  "elements": [
+   1,
+   2,
+   2,
+   1,
+   2
+  ],
+  "loveState": "mixed",
+  "gyeok": "정관",
+  "ratio": 0.2,
+  "doors": [
+   {
+    "mo": 5,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 2,
+    "score": 6,
+    "type": "slam"
+   },
+   {
+    "mo": 11,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 21,
+    "s": 3,
+    "wd": 1,
+    "X": {
+     "g": 5,
+     "j": 5
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 18,
+    "s": 0,
+    "wd": 5,
+    "X": {
+     "g": 2,
+     "j": 2
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1986~1988년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1991-2-18",
+   "time": "14:03",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1991,
+   "m": 2,
+   "d": 18,
+   "time": "14:03",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "신미",
+   "month": "경인",
+   "day": "기미",
+   "hour": "신미"
+  },
+  "ilju": "기미",
+  "elements": [
+   1,
+   0,
+   4,
+   3,
+   0
+  ],
+  "loveState": "none",
+  "gyeok": "정관",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 6,
+    "score": 8,
+    "type": "half"
+   },
+   {
+    "mo": 1,
+    "score": 4,
+    "type": "slam"
+   },
+   {
+    "mo": 4,
+    "score": 7,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 22,
+    "s": 5,
+    "wd": 2,
+    "X": {
+     "g": 6,
+     "j": 6
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 17,
+    "s": 0,
+    "wd": 4,
+    "X": {
+     "g": 1,
+     "j": 1
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1993~1995년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2003-6-13",
+   "time": "18:09",
+   "sex": "여자",
+   "orient": "queer"
+  },
+  "kst": {
+   "y": 2003,
+   "m": 6,
+   "d": 13,
+   "time": "18:09",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "계미",
+   "month": "무오",
+   "day": "정사",
+   "hour": "기유"
+  },
+  "ilju": "정사",
+  "elements": [
+   0,
+   3,
+   3,
+   1,
+   1
+  ],
+  "loveState": "sharp",
+  "gyeok": "비견",
+  "ratio": 0.5,
+  "doors": [
+   {
+    "mo": 11,
+    "score": 6,
+    "type": "slam"
+   },
+   {
+    "mo": 4,
+    "score": 4,
+    "type": "knock"
+   },
+   {
+    "mo": 8,
+    "score": 6,
+    "type": "half"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 12,
+    "s": 6,
+    "wd": 6,
+    "X": {
+     "g": 6,
+     "j": 8
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 15,
+    "s": 1,
+    "wd": 2,
+    "X": {
+     "g": 9,
+     "j": 11
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1998~2000년생",
+   "너보다 3~5살 많아"
+  ]
+ },
+ {
+  "input": {
+   "solar": "2004-4-3",
+   "time": "01:45",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 2004,
+   "m": 4,
+   "d": 3,
+   "time": "01:45",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "갑신",
+   "month": "정묘",
+   "day": "임자",
+   "hour": "신축"
+  },
+  "ilju": "임자",
+  "elements": [
+   2,
+   1,
+   1,
+   2,
+   2
+  ],
+  "loveState": "clean",
+  "gyeok": "상관",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 8,
+    "type": "knock"
+   },
+   {
+    "mo": 1,
+    "score": 4,
+    "type": "half"
+   },
+   {
+    "mo": 6,
+    "score": 6,
+    "type": "slam"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 19,
+    "s": 3,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 10,
+    "s": 1,
+    "wd": 4,
+    "X": {
+     "g": 4,
+     "j": 6
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "2003~2005년생",
+   "거의 또래, 한두 살 차이"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1997-7-1",
+   "time": "19:26",
+   "sex": "여자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1997,
+   "m": 7,
+   "d": 1,
+   "time": "19:26",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "정축",
+   "month": "병오",
+   "day": "갑진",
+   "hour": "계유"
+  },
+  "ilju": "갑진",
+  "elements": [
+   1,
+   3,
+   2,
+   1,
+   1
+  ],
+  "loveState": "sharp",
+  "gyeok": "상관",
+  "ratio": 0.1,
+  "doors": [
+   {
+    "mo": 9,
+    "score": 11,
+    "type": "half"
+   },
+   {
+    "mo": 3,
+    "score": 4,
+    "type": "knock"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 13,
+    "s": 8,
+    "wd": 0,
+    "X": {
+     "g": 7,
+     "j": 9
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 14,
+    "s": 0,
+    "wd": 1,
+    "X": {
+     "g": 8,
+     "j": 10
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1999~2001년생",
+   "너보다 2~4살 어려"
+  ]
+ },
+ {
+  "input": {
+   "solar": "1968-3-5",
+   "time": "13:18",
+   "sex": "남자",
+   "orient": "hetero"
+  },
+  "kst": {
+   "y": 1968,
+   "m": 3,
+   "d": 5,
+   "time": "13:18",
+   "shift": 0
+  },
+  "pillars": {
+   "year": "무신",
+   "month": "갑인",
+   "day": "갑술",
+   "hour": "경오"
+  },
+  "ilju": "갑술",
+  "elements": [
+   3,
+   1,
+   2,
+   2,
+   0
+  ],
+  "loveState": "clean",
+  "gyeok": "비견",
+  "ratio": 0.4,
+  "doors": [
+   {
+    "mo": 3,
+    "score": 7,
+    "type": "half"
+   },
+   {
+    "mo": 1,
+    "score": 6,
+    "type": "knock"
+   },
+   {
+    "mo": 9,
+    "score": 3,
+    "type": "key"
+   }
+  ],
+  "december": {
+   "A": true,
+   "best": {
+    "d": 19,
+    "s": 5,
+    "wd": 6,
+    "X": {
+     "g": 3,
+     "j": 3
+    },
+    "clash": false
+   },
+   "shake": {
+    "d": 8,
+    "s": 1,
+    "wd": 2,
+    "X": {
+     "g": 2,
+     "j": 4
+    },
+    "clash": true
+   }
+  },
+  "partnerAge": [
+   "1963~1965년생",
+   "너보다 3~5살 많아"
+  ]
+ }
+]
