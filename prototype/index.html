@@ -1,0 +1,1236 @@
+<title>운명의 문 랜딩 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one phone-sized stage; scene art fills it, 노엘's line + input sit in a glass panel on the lower third. Single dark theme on purpose (candlelit ballroom). */
+:root {
+  --night: #0b0a10;
+  --ink: #f4ecdf;
+  --ink-dim: #b9ad9c;
+  --gold: #e6c27a;
+  --gold-deep: #a9813f;
+  --glass: rgba(14, 11, 20, 0.62);
+  --line: rgba(230, 194, 122, 0.45);
+  --wine: #6e1d2a;
+  --f-voice: "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --f-ui: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  display: flex; justify-content: center;
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+}
+.stage {
+  position: relative; width: 100%; max-width: 480px; height: 100%; min-height: 560px;
+  overflow: hidden; background: var(--night);
+}
+.bg { position: absolute; inset: 0; }
+.bg img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
+  opacity: 0; transition: opacity .9s ease; transform: scale(1.04);
+}
+.bg img.on { opacity: 1; animation: drift 14s ease-out forwards; }
+@keyframes drift { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+.shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(11,10,16,.35) 0%, rgba(11,10,16,0) 22%, rgba(11,10,16,0) 45%, rgba(11,10,16,.85) 72%, var(--night) 100%);
+}
+.dust { position: absolute; inset: 0; pointer-events: none; }
+.tag {
+  position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); left: 16px; z-index: 5;
+  font-size: 11px; letter-spacing: .08em; color: var(--ink-dim);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; background: rgba(11,10,16,.5);
+}
+.restart {
+  position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 5;
+  font: 500 12px var(--f-ui); color: var(--ink-dim); background: none; border: none; padding: 6px; cursor: pointer;
+}
+.logo {
+  position: absolute; left: 0; right: 0; top: calc(9% + env(safe-area-inset-top, 0px)); z-index: 4; text-align: center;
+  font-family: var(--f-voice); font-weight: 800; line-height: 1.25;
+  color: var(--gold); text-shadow: 0 0 18px rgba(230,194,122,.55), 0 2px 6px rgba(0,0,0,.8);
+  transition: opacity .6s;
+}
+.logo small { display: block; font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: .04em; }
+.logo span { display: block; font-size: 34px; letter-spacing: .02em; }
+.logo i { display: block; width: 140px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.panel {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+  padding: 0 16px calc(22px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 14px;
+}
+.speaker { font: 700 12px var(--f-ui); letter-spacing: .18em; color: var(--gold); }
+.line {
+  font-family: var(--f-voice); font-weight: 700; font-size: 21px; line-height: 1.55; min-height: 2.6em;
+  text-wrap: balance; text-shadow: 0 2px 8px rgba(0,0,0,.9);
+}
+.line.mono { font-weight: 400; color: var(--ink-dim); font-size: 18px; }
+.sub { font-size: 14px; line-height: 1.6; color: var(--ink-dim); }
+.box {
+  background: var(--glass); border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: grid; gap: 12px;
+}
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.row > * { flex: 1 1 0; min-width: 0; }
+label.cap, span.cap { font-size: 12px; color: var(--ink-dim); letter-spacing: .04em; }
+input, select {
+  width: 100%; font: 500 17px var(--f-ui); color: var(--ink); background: rgba(255,255,255,.06);
+  border: 1px solid rgba(230,194,122,.3); border-radius: 10px; padding: 12px 12px; outline: none; appearance: none;
+}
+select { background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 52%, calc(100% - 11px) 52%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
+input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(230,194,122,.18); }
+.chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.chip {
+  font: 500 15px var(--f-ui); color: var(--ink); background: rgba(255,255,255,.05);
+  border: 1px solid rgba(230,194,122,.3); border-radius: 10px; padding: 12px 8px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { border-color: var(--gold); background: rgba(230,194,122,.16); color: var(--gold); }
+.btn {
+  font: 700 16px var(--f-ui); letter-spacing: .02em; color: #1a1208; cursor: pointer;
+  background: linear-gradient(180deg, #f0d293, var(--gold) 55%, var(--gold-deep));
+  border: none; border-radius: 12px; padding: 15px 16px; width: 100%;
+  box-shadow: 0 6px 22px rgba(230,194,122,.25);
+}
+.btn[disabled] { opacity: .4; cursor: default; box-shadow: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.err { font-size: 13px; color: #f1a7a7; min-height: 1em; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-dim); cursor: pointer; }
+.check input { width: 18px; height: 18px; padding: 0; accent-color: var(--gold); appearance: auto; }
+.key {
+  display: flex; align-items: center; gap: 10px; font-family: var(--f-voice); font-weight: 700; color: var(--gold); font-size: 15px;
+}
+.key b { flex: 1; height: 2px; background: linear-gradient(90deg, var(--gold), rgba(230,194,122,.1)); border-radius: 2px; position: relative; overflow: hidden; }
+.key b::after { content: ""; position: absolute; inset: 0; width: 0; background: #fff6dc; animation: fill 3s ease-in-out forwards; }
+@keyframes fill { to { width: 100%; } }
+.card { display: grid; gap: 6px; }
+.card dt { font-size: 12px; color: var(--ink-dim); letter-spacing: .06em; }
+.card dd { margin: 0; font-family: var(--f-voice); font-weight: 700; font-size: 18px; color: var(--ink); }
+.blur { filter: blur(6px); user-select: none; }
+.note { font-size: 12px; color: var(--ink-dim); text-align: center; }
+.dots { display: flex; gap: 6px; justify-content: center; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(230,194,122,.25); }
+.dots i.on { background: var(--gold); }
+.fade { animation: rise .5s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.panel.tall { top: calc(52px + env(safe-area-inset-top, 0px)); overflow-y: auto; align-content: end; padding-top: 24px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28px); mask-image: linear-gradient(to bottom, transparent 0, #000 28px); }
+.plate { background: linear-gradient(180deg, rgba(58,22,30,.92), rgba(30,12,18,.94)); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px; display: grid; gap: 14px; }
+.plate h3 { margin: 0; text-align: center; font: 800 19px var(--f-voice); color: var(--gold); letter-spacing: .04em; }
+.plate h3 small { display: block; font: 500 12px var(--f-ui); color: var(--ink-dim); letter-spacing: .12em; margin-bottom: 4px; }
+.plate p { margin: 0; font: 400 15.5px/1.75 var(--f-voice); color: var(--ink); text-wrap: pretty; }
+.plate p b { color: var(--gold); font-weight: 800; }
+.pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+.pillars .lb { font-size: 11px; color: var(--ink-dim); }
+.pillars .ch { aspect-ratio: 1; display: grid; place-items: center; border-radius: 8px; font: 800 26px var(--f-voice); color: #140c06;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.pillars .ch.q { background: rgba(255,255,255,.06); color: var(--ink-dim); font-size: 18px; }
+.e0 { background: linear-gradient(160deg, #8fbf8a, #3f6f45); } .e1 { background: linear-gradient(160deg, #e57a6d, #8f2b2b); }
+.e2 { background: linear-gradient(160deg, #e9cd8a, #a67c35); } .e3 { background: linear-gradient(160deg, #f2f0ea, #9a978f); }
+.e4 { background: linear-gradient(160deg, #6f8fc4, #23365f); color: #f4ecdf !important; }
+.door { display: flex; align-items: center; gap: 10px; font: 700 13px var(--f-ui); color: var(--gold); letter-spacing: .06em; }
+.door i { font-style: normal; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+/* ---- webtoon scroll (results) ---- */
+.toon { position: absolute; inset: 0; z-index: 4; overflow-y: auto; overscroll-behavior: contain; background: var(--night); -webkit-overflow-scrolling: touch; }
+.pn { position: relative; width: 100%; aspect-ratio: 9 / 14; overflow: hidden; }
+.pn img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 80%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 80%, transparent 100%); }
+.pn.short { aspect-ratio: 9 / 10; }
+.pn.angel { aspect-ratio: 9 / 15; background: radial-gradient(55% 45% at 50% 38%, #fffaf0 0%, #f1dfb4 28%, #6a5a6e 62%, #141224 100%); }
+.bb { position: absolute; max-width: 72%; padding: 13px 18px; border-radius: 22px;
+  background: rgba(14, 11, 20, .74); border: 1px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font: 700 17px/1.55 var(--f-voice); color: var(--ink); text-wrap: balance; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.bb.l { left: 16px; border-bottom-left-radius: 6px; } .bb.r { right: 16px; border-bottom-right-radius: 6px; text-align: right; }
+.bb.big { font-size: 20px; }
+.sec { padding: 8px 16px 28px; display: grid; gap: 14px; }
+.say { font: 700 19px/1.6 var(--f-voice); text-align: center; color: var(--ink); text-wrap: balance; padding: 28px 8px; }
+.say small { display: block; font: 500 12px var(--f-ui); letter-spacing: .18em; color: var(--gold); margin-bottom: 8px; }
+.story .chap { display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: start; padding-top: 12px; border-top: 1px dashed var(--line); }
+.story .chap b.mo { font: 800 15px var(--f-voice); color: var(--gold); padding-top: 2px; }
+.story .chap.hl p { font-weight: 700; }
+.story .chap em { display: block; font: 600 11px var(--f-ui); font-style: normal; color: var(--gold); letter-spacing: .08em; margin-bottom: 2px; }
+.story .end { text-align: center; padding-top: 12px; border-top: 1px dashed var(--line); }
+.dcard { border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: linear-gradient(180deg, rgba(40,24,30,.9), rgba(18,12,18,.94)); display: grid; gap: 12px; }
+.dcard p { margin: 0; font: 700 17px/1.6 var(--f-voice); }
+.dcard .rx { font: 400 15px/1.6 var(--f-voice); color: var(--gold); }
+.toc { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.toc li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 15px; line-height: 1.5; }
+.toc li i { font-style: normal; color: var(--gold); font-weight: 700; }
+.toc li span b { display: block; color: var(--ink); } .toc li span em { font-style: normal; color: var(--ink-dim); filter: blur(5px); user-select: none; }
+.ctabar { position: sticky; bottom: 0; z-index: 2; padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to bottom, rgba(11,10,16,0), var(--night) 40%); transform: translateY(110%); transition: transform .4s ease; }
+.ctabar.on { transform: none; }
+.rv { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .ctabar { transition: none; } }
+.els { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; align-items: end; text-align: center; padding: 4px 0; }
+.els span { display: block; width: 60%; margin: 0 auto 6px; border-radius: 4px 4px 2px 2px; }
+.els b { display: block; font: 500 12px var(--f-ui); color: var(--ink-dim); } .els i { font: 700 13px var(--f-ui); font-style: normal; color: var(--gold); }
+.chat { display: grid; gap: 10px; }
+#ask .err:empty { display: none; }
+.chips.col { grid-template-columns: 1fr; }
+.tagline { margin: 0; text-align: center; font: 500 14px var(--f-ui); color: var(--ink-dim); letter-spacing: .08em; }
+#af .cap { margin-bottom: -6px; }
+#ask textarea { width: 100%; font: 500 16px/1.5 var(--f-ui); color: var(--ink); background: rgba(255,255,255,.06); border: 1px solid rgba(230,194,122,.3); border-radius: 10px; padding: 12px; resize: none; outline: none; }
+#ask textarea:focus { border-color: var(--gold); }
+.msg.me { cursor: pointer; }
+.msg.me:hover { background: rgba(230,194,122,.26); }
+.backrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.backrow span { font-size: 11.5px; color: var(--ink-dim); opacity: .8; }
+.back { justify-self: start; background: none; border: none; padding: 4px 2px; font: 500 13px var(--f-ui); color: var(--ink-dim); cursor: pointer; }
+
+.msg { margin: 0; max-width: 82%; padding: 11px 15px; border-radius: 18px; font: 700 16.5px/1.55 var(--f-voice); text-wrap: pretty; }
+.msg.g { justify-self: start; background: var(--glass); border: 1px solid var(--line); border-bottom-left-radius: 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); min-height: 1.55em; }
+.msg.me { justify-self: end; background: rgba(230,194,122,.16); border: 1px solid var(--gold); color: var(--gold); font: 500 15.5px/1.5 var(--f-ui); border-bottom-right-radius: 6px; }
+.row .send { flex: 0 0 auto; width: auto; padding: 12px 16px; }
+input[type=date], input[type=time] { color-scheme: dark; min-height: 48px; }
+.plate .lead { font-size: 17px; text-align: center; }
+.heard { display: grid; gap: 8px; padding: 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px dashed rgba(230,194,122,.35); }
+.heard small { font: 500 12px var(--f-ui); color: var(--ink-dim); letter-spacing: .04em; }
+.heard q { font: 800 18px/1.45 var(--f-voice); color: var(--ink); quotes: '“' '”'; }
+.plate .inner { font-weight: 700; color: var(--gold); }
+.beats { display: grid; gap: 0; padding: 0 16px 8px; }
+.beat { margin: 0; padding: 26px 8px; text-align: center; font: 700 19px/1.65 var(--f-voice); color: var(--ink); text-wrap: balance; }
+.beat b { color: var(--gold); font-weight: 800; }
+.beat.big { font-size: 25px; padding: 40px 8px; }
+.beat small { display: block; font: 500 14px var(--f-ui); color: var(--ink-dim); margin-bottom: 8px; }
+.beat.pill { font: 800 22px/1.5 var(--f-voice); color: var(--gold); letter-spacing: .06em; text-shadow: 0 0 18px rgba(230,194,122,.35); }
+.hanja { display: grid; place-items: center; gap: 4px; padding: 40px 0 8px; }
+.hanja b { font: 800 72px/1 var(--f-voice); color: var(--gold); text-shadow: 0 0 24px rgba(230,194,122,.45); }
+.hanja span { font: 500 13px var(--f-ui); color: var(--ink-dim); letter-spacing: .2em; }
+.orns { display: flex; justify-content: center; gap: 22px; padding: 6px 0 10px; }
+.ball { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; position: relative;
+  background: radial-gradient(circle at 32% 30%, #fff8 0, transparent 22%), radial-gradient(circle at 50% 55%, var(--c), #0008 120%);
+  box-shadow: 0 6px 18px rgba(0,0,0,.5), 0 0 14px color-mix(in srgb, var(--c) 50%, transparent); transition: transform .3s, opacity .3s; }
+.ball::before { content: ""; position: absolute; top: -9px; left: 50%; width: 14px; height: 10px; margin-left: -7px; border-radius: 3px; background: linear-gradient(#f0d293, #a9813f); }
+.ball:hover:not(:disabled) { transform: translateY(-4px) rotate(-4deg); }
+.ball:disabled:not(.picked) { opacity: .3; cursor: default; } .ball.picked { transform: scale(1.12); }
+.ocard p { margin: 0; font: 700 17px/1.6 var(--f-voice); }
+.plate .why { font-weight: 700; color: var(--gold); text-align: center; padding-top: 6px; border-top: 1px solid var(--line); }
+.profile dd.blur, .profile .blur { filter: blur(6px); user-select: none; }
+.profile { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(230,194,122,.25), 0 0 32px rgba(230,194,122,.18); background: linear-gradient(180deg, rgba(58,22,30,.92), rgba(20,12,18,.95)); }
+.profile dd { font-size: 19px; }
+.face { position: relative; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold); margin-bottom: 14px; }
+.face .fimg { position: absolute; inset: -20px; filter: blur(14px); background: radial-gradient(circle at 50% 36%, #e2c2a8 0 16%, transparent 17%), radial-gradient(ellipse at 50% 28%, #2a1a1a 0 22%, transparent 23%), radial-gradient(ellipse at 50% 98%, #5a3a44 0 40%, transparent 41%), linear-gradient(#4a3040, #160e14); }
+.face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 55%, rgba(10,8,14,.85)); }
+.face b { z-index: 1; position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; font: 700 15px var(--f-voice); color: var(--gold); text-shadow: 0 2px 8px #000; }
+.read { display: grid; gap: 10px; padding: 20px 18px; border-left: 2px solid var(--gold); background: rgba(255,255,255,.03); }
+.read p { margin: 0; font: 700 17px/1.7 var(--f-voice); color: var(--ink); }
+.read b { color: var(--gold); font-weight: 800; }
+.pro { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; padding: 24px; cursor: pointer;
+  background: radial-gradient(1px 1px at 20% 30%, #fff 50%, transparent), radial-gradient(1px 1px at 70% 20%, #fff 50%, transparent), radial-gradient(1.5px 1.5px at 40% 70%, #fff 50%, transparent),
+    radial-gradient(1px 1px at 85% 60%, #fffb 50%, transparent), radial-gradient(2px 2px at 55% 15%, #ffe9b0 50%, transparent), radial-gradient(1px 1px at 10% 80%, #fff9 50%, transparent),
+    radial-gradient(120% 80% at 50% 0%, #1b2140 0%, #0b0a10 70%); }
+.pline { margin: 0; text-align: center; font: 700 20px/1.75 var(--f-voice); color: var(--ink); text-wrap: balance; opacity: 0; transform: translateY(10px); }
+.pline.on { animation: rise 1.2s ease forwards; } .pline b { color: var(--gold); }
+.pcut { position: absolute; top: calc(52px + env(safe-area-inset-top, 0px)); left: 16px; font: 500 11px var(--f-ui); color: var(--ink-dim); border: 1px dashed var(--line); border-radius: 999px; padding: 2px 8px; }
+.ptap { position: absolute; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); margin: 0; font: 500 12px var(--f-ui); color: var(--ink-dim); }
+.pskip { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 9; font: 500 12px var(--f-ui); color: var(--ink-dim); background: rgba(11,10,16,.6); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.pro.toon { z-index: 8; }
+.pp { position: relative; width: 100%; margin-bottom: 14px; overflow: visible; background: #141224; }
+.pp:last-of-type { margin-bottom: 0; }
+/* 프롤로그 모션: 켄번스, 눈, 깃털, 빛 맥동, 흔들림 */
+.ppi { position: absolute; inset: 0; overflow: hidden; }
+.ppi img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transform: scale(1.0); transform-origin: var(--ox,50%) var(--oy,40%); }
+.pp.in .ppi img { animation: kb 14s ease-out forwards; }
+@keyframes kb { from { transform: scale(1.0) translate(0,0); } to { transform: scale(1.12) translate(var(--kx,0), var(--ky,-2%)); } }
+.snow { position: absolute; inset: 0; pointer-events: none; opacity: .75;
+  background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 80px 120px, #fff, transparent 60%), radial-gradient(2.5px 2.5px at 150px 60px, rgba(255,255,255,.9), transparent 60%), radial-gradient(1.5px 1.5px at 200px 180px, #fff, transparent 60%), radial-gradient(2px 2px at 260px 90px, rgba(255,255,255,.85), transparent 60%);
+  background-size: 300px 220px; animation: snow 9s linear infinite; }
+.snow.s2 { opacity: .45; background-size: 180px 160px; animation-duration: 14s; filter: blur(.6px); }
+@keyframes snow { from { background-position: 0 0; } to { background-position: 40px 220px; } }
+.glow { position: absolute; width: 60%; aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(circle, rgba(255,214,140,.75) 0%, rgba(255,190,100,.25) 35%, transparent 70%); animation: glow 3.2s ease-in-out infinite; }
+@keyframes glow { 0%,100% { opacity: .35; transform: translate(-50%,-50%) scale(.92); } 50% { opacity: .9; transform: translate(-50%,-50%) scale(1.06); } }
+.feather { position: absolute; width: 34px; height: 34px; pointer-events: none; z-index: 1; opacity: 0; filter: drop-shadow(0 0 6px rgba(255,236,190,.9)); }
+.pp.in .feather { animation: fall 5.5s ease-in-out var(--fd,0s) infinite; }
+@keyframes fall {
+  0% { opacity: 0; transform: translate(0,-40px) rotate(-25deg); }
+  10% { opacity: 1; }
+  30% { transform: translate(26px, calc(var(--fy) * .3)) rotate(20deg); }
+  55% { transform: translate(-18px, calc(var(--fy) * .6)) rotate(-18deg); }
+  80% { opacity: 1; transform: translate(8px, var(--fy)) rotate(8deg); }
+  100% { opacity: 0; transform: translate(8px, var(--fy)) rotate(8deg); } }
+.pp.in.shake { animation: shake .5s ease-in-out .3s 2; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px) rotate(-.3deg); } 75% { transform: translateX(4px) rotate(.3deg); } }
+@media (prefers-reduced-motion: reduce) { .pp.in .ppi img, .snow, .glow, .pp.in .feather, .pp.in.shake { animation: none !important; } .feather { opacity: 1; } }
+
+.pp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.plab { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 500 11px var(--f-ui); color: rgba(244,236,223,.55); border: 1px dashed rgba(230,194,122,.35); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.narr { position: absolute; z-index: 2; margin: 0; max-width: 78%; padding: 10px 14px; background: rgba(11,10,16,.82); border: 1px solid var(--gold); font: 700 15.5px/1.6 var(--f-voice); color: var(--ink); text-wrap: balance; }
+.narr.tl { top: 14px; left: 14px; } .narr.tr { top: 14px; right: 14px; } .narr.br { bottom: 14px; right: 14px; }
+.narr.big { left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 86%; text-align: center; font-size: 20px; color: var(--gold); border-width: 2px; }
+.narr.big.in { transform: translate(-50%, -50%); }
+.bb2 { position: absolute; z-index: 3; margin: 0; max-width: 70%; padding: 11px 16px; border-radius: 20px; font: 700 15.5px/1.55 var(--f-voice); text-wrap: balance; }
+.bb2.l { left: 16px; } .bb2.r { right: 16px; text-align: right; }
+.bb2.say { background: #f7f1e6; color: #1a1208; box-shadow: 0 6px 18px rgba(0,0,0,.45); }
+.bb2.say.l { border-bottom-left-radius: 4px; } .bb2.say.r { border-bottom-right-radius: 4px; }
+.bb2.off { background: rgba(11,10,16,.85); color: var(--ink); border: 1px dashed var(--gold); border-radius: 22px; }
+.bb2.crowd { background: rgba(255,255,255,.9); color: #222; font: 500 13px var(--f-ui); padding: 7px 12px; border-radius: 14px; transform: rotate(-2deg); }
+.bb2.narr { background: rgba(11,10,16,.88); color: var(--gold); border: 1px solid var(--gold); border-radius: 0; }
+.bb2.think { background: rgba(255,255,255,.12); color: var(--ink); border: 1px dashed rgba(244,236,223,.6); border-radius: 26px; font: 500 15px/1.5 var(--f-ui); font-style: italic; backdrop-filter: blur(4px); }
+.sfx { position: absolute; z-index: 2; right: 10%; top: 18%; font: 800 34px var(--f-voice); color: #fff6dc; text-shadow: 0 0 14px rgba(230,194,122,.8), 2px 2px 0 #1a1208; transform: rotate(-8deg); }
+button:focus-visible, .chip:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .bg img.on { animation: none; } .fade { animation: none; } .key b::after { animation: none; width: 100%; }
+}
+</style>
+
+<div class="stage" id="stage">
+  <div class="bg" id="bg"></div>
+  <canvas class="dust" id="dust" aria-hidden="true"></canvas>
+  <div class="shade"></div>
+  <span class="tag">시안 · 실제 계산</span>
+  <button class="restart" id="restart" type="button">처음으로</button>
+  <div class="logo" id="logo"><small>크리스마스에</small><span>운명의 문을<br>열어 버렸다</span><i></i></div>
+  <section class="panel" id="panel" aria-live="polite"></section>
+</div>
+
+<script>
+// 운명의 문 사주 엔진 (시안): 원국 계산 + 1막 닫힌 문 + 2막 12월 일진
+const SAJU = (() => {
+  const GAN = '甲乙丙丁戊己庚辛壬癸', GAN_K = '갑을병정무기경신임계';
+  const JI = '子丑寅卯辰巳午未申酉戌亥', JI_K = '자축인묘진사오미신유술해';
+  const JI_MAIN = [9, 5, 0, 1, 4, 2, 3, 5, 6, 7, 4, 8];       // 지지 본기 천간
+  const elG = s => Math.floor(s / 2);                              // 0목 1화 2토 3금 4수
+  // 절기(월 시작) 근사일: [양력월, 일, 월지]  ※시안: 실제 서비스는 KASI 절기 시각표 사용
+  const JEOL = [[1, 6, 1], [2, 4, 2], [3, 6, 3], [4, 5, 4], [5, 6, 5], [6, 6, 6], [7, 7, 7], [8, 8, 8], [9, 8, 9], [10, 8, 10], [11, 7, 11], [12, 7, 0]];
+  function jdn(y, m, d) { const a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+    return d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045; }
+  const p60 = i => ({ g: i % 10, j: i % 12 });
+  function dayP(y, m, d) { return p60(((jdn(y, m, d) + 49) % 60 + 60) % 60); }
+  function monthBranch(m, d) { let br = 1; for (const [jm, jd, b] of JEOL) if (m > jm || (m === jm && d >= jd)) br = b; return br; } // 1/1~1/5 → 자(0)? handled below
+  // 절기 시각표 (1959~2009, 소한·입춘·경칩·청명·입하·망종·소서·입추·백로·한로·입동·대설 순, 한국 표준시 기준 '분' 단위)
+  // lunar-javascript(수성만년력 알고리즘)의 베이징 시각에 +1시간 해서 만든 값
+  const JEOL_T = [-5778062,-5735598,-5692744,-5649237,-5604982,-5560080,-5514821,-5469596,-5424793,-5380671,-5337298,-5294543,-5252118,-5209657,-5166804,-5123297,-5079038,-5034132,-4988868,-4943641,-4898835,-4854712,-4811338,-4768583,-4726158,-4683698,-4640846,-4597338,-4553079,-4508174,-4462914,-4417692,-4372891,-4328770,-4285394,-4242635,-4200206,-4157743,-4114891,-4071386,-4027131,-3982229,-3936969,-3891747,-3846945,-3802823,-3759446,-3716684,-3674254,-3631793,-3588943,-3545442,-3501189,-3456286,-3411023,-3365795,-3320989,-3276864,-3233488,-3190728,-3148298,-3105836,-3062985,-3019482,-2975229,-2930329,-2885068,-2839844,-2795041,-2750919,-2707545,-2664787,-2622359,-2579894,-2537040,-2493534,-2449279,-2404378,-2359119,-2313896,-2269093,-2224969,-2181594,-2138835,-2096406,-2053943,-2011089,-1967584,-1923330,-1878431,-1833174,-1787952,-1743148,-1699024,-1655645,-1612883,-1570452,-1527990,-1485139,-1441636,-1397383,-1352484,-1307227,-1262006,-1217203,-1173079,-1129703,-1086943,-1044514,-1002053,-959203,-915700,-871445,-826541,-781279,-736053,-691249,-647126,-603751,-560992,-518564,-476102,-433250,-389746,-345491,-300589,-255329,-210106,-165305,-121184,-77809,-35049,7381,49845,92698,136201,180453,225352,270610,315834,360637,404761,448137,490897,533325,575785,618634,662136,706388,751288,796551,841780,886590,930718,974096,1016855,1059281,1101740,1144588,1188088,1232341,1277241,1322502,1367728,1412535,1456661,1500039,1542798,1585225,1627684,1670532,1714033,1758286,1803186,1848447,1893672,1938479,1982607,2025987,2068750,2111179,2153640,2196487,2239985,2284233,2329131,2374391,2419617,2464425,2508554,2551937,2594704,2637137,2679599,2722445,2765941,2810187,2855082,2900339,2945564,2990373,3034502,3077882,3120646,3163077,3205539,3248388,3291886,3336134,3381031,3426290,3471518,3516328,3560458,3603838,3646600,3689031,3731493,3774344,3817845,3862096,3906992,3952247,3997470,4042275,4086403,4129785,4172550,4214983,4257446,4300298,4343799,4388048,4432943,4478196,4523417,4568222,4612350,4655734,4698500,4740931,4783392,4826239,4869737,4913987,4958885,5004144,5049370,5094179,5138310,5181692,5224457,5266888,5309349,5352196,5395694,5439944,5484843,5530103,5575328,5620133,5664259,5707638,5750401,5792832,5835295,5878145,5921645,5965894,6010792,6056051,6101277,6146083,6190209,6233588,6276351,6318782,6361245,6404094,6447592,6491839,6536735,6581994,6627221,6672031,6716162,6759544,6802308,6844738,6887199,6930047,6973544,7017790,7062685,7107943,7153169,7197980,7242111,7285492,7328253,7370680,7413138,7455984,7499482,7543730,7588628,7633889,7679117,7723929,7768062,7811445,7854208,7896635,7939091,7981936,8025433,8069682,8114579,8159838,8205064,8249873,8294004,8337389,8380156,8422588,8465047,8507892,8551386,8595630,8640524,8685780,8731005,8775814,8819946,8863332,8906100,8948533,8990991,9033833,9077324,9121565,9166458,9211718,9256949,9301764,9345899,9389285,9432052,9474483,9516942,9559786,9603279,9647521,9692414,9737672,9782900,9827711,9871844,9915228,9957994,10000425,10042887,10085734,10129229,10173473,10218365,10263619,10308843,10353653,10397787,10441173,10483940,10526373,10568834,10611679,10655172,10699415,10744306,10789560,10834785,10879597,10923733,10967123,11009894,11052328,11094788,11137632,11181124,11225366,11270258,11315512,11360737,11405547,11449681,11493067,11535836,11578268,11620728,11663572,11707065,11751308,11796202,11841460,11886687,11931498,11975631,12019017,12061784,12104216,12146677,12189522,12233017,12277261,12322155,12367412,12412637,12457447,12501580,12544965,12587733,12630168,12672630,12715477,12758971,12803214,12848104,12893359,12938584,12983395,13027529,13070915,13113682,13156114,13198572,13241416,13284908,13329150,13374042,13419301,13464531,13509348,13553487,13596875,13639642,13682071,13724527,13767369,13810862,13855106,13900000,13945260,13990488,14035302,14079438,14122826,14165594,14208024,14250481,14293324,14336816,14381059,14425952,14471209,14516436,14561248,14605385,14648774,14691544,14733978,14776436,14819277,14862764,14907003,14951893,14997150,15042379,15087195,15131335,15174728,15217501,15259937,15302397,15345237,15388724,15432961,15477849,15523104,15568334,15613149,15657288,15700677,15743447,15785880,15828340,15871182,15914671,15958910,16003798,16049053,16094282,16139099,16183238,16226628,16269397,16311829,16354288,16397132,16440624,16484864,16529753,16575006,16620232,16665046,16709185,16752576,16795348,16837783,16880244,16923087,16966578,17010817,17055704,17100956,17146179,17190991,17235129,17278521,17321294,17363727,17406185,17449024,17492512,17536750,17581639,17626895,17672124,17716940,17761080,17804473,17847245,17889678,17932136,17974975,18018463,18062702,18107593,18152851,18198079,18242892,18287029,18330418,18373188,18415622,18458083,18500925,18544414,18588652,18633541,18678796,18724023,18768836,18812973,18856362,18899132,18941566,18984027,19026868,19070355,19114590,19159476,19204731,19249960,19294779,19338921,19382314,19425086,19467520,19509978,19552817,19596304,19640540,19685427,19730681,19775911,19820729,19864871,19908264,19951034,19993464,20035920,20078758,20122245,20166483,20211371,20256626,20301856,20346674,20390816,20434210,20476982,20519414,20561869,20604707,20648193,20692430,20737319,20782573,20827801,20872617,20916760,20960156,21002932];
+  function jeolAt(y, m, d, tmin) {
+    const t = Date.UTC(y, m - 1, d) / 60000 + (tmin == null ? 720 : tmin);
+    let i = JEOL_T.length - 1; while (i > 0 && JEOL_T[i] > t) i--;
+    return { i, k: i % 12, since: Math.floor((t - JEOL_T[i]) / 1440), t };
+  }
+  function pillars(y, m, d, hourIdx, nextDay, tmin) {
+    const J = jeolAt(y, m, d, tmin), ipchun = JEOL_T[(y - 1959) * 12 + 1];
+    const beforeIpchun = J.t < ipchun;
+    const yi = ((y - (beforeIpchun ? 1 : 0) - 4) % 60 + 60) % 60, Y = p60(yi);
+    const mb = (J.k + 1) % 12;                                     // 소한→축, 입춘→인 … 대설→자
+    const firstStem = (Y.g % 5) * 2 + 2;                          // 인월 천간
+    const M = { g: (firstStem + ((mb - 2 + 12) % 12)) % 10, j: mb };
+    const D = nextDay ? dayP(y, m, d + 1) : dayP(y, m, d);   // 23:30 이후 자시는 다음 날 일진
+    const H = hourIdx == null ? null : { g: ((D.g % 5) * 2 + hourIdx) % 10, j: hourIdx };
+    return { Y, M, D, H };
+  }
+  function god(dayG, s) {
+    const k = (elG(s) - elG(dayG) + 5) % 5, same = (s % 2) === (dayG % 2);
+    return [['비견', '겁재'], ['식신', '상관'], ['편재', '정재'], ['편관', '정관'], ['편인', '정인']][k][same ? 0 : 1];
+  }
+  const fam = g => ({ 비견: '비겁', 겁재: '비겁', 식신: '식상', 상관: '식상', 편재: '재성', 정재: '재성', 편관: '관성', 정관: '관성', 편인: '인성', 정인: '인성' })[g];
+  const HAP = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];              // 육합 짝
+  const WON = [7, 6, 9, 8, 11, 10, 1, 0, 3, 2, 5, 4];              // 원진 짝
+  const DOHWA = j => [9, 6, 3, 0][[0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1][j]]; // 신자진→유, 사유축→오, 인오술→묘, 해묘미→자
+  const HONG = [6, 6, 2, 7, 4, 4, 10, 9, 0, 8];                     // 일간별 홍염 지지
+  // 2026 각 달 월주 (1월=기축 … 11월=기해), 12월 경자
+  const MONTHS_2026 = [[1, 5, 1], [2, 6, 2], [3, 7, 3], [4, 8, 4], [5, 9, 5], [6, 0, 6], [7, 1, 7], [8, 2, 8], [9, 3, 9], [10, 4, 10], [11, 5, 11]]
+    .map(([mo, g, j]) => ({ mo, g, j }));
+
+  // 신호 → 문. 연애 대상: 여성=관성, 남성=재성
+  function loveSet(male, queer) { return queer ? ['관성', '재성'] : [male ? '재성' : '관성']; }
+  function doors(P, male, queer) {
+    const L = loveSet(male, queer), dG = P.D.g, dJ = P.D.j;
+    const yearLove = L.includes(fam(god(dG, 2))) || L.includes(fam(god(dG, JI_MAIN[6])));  // 2026 병오가 연애 기운인가
+    const dh = new Set([DOHWA(P.Y.j), DOHWA(dJ)]), A = analyze(P, male, queer), boost = A.loveState === 'none' ? 1 : 0;
+    const res = MONTHS_2026.map(({ mo, g, j }) => {
+      const sig = []; const gg = god(dG, g), jg = god(dG, JI_MAIN[j]);
+      if (L.includes(fam(gg))) sig.push([(gg.startsWith('정') ? 4 : 3) + boost, 'knock']);
+      if (L.includes(fam(jg))) sig.push([2 + boost, 'knock']);
+      if (HAP[dJ] === j) sig.push([4, 'half']);
+      if ((dJ + 6) % 12 === j) sig.push([4, 'slam']);
+      if (WON[dJ] === j) sig.push([2, 'off']);
+      if (dh.has(j)) sig.push([DOHWA(P.Y.j) === j && DOHWA(dJ) === j ? 4 : 3, 'key']);
+      if (HONG[dG] === j) sig.push([2, 'key']);
+      if (gg === (male ? '겁재' : '상관')) sig.push([2 + (yearLove ? 1 : 0), 'wrong']);
+      const score = sig.reduce((a, b) => a + b[0], 0);
+      const PR = { half: 6, slam: 5, knock: 4, key: 3, wrong: 2, off: 1 };
+      const top = sig.sort((a, b) => b[0] - a[0] || PR[b[1]] - PR[a[1]])[0];
+      return { mo, score, type: top ? top[1] : null };
+    }).filter(x => x.score > 0);
+    const byScore = [...res].sort((a, b) => b.score - a.score || b.mo - a.mo);
+    const pick = [];
+    for (const c of byScore) {
+      if (!pick.length) { pick.push(c); continue; }
+      if (pick.length >= 3 || c.score < 3) continue;
+      if (pick.some(p => p.type === c.type || Math.abs(p.mo - c.mo) < 2)) continue;
+      pick.push(c);
+    }
+    if (pick.length && pick[0].score < 3) pick.length = 0;
+    const [first, ...rest] = pick;
+    return first ? [first, ...rest.sort((a, b) => a.mo - b.mo)] : [];
+  }
+
+  // 원국 전체 읽기: 오행 분포, 신강·신약, 월령(격), 연애 기운 상태, 원국 안 일지 합·충
+  function analyze(P, male, queer) {
+    const dG = P.D.g, L = loveSet(male, queer), nL = f => L.reduce((a, k) => a + f[k], 0);
+    const pos = [['연간', P.Y.g, 1, 'g'], ['월간', P.M.g, 1, 'g'], ['연지', JI_MAIN[P.Y.j], 1, 'j'], ['월지', JI_MAIN[P.M.j], 3, 'j'], ['일지', JI_MAIN[P.D.j], 2, 'j']];
+    if (P.H) pos.push(['시간', P.H.g, 1, 'g'], ['시지', JI_MAIN[P.H.j], 1, 'j']);
+    const el = [0, 0, 0, 0, 0]; el[elG(dG)]++;
+    pos.forEach(([, s]) => el[elG(s)]++);
+    const famW = { 비겁: 0, 식상: 0, 재성: 0, 관성: 0, 인성: 0 }, famN = { ...famW }, gods = [];
+    let tot = 0;
+    pos.forEach(([, s, w]) => { const g = god(dG, s), f = fam(g); famW[f] += w; famN[f]++; tot += w; gods.push(g); });
+    const ratio = (famW.비겁 + famW.인성) / tot;
+    const strength = ratio >= .5 ? '신강' : ratio <= .35 ? '신약' : '중화';
+    const gyeok = god(dG, JI_MAIN[P.M.j]);
+    const lg = gods.filter(g => L.includes(fam(g)));
+    const loveState = nL(famN) === 0 ? 'none' : nL(famN) >= 3 ? 'many'
+      : (lg.some(g => g.startsWith('정')) && lg.some(g => g.startsWith('편'))) ? 'mixed'
+      : (!male && famN.식상 >= 3) ? 'sharp' : 'clean';
+    const dJ = P.D.j, others = [P.Y.j, P.M.j, P.H?.j].filter(x => x != null);
+    const natal = others.some(j => (dJ + 6) % 12 === j) ? 'clash' : others.some(j => HAP[dJ] === j) ? 'hap' : null;
+    const n = P.H ? 8 : 6, missing = el.map((c, i) => c === 0 ? i : -1).filter(i => i >= 0);
+    const heavy = el.findIndex(c => c >= (n === 8 ? 4 : 3));
+    // 2026 병오(화)가 이 사주에 반가운 기운인가: 신강이면 식재관, 신약이면 인비
+    const fireFam = fam(god(dG, 2)), helps = strength === '신약' ? ['인성', '비겁'] : strength === '신강' ? ['식상', '재성', '관성'] : ['식상', '재성', '관성', '인성', '비겁'];
+    return { el, ratio, strength, gyeok, loveState, natal, missing, heavy, famN, yearGood: helps.includes(fireFam) && el[1] < 3 };
+  }
+
+  // 2막: 2026-12-08 ~ 12-24 일진 점수
+  function december(P, male, queer) {
+    const L = loveSet(male, queer), dG = P.D.g, dJ = P.D.j, dh = new Set([DOHWA(P.Y.j), DOHWA(dJ)]);
+    const days = [];
+    for (let d = 8; d <= 24; d++) {
+      const X = dayP(2026, 12, d), gg = god(dG, X.g); let s = 0;
+      if (queer ? (gg === '정관' || gg === '정재') : gg === (male ? '정재' : '정관')) s += 3;
+      if (HAP[dJ] === X.j) s += 3;
+      if (dh.has(X.j)) s += 2;
+      if (s === 0 && (L.includes(fam(gg)) || L.includes(fam(god(dG, JI_MAIN[X.j]))))) s += 1;
+      const wd = new Date(2026, 11, d).getDay();
+      days.push({ d, s, wd, X, clash: (dJ + 6) % 12 === X.j });
+    }
+    const best = [...days].sort((a, b) => b.s - a.s || ((b.wd === 5 || b.wd === 6) - (a.wd === 5 || a.wd === 6)) || b.d - a.d)[0];
+    return { A: best.s >= 3, best, shake: days.find(x => x.clash && x.d !== best.d) || null, passers: days.filter(x => x.s === 1).map(x => x.d) };
+  }
+  return { GAN, GAN_K, JI, JI_K, JI_MAIN, elG, jeolAt, pillars, god, fam, doors, december, dayP, analyze };
+})();
+
+
+// 1막 문패 카드 + 닫힌 문 대사 (설계서 「운명의 문 사주 설계서」 표 그대로)
+const TXT = {
+  img: ['곧게 선 큰 나무', '담장을 타고 오르는 덩굴꽃', '한낮의 태양', '어두운 방의 촛불', '눈 덮인 큰 산', '겨울을 견딘 정원의 흙', '아직 다듬지 않은 원석', '잘 세공된 보석', '밤바다', '처음 내리는 눈'],
+  trait: ['사람들은 네가 잘 안 흔들리는 줄 알아. 근데 너도 누가 먼저 괜찮냐고 물어봐 주길 바란 적 있지.', '부드러워 보여도 쉽게 꺾이진 않아. 상처받은 날에도 티 안 내고 넘어간 적 있잖아.', '사람들 사이에선 밝은 쪽이지. 근데 집에 돌아오는 길에 괜히 허전했던 날도 있었을 거야.', '마음을 아무한테나 다 보여주진 않아. 대신 한번 마음 준 사람한테는 오래 따뜻하지.', '다들 너한테 기대는 편이야. 정작 네 얘기는 다 못 꺼내고 넘어간 날도 있었지.', '남 챙기는 게 자연스러워서, 네가 원하는 걸 말할 타이밍을 놓친 적 있지.', '말이 곧아서 오해받은 적 있지. 근데 한번 네 편이면 끝까지 네 편이야.', '남들이 그냥 넘기는 걸 넌 알아채. 그래서 혼자 신경 쓰인 날이 많았을 거야.', '누구 얘기든 잘 들어주는데, 정작 네 속을 다 아는 사람은 많지 않아.', '겉으론 조용해 보여도 머릿속은 바빠. 남의 기분부터 챙기다 네 기분은 나중에 알아챈 적 있지.'],
+  season(j) { return [0, 1, 11].includes(j) ? '눈 내리는 밤의' : [2, 3, 4].includes(j) ? '막 봄이 오는' : [5, 6, 7].includes(j) ? '한여름 볕 아래' : '서늘한 가을밤의'; },
+  love: { 비겁: '연인도 친구처럼 대해. 자존심 때문에 먼저 연락을 못 해.', 식상: '좋으면 다 표현해. 너무 챙기다 지쳐.', 재성: '현실을 먼저 봐. 관계를 네가 끌고 가는 편이야.', 관성: '끌리는 사람한테 약해. 한번 들이면 책임지려 해.', 인성: '받는 사랑이 편해. 생각이 너무 많아서 타이밍을 놓쳐.' },
+  gyeok: {
+    비견: '혼자 해결하는 게 편한 스타일이라, 도와달란 말을 잘 못 해.',
+    겁재: '지기 싫은 순간엔 누구보다 독해지는 체질이야. 그 밑엔 인정받고 싶은 마음이 깔려 있고.',
+    식신: '좋아하는 걸 할 땐 시간 가는 줄 모르는 타입. 싫은 건 표정에서 먼저 들키고.',
+    상관: '할 말은 하는 스타일이야. 참았던 말은 한 번에 터지고.',
+    편재: '사람 챙기고 분위기 만드는 데 타고났어. 정작 너 자신은 맨 뒤로 미루고.',
+    정재: '계획이 틀어지면 겉은 멀쩡해도 속은 한동안 시끄러운 타입.',
+    편관: '책임질 일이 생기면 오히려 단단해지는 체질이야. 대신 긴장을 잘 못 풀고.',
+    정관: '믿음직하단 말 꽤 들었을 거야. 그 기대 맞추느라 혼자 지치는 것도 너고.',
+    편인: '직감이 무섭게 잘 맞는 스타일. 대신 생각이 꼬리를 물어서 밤이 길어.',
+    정인: '이해가 돼야 마음이 놓이는 타입이야. 누가 먼저 알아주면 금방 풀리고.',
+  },
+
+
+  strength: {
+    신강: '기운이 센 사주야. 한번 정하면 밀고 가는 힘이 있어.',
+    신약: '기운이 섬세한 사주야. 공기를 잘 읽는 대신, 사람 많은 날엔 더 빨리 지쳐.',
+    중화: '',
+  },
+
+  elName: ['나무', '불', '흙', '쇠', '물'],
+  missing: ['먼저 다가가야 할 순간에 꼭 한 박자 늦는 스타일이야.', '마음은 뜨거운데 표현이 늦어서, 상대는 한참 뒤에야 알아.', '마음 둘 곳을 늘 찾아다니는 체질이야.', '끊어야 할 인연을 생각보다 오래 쥐고 있는 타입이고.', '속얘기 나눌 사람이 없으면 금방 메마르는 체질이야.'],
+  heavy: ['하고 싶은 게 많아서 마음이 몸보다 늘 먼저 가.', '확 타오르는 체질이야. 대신 식을까 봐 스스로 겁내고.', '다 품어주는 대신, 마음 정하는 데 한참 걸리는 스타일.', '기준이 칼 같아서 아무나 통과 못 해.', '말하기 전에 혼자 결론까지 다 내버리는 타입이야.'],
+  loveState: {
+    none: '네 사주엔 남자 기운이 겉으로 안 드러나. 그래서 좋아하는 걸 남들보다 늦게 알아채는 체질이야.',
+    noneQ: '네 사주엔 인연 기운이 겉으로 안 드러나. 그래서 좋아하는 걸 남들보다 늦게 알아채는 체질이야.',
+    noneM: '네 사주엔 여자 기운이 겉으로 안 드러나. 그래서 좋아하는 걸 남들보다 늦게 알아채는 체질이야.',
+    clean: '',
+    mixed: '끌리는 타입이 하나로 안 정해져. 편한 사람이랑 설레는 사람 사이에서 늘 저울질하는 스타일.',
+    mixedM: '끌리는 타입이 하나로 안 정해져. 편한 사람이랑 설레는 사람 사이에서 늘 저울질하는 스타일.',
+    many: '다가오는 사람이 끊이질 않는 사주야. 대신 거절을 못 해서 피곤해지고.',
+    sharp: '아끼는 사람일수록 말이 먼저 날카롭게 나가는 타입이야.',
+  },
+
+
+  natal: {
+    clash: '연애할 때 마음이 크게 오르내린 시기가 있었을 거야.',
+    hap: '한번 정이 들면 쉽게 못 놓는 편이야.',
+  },  scene: { solo: '연락 올까 휴대폰 한 번 더 보는 밤이 올해도 꽤 있었어.', crush: '그 사람 답장 하나에 하루 기분이 왔다 갔다 하는 중이고.', partner: '서운한 건 말 안 하고 삼키는 쪽이야. 그게 지금 쌓이는 중이고.', breakup: '괜찮다고 해놓고, 그 사람 프로필은 아직 한 번씩 눌러보는 중.', married: '익숙해서 고맙다는 말을 자꾸 미루는 중이야.' },
+  where: { student: ['수업 끝나고 들른 자리', '친구가 데려간 연말 모임', '학교 근처 카페', '동아리·스터디 송년회'], seek: ['면접 끝나고 들른 카페', '오랜만에 나간 연말 모임', '친구의 소개', '스터디 모임'], office: ['회사 송년회 2차', '일 때문에 간 자리', '퇴근길 들른 동네 카페', '친구의 소개'], biz: ['거래처와의 자리', '연말 네트워킹 모임', '오래된 친구의 소개', '가게나 사무실에 찾아온 사람'], free: ['작업하러 간 카페', '일로 만난 사람과의 자리', '연말 모임', '친구의 소개'], rest: ['오랜만에 나간 연말 모임', '동네 카페', '친구의 소개', '혼자 간 전시나 공연'] },
+  whereP: ['둘만의 저녁', '연말 모임', '오래 미뤄둔 나들이', '집 근처 늦은 산책'],
+  yearTone: ['그래서 유난히 버거운 해였어.', '힘들었어도 남는 게 있는 해였고.'],
+  // 일간 그룹(오행)별 2026 병오년: [올해 한 줄, 재해석]
+  year: [
+    ['올해 넌 마음을 먼저 줬어. 그만큼 받았는지는 모르겠고.', '그렇게 먼저 줄 수 있는 것도 재능이야. 이제 받을 차례고.'],
+    ['올해는 사람이 많았는데, 정작 네 편은 적었어.', '사람 사이에서 지친 거지, 사람이 싫어진 건 아니잖아.'],
+    ['올해 넌 생각만 길었어. 누가 먼저 와주길 기다리면서.', '기다린 시간도 헛건 아니야. 네가 뭘 원하는지 알게 됐으니까.'],
+    ['올해 넌 문 두드리는 소리를 자주 들었어. 다 열어주진 않았지만.', '쉽게 안 연 건 까다로워서가 아니라, 문을 아껴둔 거야.'],
+    ['올해는 마음보다 현실이 먼저였어. 돈, 성과, 일정.', '연애가 밀린 건 네가 차가워서가 아니라, 버티느라 바빴던 거야.'],
+  ],
+  // 남성: 경·신(병오=관성 → 일), 임·계(병오=재성 → 인연)
+  yearM: { 3: '올해는 책임질 일이 쌓였어. 연애가 일 뒤로 밀렸고.', 4: '올해 넌 사람을 자꾸 마주쳤어. 잡을지 말지 재느라 바빴고.' },
+  wu: { 7: '그리고 내내 누가 옆에 있었어.', 0: '그리고 한 번은 크게 흔들렸어.', 1: '그리고 이상하게 엇갈린 순간이 있었어.' },
+  // 닫힌 문: 일반 2개 + ★(연애 중) 1개
+  // 올해의 이야기: 장면 하나 = 한 달. 제목은 가장 컸던 장면에서
+  story: {
+    knock: { title: '마음을 숨긴 해', l: ['{월}, 누군가 너한테 먼저 다가왔어. 꽤 괜찮은 사람이었는데, 넌 한 발 물러서서 지켜보기만 했고. 싫어서가 아니라, 확신이 늦게 오는 체질이라서.', '{월}쯤, 자꾸 눈에 밟히는 사람이 하나 있었어. 겉으론 아무렇지 않은 척했지만, 속으론 꽤 오래 굴려봤을걸?'], s: '{월}, 네 사람이 현실 얘기를 꺼냈어. 그만큼 진지해졌다는 건데, 넌 반가우면서도 어깨가 무거웠고.' },
+    half: { title: '거의 닿을 뻔한 해', l: ['{월}, 거의 다 된 인연이 있었어. 연락도 자연스러웠고 분위기도 좋았는데, 누가 먼저 한 발 내딛느냐에서 멈췄지.', '{월}쯤, 이름 붙이기 애매한 사이가 하나 있었어. 친구라기엔 가깝고, 연인이라기엔 한 걸음 모자란.'], s: '{월}, 둘이 올해 제일 가까웠어. 그때 나눈 얘기, 생각보다 오래 남아 있을걸?' },
+    slam: { title: '하나를 정리한 해', l: ['{월}, 하나를 끝냈어. 사람이든 마음이든. 그땐 후련했는데, 생각보다 자주 뒤를 돌아봤을지도?', '{월}쯤, 크게 한 번 흔들렸어. 무너진 게 아니라, 버릴 걸 버린 거야.'], s: '{월}, 크게 한 번 부딪혔어. 사소하게 시작해서, 사소하게 안 끝난 얘기.' },
+    key: { title: '시선이 머문 해', l: ['{월}, 너한테 시선이 몰렸어. 정작 너만 몰랐고. 그때 누군가는 말 걸 타이밍을 재고 있었어.', '{월}쯤, 생각지도 않은 사람한테서 연락이 왔을 거야. 별 뜻 없어 보였겠지만, 그쪽은 아니었어.'], s: '{월}, 너한테 유독 시선이 많이 왔어. 네 사람도 그걸 느꼈고. 말은 안 했지만.' },
+    wrong: { title: '말이 앞선 해', l: ['{월}, 좋은 흐름이 있었는데 말이 마음보다 먼저 나갔어. 진심이었는데, 전달이 엇나갔지.', '{월}쯤, 네가 밀어낸 건지 밀려난 건지 헷갈린 일이 있었어. 둘 다였을지도?'], s: '{월}, 네 말 한마디에 분위기가 확 바뀌었어. 진심이었는데, 타이밍이 아니었던 거야.' },
+    off: { title: '엇갈린 해', l: ['{월}, 타이밍이 계속 어긋났어. 네가 다가가면 그쪽이 물러서고, 그쪽이 오면 네가 바빴고.', '{월}쯤, 별것 아닌 오해 하나가 생각보다 길게 갔어.'], s: '{월}, 이상하게 서로 서운했어. 이유는 둘 다 제대로 말 못 했고.' },
+  },
+  door: {
+    knock: { name: '두드린 문', l: ['{월}엔 누가 네 문을 두드렸어. 꽤 괜찮은 사람이었는데, 넌 바로 안 열어줬고.', '{월}쯤 마음 쓰이는 사람이 하나 있었어. 티는 하나도 안 냈겠지만.'], s: '{월}엔 네 사람이 현실 얘기를 꺼냈어. 진지해진 만큼 너는 오히려 무거웠고.' },
+    half: { name: '반쯤 열린 문', l: ['{월}엔 문이 반쯤 열려 있었어. 거의 다 됐는데, 누가 먼저 손을 놨는지가 문제였고.', '{월}쯤 연락이 자연스럽게 이어지던 사람이 있었어. 이름 붙이기 애매한, 딱 그런 사이.'], s: '{월}엔 둘이 제일 가까웠어. 그때 한 약속, 아직 유효하다?' },
+    slam: { name: '쾅 닫힌 문', l: ['{월}엔 문이 한 번 쾅 닫혔어. 네가 닫았든 바람이 닫았든, 결과는 같았고.', '{월}쯤 하나 정리했어. 사람이든, 마음이든.'], s: '{월}엔 크게 한 번 부딪혔어. 사소하게 시작해서 사소하게 안 끝난 싸움.' },
+    key: { name: '열쇠구멍', l: ['{월}엔 너한테 시선이 몰렸어. 정작 너만 몰랐고.', '{월}쯤 생각지도 않은 사람한테서 연락이 왔을 거야.'], s: '{월}엔 누가 널 지켜보고 있었어. 네 사람 말고.' },
+    wrong: { name: '잘못 연 문', l: ['{월}쯤 문은 열었는데, 열자마자 말이 먼저 나갔어.', '{월}엔 네가 밀어낸 건지 밀려난 건지, 너도 헷갈렸을 거야.'], s: '{월}엔 네 말 한마디에 분위기가 확 바뀌었어. 진심이었는데.' },
+    off: { name: '어긋난 문', l: ['{월}엔 타이밍이 계속 어긋났어. 네가 다가가면 그쪽이 물러서고.', '{월}쯤 별것 아닌 오해가 생각보다 길게 갔어.'], s: '{월}엔 이상하게 서로 서운했어. 이유는 둘 다 제대로 말 못 했고.' },
+  },
+
+
+
+};
+
+
+const IMG = ['s0','box','book','loading','closed','last','resA','resB','lock'];
+const bg = document.getElementById('bg');
+const imgs = {};
+IMG.forEach(k => { const im = new Image(); im.src = `img/${k}.jpg`; im.alt = ''; bg.appendChild(im); imgs[k] = im; });
+let curBg = null;
+function setBg(k) { if (curBg === k) return; Object.values(imgs).forEach(i => i.classList.remove('on')); void imgs[k].offsetWidth; imgs[k].classList.add('on'); curBg = k; }
+
+const S = { cal: 'solar', leap: false, lb: null, wk: '', orient: '', job: '', worry: '', time: '13:00', R: null, di: 0, hits: 0, sex: '남자', name: '태준', y: 1989, m: 3, d: 18, fast: false, hour: '', noTime: false, status: '', step: 0 };
+const panel = document.getElementById('panel');
+const logo = document.getElementById('logo');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---- tiny audio: page-flip whoosh + key chime (only after a tap) ----
+let ac = null;
+function sfx(kind) {
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const t = ac.currentTime;
+    if (kind === 'flip') {
+      const len = .28, buf = ac.createBuffer(1, ac.sampleRate * len, ac.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
+      const src = ac.createBufferSource(); src.buffer = buf;
+      const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2400; f.Q.value = .7;
+      const g = ac.createGain(); g.gain.value = .18;
+      src.connect(f).connect(g).connect(ac.destination); src.start(t);
+    } else {
+      [1318.5, 1760, 2637].forEach((fr, i) => {
+        const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = fr;
+        g.gain.setValueAtTime(0, t + i * .09); g.gain.linearRampToValueAtTime(.07, t + i * .09 + .01);
+        g.gain.exponentialRampToValueAtTime(.0001, t + i * .09 + 1.4);
+        o.connect(g).connect(ac.destination); o.start(t + i * .09); o.stop(t + i * .09 + 1.5);
+      });
+    }
+  } catch (e) {}
+}
+
+// ---- typewriter for 노엘's lines ----
+let typing = null;
+function type(el, text, speed = 45) {
+  clearInterval(typing);
+  if (reduce) { el.textContent = text; return Promise.resolve(); }
+  el.textContent = ''; let i = 0;
+  return new Promise(res => { typing = setInterval(() => { el.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(typing); res(); } }, speed); });
+}
+
+function h(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content; }
+function dots(n) { return `<div class="dots" aria-hidden="true">${[1,2,3,4].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</div>`; }
+
+const SIJIN = ['자시', '축시', '인시', '묘시', '진시', '사시', '오시', '미시', '신시', '유시', '술시', '해시'];
+function sijin(hhmm) {
+  if (!hhmm) return null;
+  const [h, m] = hhmm.split(':').map(Number), t = h * 60 + m;
+  return { idx: Math.floor((((t - 30 + 60) % 1440) + 1440) % 1440 / 120), nextDay: t >= 23 * 60 + 30 };
+}
+const HOURS = ['자시 23~01시','축시 01~03시','인시 03~05시','묘시 05~07시','진시 07~09시','사시 09~11시','오시 11~13시','미시 13~15시','신시 15~17시','유시 17~19시','술시 19~21시','해시 21~23시'];
+// ---- 출생 시각 보정: 한국은 1961.8.10 전엔 UTC+8:30, 1960·1987·1988년 여름엔 서머타임이었다.
+// 출생 당시 시계 시각을 지금의 한국 표준시(UTC+9) 기준으로 바꾼다. [이 시각(UTC 분) 전까지, 그때 시계의 UTC 오프셋(분)]
+const KR_TZ = [[Date.UTC(1960, 3, 30, 16) / 60000, 510], [Date.UTC(1960, 8, 17, 15) / 60000, 570], [Date.UTC(1961, 7, 9, 16) / 60000, 510],
+  [Date.UTC(1987, 4, 9, 17) / 60000, 540], [Date.UTC(1987, 9, 10, 17) / 60000, 600], [Date.UTC(1988, 4, 7, 17) / 60000, 540], [Date.UTC(1988, 9, 8, 17) / 60000, 600], [Infinity, 540]];
+function toKST(y, m, d, hhmm) {
+  if (!hhmm) return { y, m, d, time: '', shift: 0 };
+  const [h, mi] = hhmm.split(':').map(Number), L = Date.UTC(y, m - 1, d, h, mi) / 60000;
+  let off = 540;
+  for (let i = 0, from = -Infinity; i < KR_TZ.length; from = KR_TZ[i][0], i++) { const u = L - KR_TZ[i][1]; if (u >= from && u < KR_TZ[i][0]) { off = KR_TZ[i][1]; break; } }
+  const shift = 540 - off, t = new Date((L + shift) * 60000);
+  return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate(), time: `${String(t.getUTCHours()).padStart(2, '0')}:${String(t.getUTCMinutes()).padStart(2, '0')}`, shift };
+}
+function calc() {
+  const K = S.adj = toKST(+S.y, +S.m, +S.d, S.noTime ? '' : S.time);
+  const sj = S.noTime ? null : sijin(K.time);
+  const tmin = K.time ? K.time.split(':').reduce((h, m) => +h * 60 + +m) : null;
+  const P = SAJU.pillars(K.y, K.m, K.d, sj ? sj.idx : null, sj ? sj.nextDay : false, tmin), dG = P.D.g;
+  const male = S.sex === '남자', queer = S.orient === 'queer', A = SAJU.analyze(P, male, queer), T = TXT;
+  const loveFam = SAJU.fam(SAJU.god(dG, SAJU.JI_MAIN[P.D.j]));
+  const yr = [...T.year[SAJU.elG(dG)]]; if (male && T.yearM[SAJU.elG(dG)]) yr[0] = T.yearM[SAJU.elG(dG)];
+  const ls = queer && A.loveState === 'none' ? 'noneQ' : male && (A.loveState === 'none' || A.loveState === 'mixed') ? A.loveState + 'M' : A.loveState;
+  const elLine = A.missing.length ? `넌 ${T.elName[A.missing[0]]} 기운이 비어 있어. ${T.missing[A.missing[0]]}`
+    : A.heavy >= 0 ? `넌 ${T.elName[A.heavy]} 기운이 넘쳐. ${T.heavy[A.heavy]}` : '';
+  S.R = {
+    P, A, ilju: SAJU.GAN_K[dG] + SAJU.JI_K[P.D.j],
+    image: `${T.season(P.M.j)} ${T.img[dG]}`, trait: T.trait[dG],
+    gyeok: A.famN[SAJU.fam(A.gyeok)] >= 2 ? T.gyeok[A.gyeok] : '', strength: (A.ratio >= .55 || A.ratio <= .3) ? T.strength[A.strength] : '', elLine,
+    love: [T.loveState[ls], A.natal ? T.natal[A.natal] : '', T.scene[S.status] || ''].filter(Boolean).join(' '),
+    heard: (() => { const h = HEARD[dG]; const love = HEARD_LOVE[A.loveState] || (A.el[1] === 0 ? HEARD_LOVE.fire0 : A.el[1] >= (P.H ? 4 : 3) ? HEARD_LOVE.fire4 : h[1]); return { p: h[0], l: love, inner: h[2] }; })(),
+    workLine: S.job ? `${WORK_PLACE[S.job]} ${WORK_LINE[SAJU.fam(SAJU.god(dG, 2))]}` : '',
+    yearLine: `${yr[0]} ${T.yearTone[A.yearGood ? 1 : 0]}`, reframe: yr[1], wuLine: T.wu[[7, 0, 1].find(j => j === P.D.j)] || '',
+    doors: SAJU.doors(P, male, queer), dec: SAJU.december(P, male, queer),
+  };
+}
+
+// deterministic "reading" from the inputs (stand-in for the real saju engine)
+function seed() { const s = `${S.sex}|${S.name}|${S.y}${S.m}${S.d}|${S.time}|${S.status}|${S.orient}|${S.job}`; let x = 2166136261; for (const c of s) { x ^= c.charCodeAt(0); x = Math.imul(x, 16777619); } return x >>> 0; }
+
+const STEPS = {
+  0() {
+    setBg('s0'); logo.style.opacity = 1;
+    panel.innerHTML = `<p class="tagline fade">크리스마스 전, 딱 한 번 열리는 문</p>
+      <button class="btn fade" id="go" type="button">노엘과 사주 보기</button>`;
+    on('go', () => { logo.style.opacity = 0; next(30, 'chime'); });
+  },
+  1() {
+    setBg('box'); logo.style.opacity = 0;
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <button class="btn fade" id="go" type="button">열쇠 받기</button>`;
+    type(ln(), '"마지막 문 열쇠야. 근데 아직 네 이름이 안 새겨졌어."');
+    on('go', () => next(20));
+  },
+  30() {
+    // 프롤로그: 웹툰처럼 세로로 내려 읽는다. 내레이션 박스 + 말풍선이 컷과 컷 사이(거터)에 걸쳐서 장면을 잇는다
+    panel.innerHTML = ''; S.pro = true;
+    // [컷, 비율, 배경(이미지 없으면 그라디언트), 내레이션, 말풍선들 [좌우, 위치%, 글, 종류], 효과음]
+    // 노엘의 1인칭 독백으로 진행: 내레이션 박스 = 노엘의 속마음, 흰 말풍선 = 인간들의 목소리
+    // 철학: 인연은 오는 게 아니라 '알아보는 것'. 설명하지 않고 장면으로 보여준다
+    const C = [
+      ['P1', '9/14', 'img:p1', ['별이 지금보다 훨씬 밝던 시절부터,', 'tl'], [['r', 74, '나는 인간들의 인연을 지켜봤어.', 'narr']], ''],
+      ['P2', '9/14', 'img:p2', ['봐, 저 둘.', 'tl'], [['r', 40, '같은 카페에서 벌써 백 번은 마주쳤어.', 'narr'], ['l', 82, '아직 서로 이름도 몰라.', 'narr']], ''],
+      ['P3', '9/14', 'img:p3', ['인연은 늘 먼저 와 있어. 알아보는 게 늦을 뿐이지.', 'tl'], [], '툭'],
+      ['P4', '9/14', 'img:p4', ['그래서 크리스마스가 오면, 창문을 하나하나 들여다봐.', 'tl'], [['r', 36, '"올해는… 연락 올까."', 'say'], ['l', 52, '"그 사람, 잘 지내려나."', 'say'], ['r', 84, '그리고 딱 한 사람에게만, 선물을 줘.', 'narr']], ''],
+      ['P5', '9/14', 'img:p5', ['그 사람이 곁을 지나가는 순간,', 'big'], [['l', 78, '그걸 알아챌 수 있게.', 'narr']], '반짝'],
+      ['P6', '9/14', 'img:p6', ['올해 창문을 들여다보다가, 유난히 마음이 복잡한 사람 하나가 눈에 밟혔어.', 'tl'], [['r', 50, '몇 번이나 문 앞까지 왔다가,<br>그냥 지나친 사람.', 'narr'], ['l', 82, '그게, 너야.', 'narr']], ''],
+      ['P7', '9/14', 'img:p7', ['그해 겨울, 노엘은 처음으로 인간 앞에 모습을 드러냈다.', 'big'], [['l', 6, '그래서 이번엔, 선물만 두고 가지 않기로 했어.', 'narr'], ['r', 86, '…바로, 네 앞에.', 'narr']], ''],
+      ['B1', '9/14', 'img:b1', null, [['l', 74, '(…여기, 원래 문이 있었나?)', 'think']], ''],
+      ['B2 지나치려는 순간, 문 안에서 들려오는 목소리', '9/10', 'linear-gradient(#2a1c22,#120e14)', null, [['r', 30, '"또 그냥 가려고?"', 'off'], ['l', 74, '(…나한테 하는 말이야?)', 'think']], '끼익—'],
+      ['B3', '9/14', 'img:b3', null, [['r', 14, '"올해만 벌써 몇 번째야.<br>이 앞을 그냥 지나친 게."', 'off'], ['l', 76, '"마음이 복잡하면,<br>원래 문이 잘 안 보이거든."', 'off']], ''],
+      ['B4 돌아보는 노엘', '9/13', 'img:s0', null, [['l', 72, '"이번엔 그냥 못 보내.<br>들어와."', 'say']], ''],
+    ];
+    // 컷별 모션: kb=켄번스 원점/방향, snow=눈, glow=[x%,y%], fe=[[x%,y%,낙하px,지연s]], shake
+    const FX = {
+      P1: { kb: ['50%', '20%', '0', '3%'], snow: 2 },
+      P2: { kb: ['45%', '45%', '-2%', '0'] },
+      P3: { kb: ['50%', '40%', '0', '-2%'], glow: [50, 38], fe: [[48, 18, 240, 0], [30, 8, 200, 2.6]] },
+      P4: { kb: ['60%', '50%', '-2%', '-1%'], snow: 2 },
+      P5: { kb: ['55%', '55%', '0', '-2%'], glow: [55, 52] },
+      P6: { kb: ['50%', '60%', '0', '-3%'], snow: 1, glow: [62, 48] },
+      P7: { kb: ['50%', '45%', '0', '-2%'], snow: 2, fe: [[56, 6, 300, .4]] },
+      B1: { kb: ['50%', '55%', '0', '-2%'], snow: 1, glow: [52, 52] },
+      B2: { shake: 1 },
+      B3: { kb: ['50%', '40%', '0', '-2%'], fe: [[40, 6, 320, 1]] },
+      B4: { kb: ['50%', '30%', '0', '-1%'] },
+    };
+    const FEATHER = '<svg viewBox="0 0 40 40"><path d="M33 4C22 6 11 15 7 30l-2 6 2-1C12 22 20 13 33 4z" fill="#fffaf0"/><path d="M33 4C25 13 17 21 7 33" stroke="#e9dcc0" stroke-width="1.2" fill="none"/></svg>';
+    const o = document.createElement('div'); o.className = 'pro toon'; o.id = 'pro';
+    o.innerHTML = C.map(([lab, ar, bgv, narr, bubbles, sfxt]) => { const fx = FX[lab.split(' ')[0]] || {}; const kb = fx.kb || ['50%', '40%', '0', '-2%']; return `
+      <div class="pp${fx.shake ? ' shake' : ''}" style="aspect-ratio:${ar};${bgv.startsWith('img:') ? '' : `background:${bgv}`}">
+        ${bgv.startsWith('img:') ? `<div class="ppi" style="--ox:${kb[0]};--oy:${kb[1]};--kx:${kb[2]};--ky:${kb[3]}"><img src="img/${bgv.slice(4)}.jpg" alt=""></div>` : ''}
+        ${fx.glow ? `<span class="glow" style="left:${fx.glow[0]}%;top:${fx.glow[1]}%"></span>` : ''}
+        ${fx.snow ? `<span class="snow"></span>${fx.snow > 1 ? '<span class="snow s2"></span>' : ''}` : ''}
+        ${(fx.fe || []).map(([x, y, d, dl]) => `<span class="feather" style="left:${x}%;top:${y}%;--fy:${d}px;--fd:${dl}s">${FEATHER}</span>`).join('')}
+        ${narr ? `<p class="narr ${narr[1]} rv">${narr[0]}</p>` : ''}
+        ${sfxt ? `<span class="sfx rv">${sfxt}</span>` : ''}
+        ${bubbles.map(([side, top, t, kind]) => `<p class="bb2 ${side} ${kind} rv" style="top:${top}%">${t}</p>`).join('')}
+      </div>`; }).join('') + `<div class="sec" style="padding:28px 16px 40px"><button class="btn" id="pgo" type="button">노엘에게 다가가기</button></div>`
+      + `<button class="pskip" id="pskip" type="button">건너뛰기</button>`;
+    document.getElementById('stage').appendChild(o);
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { root: o, threshold: .3 });
+    o.querySelectorAll('.rv').forEach(el => io.observe(el));
+    o.querySelectorAll('.pp').forEach(el => io.observe(el));
+    const end = () => { o.remove(); setBg('book'); next(20); };
+    document.getElementById('pgo').addEventListener('click', end);
+    document.getElementById('pskip').addEventListener('click', () => { S.pro = false; end(); });
+  },
+  20() {
+    setBg('book'); panel.classList.add('tall');
+    panel.innerHTML = `<div class="chat" id="chat"></div><div id="ask"></div>`;
+    runChat();
+  },
+  2() {
+    setBg('book');
+    panel.innerHTML = `${dots(1)}<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <form class="box fade" id="f"><label class="cap" for="nm">이름</label>
+      <input id="nm" maxlength="12" autocomplete="given-name" placeholder="이름 또는 불리고 싶은 이름" value="${esc(S.name)}">
+      <p class="err" id="er"></p><button class="btn" type="submit">적었어</button></form>`;
+    type(ln(), '"이름부터 적어."');
+    form(() => { const v = val('nm').trim(); if (!v) return err('이름을 적어야 열쇠에 새길 수 있어요.'); S.name = v; next(3); });
+  },
+  3() {
+    setBg('book');
+    const ys = []; for (let y = 2008; y >= 1960; y--) ys.push(y);
+    panel.innerHTML = `${dots(2)}<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <form class="box fade" id="f"><span class="cap">성별</span>
+      <div class="chips" role="group" aria-label="성별">${['여자', '남자'].map(o => `<button type="button" class="chip sx" aria-pressed="${S.sex === o}">${o}</button>`).join('')}</div>
+      <span class="cap">생년월일 (양력)</span>
+      <div class="row">
+        <select id="yy" aria-label="태어난 해"><option value="">년</option>${ys.map(y => `<option ${S.y == y ? 'selected' : ''}>${y}</option>`).join('')}</select>
+        <select id="mm" aria-label="태어난 달"><option value="">월</option>${[...Array(12)].map((_, i) => `<option ${S.m == i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select>
+        <select id="dd" aria-label="태어난 날"><option value="">일</option>${[...Array(31)].map((_, i) => `<option ${S.d == i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select>
+      </div><p class="err" id="er"></p><button class="btn" type="submit">이날이야</button></form>`;
+    type(ln(), '"언제 태어났어? 문은 그날을 기억하거든."');
+    panel.querySelectorAll('.sx').forEach(c => c.addEventListener('click', () => {
+      panel.querySelectorAll('.sx').forEach(x => x.setAttribute('aria-pressed', 'false')); c.setAttribute('aria-pressed', 'true'); S.sex = c.textContent;
+    }));
+    form(() => {
+      const y = +val('yy'), m = +val('mm'), d = +val('dd');
+      if (!S.sex) return err('성별을 골라주세요. 사주에서 인연을 읽는 기운이 달라요.');
+      if (!y || !m || !d) return err('년, 월, 일을 모두 골라주세요.');
+      const dt = new Date(y, m - 1, d); if (dt.getMonth() !== m - 1) return err(`${m}월에는 ${d}일이 없어요. 날짜를 다시 골라주세요.`);
+      Object.assign(S, { y, m, d }); next(4);
+    });
+  },
+  4() {
+    setBg('book');
+    const hours = HOURS;
+    panel.innerHTML = `${dots(3)}<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <form class="box fade" id="f"><label class="cap" for="hh">태어난 시간</label>
+      <select id="hh" ${S.noTime ? 'disabled' : ''}><option value="">시간 고르기</option>${hours.map(x => `<option ${S.hour === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+      <label class="check"><input type="checkbox" id="nt" ${S.noTime ? 'checked' : ''}> 시간을 몰라요</label>
+      <p class="err" id="er"></p><button class="btn" type="submit">그때야</button></form>`;
+    type(ln(), '"몇 시였어? 몰라도 들어올 순 있어."');
+    document.getElementById('nt').addEventListener('change', e => { document.getElementById('hh').disabled = e.target.checked; });
+    form(() => {
+      const nt = document.getElementById('nt').checked, hv = val('hh');
+      if (!nt && !hv) return err('시간을 고르거나 "시간을 몰라요"를 체크해 주세요.');
+      S.noTime = nt; S.hour = nt ? '' : hv; next(5);
+    });
+  },
+  5() {
+    setBg('book');
+    const opts = ['혼자야', '썸 타는 중', '연애 중', '말하기 복잡해'];
+    panel.innerHTML = `${dots(4)}<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <form class="box fade" id="f"><div class="chips" role="group" aria-label="지금 연애 상태">${opts.map(o => `<button type="button" class="chip" aria-pressed="${S.status === o}">${o}</button>`).join('')}</div>
+      <p class="err" id="er"></p><button class="btn" type="submit" id="sb" ${S.status ? '' : 'disabled'}>이게 다야</button></form>`;
+    type(ln(), '"지금… 옆에 누가 있긴 해?"');
+    panel.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+      panel.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      c.setAttribute('aria-pressed', 'true'); S.status = c.textContent; document.getElementById('sb').disabled = false;
+    }));
+    form(() => next(6, 'chime'));
+  },
+  6() {
+    setBg('loading');
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <div class="box fade"><div class="key">빛 <b></b> ${esc(S.name)}</div><p class="sub">노엘이 진짜 모습을 드러내는 중… (변신 영상 자리)</p></div>`;
+    (async () => {
+      for (const [t, w] of [['"…됐어. 다 봤어."', 800], ['"역시, 너 맞네."', 900], ['"아까 내가 뭔지 궁금했지?"', 800], ['"이제 숨길 필요 없겠다."', 1400]]) {
+        if (S.step !== 6) return; await type(ln(), t, 45); await wait(w);
+      }
+      if (S.step === 6) next(7);
+    })();
+  },
+  7() {
+    calc(); logo.style.opacity = 0; panel.innerHTML = ''; setBg('book');
+    const R = S.R, P = R.P, dG = P.D.g, X = R.dec, A = X.A, nm = esc(S.name), WD = '일월화수목금토', IN = introLines();
+    const col = (p, top) => p ? `<div><div class="lb">${top}</div><div class="ch e${SAJU.elG(p.g)}">${SAJU.GAN[p.g]}</div></div>` : `<div><div class="lb">시</div><div class="ch q">?</div></div>`;
+    const colJ = p => p ? `<div><div class="ch e${SAJU.elG(SAJU.JI_MAIN[p.j])}">${SAJU.JI[p.j]}</div><div class="lb">${SAJU.god(dG, SAJU.JI_MAIN[p.j])}</div></div>` : `<div><div class="ch q">닫힘</div><div class="lb">시간 모름</div></div>`;
+    const cols = [['시', P.H], ['일', P.D], ['월', P.M], ['연', P.Y]];
+    const pn = (img, bubbles, cls = '') => `<div class="pn ${cls}"><img src="img/${img}.jpg" alt="">${bubbles.map(([side, top, t, big]) => `<p class="bb ${side} ${big ? 'big' : ''} rv" style="top:${top}%">${t}</p>`).join('')}</div>`;
+    const k = seed() % 2;
+    const togetherS = ['partner', 'married'].includes(S.status);
+    const storyHtml = (() => {
+      const ds = R.doors, top = ds[0];
+      const title = top ? TXT.story[top.type].title : '조용했던 해';
+      const chaps = ds.length ? [...ds].sort((x, y) => x.mo - y.mo).map(d => {
+        const T = TXT.story[d.type], line = (togetherS ? T.s : T.l[k]).replace(/^\{월\}쯤?, /, '');
+        return `<div class="chap ${d === top ? 'hl' : ''}"><b class="mo">${d.mo}월</b><p>${d === top ? '<em>올해 가장 컸던 장면</em>' : ''}${esc(line)}</p></div>`;
+      }).join('') : `<div class="chap hl"><b class="mo">1년</b><p>겉으로 보기엔 조용했어. 큰 사건도, 큰 사람도 없었고. 근데 조용한 해는, 다음 장을 준비하는 해야.</p></div>`;
+      const end = togetherS ? '그리고 지금, 12월.<br><b>둘의 다음 장이 시작될 차례야.</b>' : '그리고 지금, 12월.<br><b>그 장면들은 전부, 이번 겨울의 예고편이었어.</b>';
+      return `<article class="plate story rv" aria-label="${nm}의 올해"><h3><small>${nm}의 2026</small>${title}</h3>
+        <p class="lead">올해 네 이야기를 한 장으로 적으면, 이래.</p>${chaps}<p class="end">${end}</p></article>`;
+    })();
+    const st = RES[S.status] || RES.solo, together = ['partner', 'married'].includes(S.status);
+    const where = (together ? TXT.whereP : (TXT.where[S.job] || TXT.where.rest))[seed() % 4];
+    const result = A
+      ? `${pn('resA_w', [['r', 10, st.A[0](nm), 1], ['l', 66, st.A[1]]])}
+         <div class="sec"><dl class="box card rv"><dt>문이 열리는 날</dt><dd>12월 ${X.best.d}일 (${WD[X.best.wd]}) 무렵</dd><dt>${st.place}</dt><dd>${where}</dd>${X.shake ? `<dt>흔들릴 날</dt><dd>12월 ${X.shake.d}일</dd>` : ''}</dl></div>`
+      : `${pn('resB_w', [['r', 10, st.B[0](nm), 1], ['l', 66, st.B[1]]])}
+         <div class="sec"><dl class="box card rv"><dt>문이 열리는 때</dt><dd>크리스마스 뒤</dd><dt>올겨울 할 일</dt><dd>${st.todo}</dd></dl></div>`;
+    const toc = [...(A ? st.tocA : st.tocB)];
+    const wk = worryKind(S.worry);
+    if (S.worry) toc.unshift([`“${S.worry.length > 28 ? S.worry.slice(0, 28) + '…' : S.worry}”`, '이 고민에 대한 노엘의 답']);
+    const lockLine = S.worry ? WORRY[wk].lock : st.lock;
+    const pk = p => p ? SAJU.GAN_K[p.g] + SAJU.JI_K[p.j] : '';
+    const pillarsTxt = `${pk(P.Y)}년 ${pk(P.M)}월 ${pk(P.D)}일${P.H ? ` ${pk(P.H)}시` : ''}`;
+    const why = S.worry ? `딱 보니까 이거 때문에 들어왔네.<br><b>“${esc(S.worry.length > 24 ? S.worry.slice(0, 24) + '…' : S.worry)}”</b>` : WHY[S.status] || WHY.solo;
+    const pe = partnerEl(), PF = PARTNER[pe], AG = partnerAge();
+    const fate = A
+      ? `<p class="beat rv">"잠깐."</p><p class="beat big rv">"너… 12월 ${X.best.d}일에<br>문 열린다."</p>`
+      : `<p class="beat rv">"잠깐."</p><p class="beat big rv">"너… 올해는 안 열려."</p><p class="beat rv">"대신 크리스마스 지나면, 바로야."</p>`;
+    const profile = together
+      ? `<dl class="box card profile rv">
+          <dt>그날</dt><dd>${A ? `12월 ${X.best.d}일 (${WD[X.best.wd]}) 저녁` : '크리스마스 지나고 첫 주말'}</dd>
+          <dt>장소</dt><dd>${where}</dd>
+          <dt>그 사람의 속마음</dt><dd>${PF.mind.split(' ').slice(0, 2).join(' ')} <span class="blur">${PF.mind.split(' ').slice(2).join(' ')}</span></dd>
+          <dt>그날 네가 해야 할 말</dt><dd class="blur">"요즘 나 좀 서운했어."</dd>
+        </dl>`
+      : `<div class="face rv" aria-label="운명의 상대 얼굴 (가려짐)"><div class="fimg" style="background:url(img/${(S.sex === '남자') === (S.orient === 'queer') ? 'fm' : 'ff'}.jpg) center 20%/cover"></div><b>얼굴은 열쇠를 꽂아야 보여</b></div>
+        <dl class="box card profile rv">
+          <dt>나이</dt><dd>${AG[0]} <small style="display:block;font-size:13px;color:var(--ink-dim)">${AG[1]}</small></dd>
+          <dt>직업</dt><dd>${PF.job}</dd>
+          <dt>만나는 장소</dt><dd>${where}</dd>
+          <dt>만나는 시기</dt><dd>${A ? `12월 ${X.best.d}일 (${WD[X.best.wd]}) 무렵` : '크리스마스 지나고, 첫 신호가 오는 달'}</dd>
+          <dt>성격</dt><dd>${PF.mind.split(' ').slice(0, 2).join(' ')} <span class="blur">${PF.mind.split(' ').slice(2).join(' ')}</span></dd>
+          <dt>그 사람의 첫마디</dt><dd class="blur">"혹시 아까 저 보셨어요?"</dd>
+        </dl>`;
+    const t = document.createElement('div'); t.className = 'toon'; t.id = 'toon';
+    t.innerHTML = `
+      <div class="pn angel"><img src="img/angel.jpg" alt="">
+        <span class="sfx rv" style="top:7%;left:8%;right:auto;font-size:48px;transform:rotate(-10deg)">쵤악—!</span>
+        <span class="sfx rv" style="top:40%;right:8%;font-size:22px;transform:rotate(6deg)">사르륵</span>
+        <p class="bb l rv" style="top:60%">"나는 인간의 인연을 돌보는<br>천사, 노엘."</p>
+        <p class="bb r rv" style="top:80%">"올해 선물, 너한테 줄게."</p></div>
+      ${pn('book_w', [['l', 12, '"자, 펼쳐볼게."', 1], ['r', 66, `"${nm}, 네 이야기."`]], 'short')}
+      <div class="beats">
+        <p class="beat rv">"${IN.date}<br>${IN.born}"</p>
+        ${IN.tz ? `<p class="beat rv">"${IN.tz}"</p>` : ''}
+        <p class="beat pill rv">${pillarsTxt}</p>
+        <p class="beat rv">"…와."</p>
+        <p class="beat big rv">"보통 팔자가 아닌데?"</p>
+        <p class="beat rv">"${IN.rare[0]}<br><b>${IN.rare[1]}</b>"</p>
+        <p class="beat rv">"흠."</p>
+        <p class="beat big rv">"한 줄로 말해줄게."</p>
+      </div>
+      <div class="sec"><article class="plate rv" aria-label="${nm}의 문패">
+        <h3><small>${nm}의 문패</small>${R.ilju} 일주</h3>
+        <p class="lead">넌 <b>${R.image}</b> 같아.</p>
+        <div class="heard"><small>좋아했던 사람한테 이런 말, 들어봤을 거야</small><q>${R.heard.p}</q><q>${R.heard.l}</q></div>
+        <p class="inner">${R.heard.inner}</p>
+        <p><b>연애할 땐,</b> ${R.love}</p>
+        <p>${R.yearLine}${R.workLine ? ' ' + R.workLine : ''}${R.wuLine ? ' ' + R.wuLine : ''}</p><p>${R.reframe}</p>
+        <p class="why">"네가 이렇게 사는 덴 다 이유가 있어. 전부 네 팔자야."</p>
+        <div class="pillars" aria-label="여덟 글자">${cols.map(([kk, p]) => col(p, kk === '일' ? '일간(나)' : p ? SAJU.god(dG, p.g) : kk)).join('')}${cols.map(([, p]) => colJ(p)).join('')}</div>
+        <div class="els" aria-label="오행 분포">${R.A.el.map((c, i) => `<div><span class="e${i}" style="height:${8 + c * 14}px"></span><b>${TXT.elName[i]}</b><i>${c}</i></div>`).join('')}</div>
+        ${R.elLine ? `<p>${R.elLine}</p>` : ''}
+        ${R.gyeok || R.strength ? `<p>${[R.gyeok, R.strength].filter(Boolean).join(' ')}</p>` : ''}
+      </article></div>
+      <div class="hanja rv"><b>年</b><span>너의 올해</span></div>
+      ${pn('closed', [['r', 14, '"올해 네 이야기,<br>한 장으로 적어봤어."'], ['l', 70, '"읽어봐."', 1]], 'short')}
+      <div class="sec">${storyHtml}</div>
+      <div class="beats">
+        <p class="beat rv">"이제 앞으로 얘기 해볼까?"</p>
+        <p class="beat rv">"솔직히 좀 소름 돋을 거야."</p>
+        <p class="beat big rv"><small>근데 미리 말해두는데,</small>"좋은 말만 해줄 생각 없어."</p>
+      </div>
+      <div class="hanja rv"><b>日</b><span>문이 열리는 날</span></div>
+      ${pn('last_w', [['l', 70, '"진짜는<br>저 문 너머에 있어."', 1]])}
+      <div class="beats" id="fate">${fate}</div>
+      ${result}
+      <div class="sec"><div class="read rv">${readPara()}</div></div>
+      <div class="beats">
+        <p class="beat rv">"그래서."</p>
+        <p class="beat big rv">"열쇠, 준비됐어?"</p>
+        <p class="beat rv">"할 얘기 아직 산더미야.<br><b>오직 ${nm}, 너한테만 하는 얘기.</b>"</p>
+      </div>
+      ${pn('lock_w', [['r', 12, lockLine], ['l', 68, '"열어볼래?"', 1]], 'short')}
+      <div class="sec"><div class="box rv"><span class="cap" style="font-size:12px;color:var(--ink-dim)">마지막 문 너머에 있는 것</span>
+        <ol class="toc">${toc.map(([h, b], i) => `<li><i>${i + 1}</i><span><b>${esc(h)}</b><em>${b}</em></span></li>`).join('')}</ol></div></div>
+      <div class="beats">
+        <p class="beat rv">"잠깐. 이거 그냥 재미로 보는<br>운세랑 똑같다고 생각하면 오산이야."</p>
+        <p class="beat rv">"난 네 여덟 글자로 12월 8일부터 24일까지,<br><b>17일을 하루씩 다 봤어.</b>"</p>
+        <p class="beat big rv">"문 열리는 날?<br>딱 하루야."</p>
+      </div>
+      <div class="hanja rv"><b>緣</b><span>${together ? '그날의 두 사람' : '운명의 상대'}</span></div>
+      <div class="beats">
+        <p class="beat rv">"마지막으로 하나만 보여줄게."</p>
+        <p class="beat big rv">"${together ? '그날, 네 옆의 그 사람.' : '네 운명의 상대.'}"</p>
+        <p class="beat rv">"…와. 보통 사람 아닌데?"</p>
+      </div>
+      <div class="sec">${profile}
+        <p class="beat rv" style="padding:22px 8px 4px">"얼굴까지 보고 싶으면,<br><b>열쇠 꽂아.</b>"</p>
+        <button class="btn ghost rv" id="share" type="button">친구에게 문 보내기</button><p class="note" id="nt" role="status"></p></div>
+      <div class="ctabar" id="cta"><button class="btn" id="pay" type="button">열쇠 꽂고 그 사람 보기 · 3,900원</button></div>`;
+    document.getElementById('stage').appendChild(t);
+    t.querySelectorAll('.dcard').forEach(c => c.querySelectorAll('button[data-a]').forEach(b => b.addEventListener('click', () => {
+      sfx('flip'); const hit = b.dataset.a === '1', i = +c.dataset.i, rx = c.querySelector('.rx');
+      rx.textContent = hit ? ['"그럴 줄 알았어."', '"여기 다 적혀 있거든."'][i % 2] : '"그럼 네가 못 본 거야. 그 문은 분명 열려 있었어."';
+      rx.hidden = false; c.querySelector('.two').remove();
+    })));
+    t.querySelectorAll('.ball').forEach(b => b.addEventListener('click', () => {
+      sfx('chime'); const i = +b.dataset.i;
+      t.querySelectorAll('.ball').forEach(x => x.classList.toggle('picked', x === b)); t.querySelectorAll('.ball').forEach(x => x.disabled = true);
+      const el = [1, 2, 0][i], name = ['빨강', '금빛', '초록'][i], E = TXT.elName[el], c = S.R.A.el[el], full = S.R.P.H ? 4 : 3;
+      const pick = c === 0 ? `네가 고른 ${name}, 네 사주엔 하나도 없는 ${E} 기운이야. 없는 쪽에 끌리는 거, 그게 지금 네가 원하는 거고.`
+        : c >= full ? `네가 고른 ${name}, 네 사주에 이미 넘치는 ${E} 기운이야. 익숙한 쪽으로 손이 가는 스타일이다?`
+        : `${name}을 골랐네. ${E} 기운이 지금 너한테 필요하다는 뜻이야.`;
+      document.getElementById('otext').textContent = `"${pick} ${(ORN[S.status] || ORN.solo)[i]}"`; document.getElementById('ocard').hidden = false;
+    }));
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { root: t, threshold: .25 });
+    t.querySelectorAll('.rv').forEach(el => io.observe(el));
+    const cta = document.getElementById('cta'), resPn = document.getElementById('fate');
+    t.addEventListener('scroll', () => cta.classList.toggle('on', t.scrollTop + t.clientHeight > resPn.offsetTop + resPn.offsetHeight * .6), { passive: true });
+    on('pay', () => { document.getElementById('nt').textContent = '시안이라 결제는 아직 연결되지 않았어요. 실제 서비스에서는 여기서 결제 후 마지막 문이 열려요.'; document.getElementById('nt').scrollIntoView({ block: 'center' }); });
+    on('share', async () => {
+      const msg = '크리스마스에 운명의 문을 열어 버렸다. 너도 열어볼래?';
+      try { await navigator.clipboard.writeText(msg); document.getElementById('nt').textContent = '공유 문구를 복사했어요.'; }
+      catch (e) { document.getElementById('nt').textContent = `공유 문구: ${msg}`; }
+    });
+  },
+  11() {
+    setBg('closed');
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <button class="btn fade" id="go" type="button">들을래</button>`;
+    type(ln(), S.R.doors.length ? '"올해 네 앞에서 닫힌 문이 몇 개 있어. 난 듣기 좋은 말만 하진 않아. 그래도 들을래?"' : '"올해는 문이 조용했지. 그래서 더 수상해."');
+    on('go', () => { S.di = 0; S.hits = 0; S.R.doors.length ? next(12) : next(8); });
+  },
+  12() {
+    setBg('closed');
+    const d = S.R.doors[S.di], T = TXT.door[d.type], k = seed() % 2;
+    const line = (['partner', 'married'].includes(S.status) ? T.s : T.l[k]).replace('{월}', `${d.mo}월`);
+    panel.innerHTML = `<div class="door fade"><i>닫힌 문 ${S.di + 1} / ${S.R.doors.length}</i><span>${T.name}</span></div>
+      <div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <div class="two fade"><button class="btn ghost" id="no" type="button">아니야</button><button class="btn" id="yes" type="button">맞아</button></div>`;
+    type(ln(), `"${line}"`);
+    const after = (hit) => {
+      if (hit) S.hits++;
+      type(ln(), hit ? ['"그럴 줄 알았어."', '"여기 다 적혀 있거든."'][S.di % 2] : '"그럼 네가 못 본 거야. 그 문은 분명 열려 있었어."');
+      panel.querySelector('.two').outerHTML = `<button class="btn fade" id="go" type="button">${S.di + 1 < S.R.doors.length ? '다음 문' : '계속'}</button>`;
+      on('go', () => { S.di++; S.di < S.R.doors.length ? next(12) : next(13); });
+    };
+    on('yes', () => after(true)); on('no', () => after(false));
+  },
+  13() {
+    setBg('closed');
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <button class="btn fade" id="go" type="button">그 문은 어딨어?</button>`;
+    type(ln(), (S.hits >= 2 ? '"여기까지 맞았으면, 이제부터가 진짜야.' : '"네가 못 알아챘다는 건, 다음엔 놓치면 안 된다는 뜻이야.') + ' 근데 내가 진짜 주목하는 건 따로 있어. 아직 안 닫힌 문."');
+    on('go', () => next(8, 'chime'));
+  },
+  8() {
+    setBg('last');
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <button class="btn fade" id="go" type="button">마지막 문으로</button>`;
+    type(ln(), '"진짜는 저 문 너머에 있어."');
+    on('go', () => next(9, 'chime'));
+  },
+  9() {
+    const x = seed(), X = S.R.dec, A = X.A;
+    setBg(A ? 'resA' : 'resB');
+    const WD = '일월화수목금토';
+    if (A) {
+      const where = ['연말 모임', '오래된 친구의 소개', '혼자 들른 동네 카페', '일 때문에 간 자리'][x % 4];
+      panel.innerHTML = `<div class="fade"><div class="speaker">노엘 · 결과 A</div><p class="line" id="ln"></p></div>
+        <dl class="box card fade"><dt>문이 열리는 날</dt><dd>12월 ${X.best.d}일 (${WD[X.best.wd]}) 무렵</dd><dt>그 사람을 만나는 곳</dt><dd>${where}</dd>${X.shake ? `<dt>흔들릴 날</dt><dd>12월 ${X.shake.d}일</dd>` : ''}</dl>
+        <button class="btn fade" id="go" type="button">그 사람 보기</button>`;
+      type(ln(), `"${S.name}, 너 지금 만나기 직전이야. 크리스마스 전에, 이 문이 열려."`);
+    } else {
+      panel.innerHTML = `<div class="fade"><div class="speaker">노엘 · 결과 B</div><p class="line" id="ln"></p></div>
+        <dl class="box card fade"><dt>문이 열리는 때</dt><dd>크리스마스 뒤</dd><dt>올겨울 할 일</dt><dd>지금 옆의 인연을 정리하기</dd></dl>
+        <button class="btn fade" id="go" type="button">그 사람 미리 보기</button>`;
+      type(ln(), `"${S.name}, 올해는 아니야. 근데 문은 사라지지 않아."`);
+    }
+    on('go', () => next(10));
+  },
+  10() {
+    setBg('lock');
+    panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
+      <dl class="box card fade"><dt>그 사람의 얼굴</dt><dd class="blur">흑발 · 웃을 때 눈이 휘는 사람</dd><dt>정확한 날짜와 시간</dt><dd class="blur">12월 14일 저녁 7시쯤</dd></dl>
+      <button class="btn fade" id="pay" type="button">열쇠 꽂기 · 3,900원</button>
+      <button class="btn ghost fade" id="share" type="button">친구에게 문 보내기</button>
+      <p class="note" id="nt" role="status"></p>`;
+    type(ln(), '"열어볼래?"');
+    on('pay', () => { document.getElementById('nt').textContent = '시안이라 결제는 아직 연결되지 않았어요. 실제 서비스에서는 여기서 결제 후 마지막 문이 열려요.'; });
+    on('share', async () => {
+      const msg = '크리스마스에 운명의 문을 열어 버렸다. 너도 열어볼래?';
+      try { await navigator.clipboard.writeText(msg); document.getElementById('nt').textContent = '공유 문구를 복사했어요.'; }
+      catch (e) { document.getElementById('nt').textContent = `공유 문구: ${msg}`; }
+    });
+  },
+};
+
+function react(text) {
+  const el = ln(); type(el, text);
+  panel.querySelector('.two').outerHTML = `<button class="btn fade" id="go" type="button">계속</button>`;
+  on('go', () => next(8));
+}
+// ---- 말하듯이 입력받기: 노엘이 묻고, 유저가 답하면 말풍선으로 쌓인다. 이전 답을 누르거나 '이전'으로 되돌아갈 수 있다 ----
+// ---- 문패 앞 도입: 사실(날짜·요일·절기·시진·띠)로 믿음을 주고, 드문 특징으로 "특이한 팔자"를 짚는다 ----
+// FREQ: 1960~2008년 모든 날짜(×12시진)를 이 엔진으로 계산해 얻은 특징별 비율(%)
+const FREQ = {"Hf":{"miss0":20.7,"miss3":20.4,"heavy4":4.9,"love_none":21.2,"love_clean":42.8,"heavy2":12.5,"love_sharp":8,"love_mixed":13,"love_many":14.9,"heavy1":4.2,"miss1":19.3,"heavy3":4.3,"heavy0":4.3,"miss2":7.6,"miss4":19.4},"Hm":{"miss0":20.7,"miss3":20.4,"heavy4":4.9,"love_many":15.4,"heavy2":12.5,"love_mixed":13.7,"love_clean":49.1,"heavy1":4.2,"love_none":21.8,"miss1":19.3,"heavy3":4.3,"heavy0":4.3,"miss2":7.6,"miss4":19.4},"Hq":{"miss0":20.7,"miss3":20.4,"heavy4":4.9,"love_many":57.6,"heavy2":12.5,"love_mixed":12.8,"love_clean":19.4,"love_sharp":7.3,"heavy1":4.2,"miss1":19.3,"heavy3":4.3,"heavy0":4.3,"love_none":2.9,"miss2":7.6,"miss4":19.4},"Nf":{"miss0":30.1,"miss3":30.6,"heavy4":8.6,"love_none":33.4,"heavy2":18.1,"love_clean":48.7,"love_mixed":9.6,"heavy1":8,"love_sharp":2.2,"love_many":6.1,"miss1":29.4,"heavy0":8.1,"heavy3":8.4,"miss2":14.6,"miss4":29.1},"Nm":{"miss0":30.1,"miss3":30.6,"heavy4":8.6,"love_many":6.2,"heavy2":18.1,"love_mixed":9.5,"love_clean":50.9,"love_none":33.4,"heavy1":8,"miss1":29.4,"heavy0":8.1,"heavy3":8.4,"miss2":14.6,"miss4":29.1},"Nq":{"miss0":30.1,"miss3":30.6,"heavy4":8.6,"love_many":32.3,"heavy2":18.1,"love_mixed":15.7,"love_clean":40,"heavy1":8,"love_sharp":3.6,"miss1":29.4,"heavy0":8.1,"heavy3":8.4,"love_none":8.4,"miss2":14.6,"miss4":29.1}};
+const JEOL_NAME = ['소한', '입춘', '경칩', '청명', '입하', '망종', '소서', '입추', '백로', '한로', '입동', '대설'];
+const JEOL_DAY = [6, 4, 6, 5, 6, 6, 7, 8, 8, 8, 7, 7];
+const SIJIN_IMG = ['한밤중', '새벽 가장 어두운 때', '동트기 직전', '해가 막 뜰 무렵', '아침', '오전 햇살 아래', '한낮', '늦은 오후 볕 아래', '해가 기울 무렵', '해 질 녘', '저녁 어스름', '밤이 깊어갈 때'];
+const GAN_COLOR = ['푸른', '푸른', '붉은', '붉은', '누런', '누런', '흰', '흰', '검은', '검은'];
+const JI_ANIMAL = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
+function introLines() {
+  const R = S.R, P = R.P, A = R.A, y = +S.y, m = +S.m, d = +S.d;
+  const wd = '일월화수목금토'[new Date(y, m - 1, d).getDay()];
+  // 가장 최근 절기: 이번 달 절기일 이전이면 지난달 절기
+  const K = S.adj, JA = SAJU.jeolAt(K.y, K.m, K.d, K.time ? K.time.split(':').reduce((h, mm) => +h * 60 + +mm) : null), ji = JA.k, since = JA.since;
+  const gwa = w => ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '과' : '와');
+  const season = since <= 2 ? `${JEOL_NAME[ji]} 지나고 얼마 안 돼서` : `${JEOL_NAME[ji]}${gwa(JEOL_NAME[ji])} ${JEOL_NAME[(ji + 1) % 12]} 사이`;
+  const sj = S.noTime ? null : sijin(K.time);
+  const born = sj ? `${season}, ${SIJIN_IMG[sj.idx]}에 태어났어.` : `${season} 태어났어.`.replace('사이 태어났어', '사이에 태어났어');
+  // 드문 특징 고르기
+  const key = (P.H ? 'H' : 'N') + (S.orient === 'queer' ? 'q' : S.sex === '남자' ? 'm' : 'f'), F = FREQ[key], E = TXT.elName;
+  const cands = [];
+  A.el.forEach((c, i) => {
+    if (c === 0) cands.push([F['miss' + i], `여덟 글자 중에 ${E[i]} 기운이 하나도 없어.`]);
+    if (c >= (P.H ? 4 : 3)) cands.push([F['heavy' + i], `${E[i]} 기운이 ${c}개나 몰려 있어.`]);
+  });
+  if (A.loveState === 'none') cands.push([F.love_none, '인연 기운이 겉으로 하나도 안 드러나 있어.']);
+  if (A.loveState === 'many') cands.push([F.love_many, '인연 기운이 여러 겹으로 깔려 있어.']);
+  if (A.loveState === 'mixed') cands.push([F.love_mixed, '끌리는 기운이 두 갈래로 갈라져 있어.']);
+  if (A.loveState === 'sharp') cands.push([F.love_sharp, '좋아하는 마음과 날 선 말이 한 사주에 같이 있어.']);
+  const r = cands.filter(c => c[0] && c[0] <= 25).sort((a, b) => a[0] - b[0])[0];
+  const rare = r ? [r[1], `100명 중에 ${Math.max(1, Math.round(r[0]))}명 정도만 이래.`] : [`${R.ilju} 일주는 60명 중 1명이야.`, '그중에서도 이 계절에 태어난 사람은 더 드물고.'];
+  const tz = !K.shift ? '' : K.shift < 0 ? `그해 여름은 서머타임이었으니까, ${K.shift === -60 ? '한 시간' : '30분'} 당겨서 봤어.` : '그땐 시계가 지금이랑 30분 달랐으니까, 그것까지 맞춰서 봤어.';
+  return { tz, date: `${y}년 ${m}월 ${d}일, ${wd}요일.`, born, year: `사주로 치면 ${GAN_COLOR[P.Y.g]} ${JI_ANIMAL[P.Y.j]}의 해.`, rare };
+}
+// ---- 문패 첫머리: "사람들한테 이런 말 들어봤을 거야" (성격 한마디 + 연애 한마디) → "근데 사실 넌…" ----
+const HEARD = [
+  ['넌 너무 한결같아서 가끔 속을 모르겠어', '좋아하면 좋아한다고 말 좀 해', '근데 사실 넌, 좋아하는 사람 앞에서 누구보다 오래 고민해.'],
+  ['다 맞춰주는 것 같은데, 이상하게 안 져', '너 은근 고집 세다', '근데 사실 넌, 맞춰주면서도 절대 안 넘기는 선은 정해두고 있어.'],
+  ['너랑 있으면 시간 가는 줄 모르겠어', '근데 너 진짜 날 좋아하긴 해?', '근데 사실 넌, 진짜 좋아하는 사람 앞에선 오히려 조용해져.'],
+  ['처음엔 차가운 줄 알았어', '너 나한테만 다정한 거 맞지?', '근데 사실 넌, 그만큼 서운한 것도 오래 남아.'],
+  ['넌 듬직한데 속을 모르겠어', '서운한 거 있으면 말을 해', '근데 사실 넌, 표현을 안 할 뿐 마음은 꽤 오래전에 정해져 있어.'],
+  ['넌 너무 잘해줘서 오히려 부담돼', '너도 너 좀 챙겨', '근데 사실 넌, 너도 그렇게 챙김받고 싶어.'],
+  ['말을 꼭 그렇게 해야 돼?', '근데 결국 내 편은 너밖에 없더라', '근데 사실 넌, 한번 마음 주면 끝까지 지키는 쪽이야.'],
+  ['너 은근 까다로운 거 알아?', '너한테 맞추기 진짜 어렵다', '근데 사실 넌, 까다로운 게 아니라 쉽게 상처받기 싫은 거야.'],
+  ['넌 다 받아주는데 어딘가 멀어', '너 진짜 속마음이 뭐야?', '근데 사실 넌, 다 보여주면 떠날까 봐 반만 보여주는 거야.'],
+  ['너 생각 너무 많이 해', '내 기분은 귀신같이 알면서 네 기분은 왜 몰라?', '근데 사실 넌, 상대 마음을 먼저 다 읽어버려서 지치는 거야.'],
+];
+// 사주 신호가 강하면 연애 한마디를 바꾼다 (연애 기운 상태 > 불 기운 > 일간 기본)
+const HEARD_LOVE = { none: '너 연애에 관심 없는 줄 알았어', mixed: '네 이상형이 대체 뭐야?', many: '너 주변엔 왜 이렇게 사람이 많아?', sharp: '좋아하면서 왜 자꾸 틱틱대?', fire0: '좋아하는 티를 하나도 안 내', fire4: '너 금방 빠지고 금방 식잖아' };
+// ---- 범산도령식 한 문단 풀이: 단정 → 체질 → 의외의 반전 → 기대 → 열쇠로 끊기 ----
+const READ = {
+  open: { none: '너 연애 팔자, 겉으로는 하나도 안 보이는 스타일이다?', many: '너 연애 팔자, 생각보다 훨씬 시끄러운 스타일이다?', mixed: '너 연애 팔자 진짜 한 번에 딱 안 잡히는 스타일이다?', sharp: '너 연애 팔자, 좋아할수록 꼬이는 스타일이다?', clean: '너 연애 팔자, 의외로 한 방이 있는 스타일이다?' },
+  body: ['네 얘기를 솔직하게 꺼낼', '아무 계산 없이 웃고 있을', '말없이 옆을 지켜줄', '네 기준대로 선을 딱 그을', '조용히 상대 얘기를 들어줄'],
+  twist: { solo: '별 기대 없이 간 자리에서, 남들이 못 보는 네 모습을 알아보는 사람이 나타난다.', crush: '네가 먼저 움직일 때보다, 한 발 물러선 순간에 그 사람이 다가온다.', partner: '익숙한 사람한테서, 처음 보는 표정을 보게 된다.', married: '익숙한 사람한테서, 처음 보는 표정을 보게 된다.', breakup: '끝났다고 생각한 자리에서, 전혀 다른 문이 하나 열린다.' },
+};
+function readPara() {
+  const R = S.R, nm = esc(S.name), together = ['partner', 'married'].includes(S.status);
+  return `<p>${nm}, ${READ.open[R.A.loveState] || READ.open.clean}</p>
+    <p>너는 ${READ.body[SAJU.elG(R.P.D.g)]} 때 사람이 붙는 체질이야.</p>
+    <p>의외로 ${READ.twist[S.status] || READ.twist.solo}</p>
+    <p>${together ? '생각보다 둘 사이, 아직 남은 게 많을지도?' : '생각보다 너한테 빠질 사람, 꽤 있을지도?'}</p>
+    <p><b>${together ? '근데 그게 언제고, 그날 뭘 해야 하는지? 열쇠 꽂으면 알려줄게.' : '근데 그게 누구고, 언제 어디서 오는지? 열쇠 꽂으면 알려줄게.'}</b></p>`;
+}
+// ---- 범산도령식 흐름에 쓰는 문장들 ----
+const WHY = { solo: '올해도 혼자 크리스마스 보내기 싫어서<br>들어왔네.', crush: '그 사람 마음 궁금해서<br>들어왔네.', partner: '지금 그 사람이 맞는 사람인지<br>확인하러 왔네.', breakup: '아직 다 못 잊어서<br>들어왔네.', married: '둘 사이 설렘 좀 다시 찾고 싶어서<br>들어왔네.' };
+const ORN = {
+  solo: ['연락할 이유를 찾지 마. 연락이 오는 쪽으로 몸을 돌려.', '이번 달엔 안 가던 자리에 한 번 가 봐. 거기서 시작돼.', '혼자인 걸 들키지 않으려고 애쓰지 마. 그 틈으로 사람이 들어와.'],
+  crush: ['답장 속도로 마음을 재지 마. 만났을 때 눈을 봐.', '먼저 묻지 마. 그 사람이 한 번 더 다가오게 둬.', '그 사람 앞에서 바쁜 척은 그만. 한 번은 시간을 내줘.'],
+  partner: ['서운한 걸 쌓아두지 마. 이번 주 안에 한 번은 꺼내.', '익숙한 데이트 말고, 처음 가는 곳으로 가 봐.', '고맙다는 말은 생각날 때 바로 해. 미루면 사라져.'],
+  breakup: ['그 사람 소식은 이번 달까지만 확인해.', '혼자 정리하려고 하지 마. 믿는 사람한테 한 번은 털어놔.', '다시 연락하고 싶어지는 밤엔, 아침까지만 기다려 봐.'],
+  married: ['익숙한 말 말고, 처음 같은 말 한마디.', '둘만의 시간을 달력에 먼저 적어 둬.', '부탁 말고 칭찬을 먼저 해 봐. 분위기가 바뀌어.'],
+};
+// 그 사람의 기운: 여성(이성)=관성 오행, 남성(이성)=재성 오행, 동성=일지와 육합하는 글자의 오행
+const PARTNER = [
+  { look: '키 크고 마른 편, 선이 고운 강아지상', job: '기획자, 교육, 디자인 쪽', mind: '차분한데 은근히 다정해서 한번 빠지면 답 없는 사람' },
+  { look: '웃을 때 눈이 휘는 화사한 얼굴', job: '마케터, 크리에이터, 영업 쪽', mind: '좋으면 숨기지 못해서 먼저 티 내는 사람' },
+  { look: '어깨 넓고 듬직한 곰상', job: '운영관리, 공공기관, 부동산 쪽', mind: '말수 적어도 한번 정하면 끝까지 가는 사람' },
+  { look: '이목구비 또렷하고 깔끔한 고양이상', job: '개발자, 금융, 법 쪽', mind: '단호해 보여도 내 사람한텐 한없이 약한 사람' },
+  { look: '눈매 깊고 분위기 있는 여우상', job: '연구원, IT, 무역 쪽', mind: '생각이 깊어서 상대를 오래 지켜보다 다가오는 사람' },
+];
+function partnerEl() {
+  const P = S.R.P, e = SAJU.elG(P.D.g);
+  if (S.orient === 'queer') { const hap = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2][P.D.j]; return SAJU.elG(SAJU.JI_MAIN[hap]); }
+  return S.sex === '남자' ? (e + 2) % 5 : (e + 3) % 5;
+}
+// 운명의 상대 나이: 연애 기운(여성=관성, 남성=재성)이 어느 기둥에 먼저 앉았는지로 본다
+function partnerAge() {
+  const P = S.R.P, dG = P.D.g, y = +S.y, L = S.orient === 'queer' ? ['관성', '재성'] : [S.sex === '남자' ? '재성' : '관성'];
+  const has = g => g != null && L.includes(SAJU.fam(SAJU.god(dG, g)));
+  const at = [['Y', P.Y.g], ['Y', SAJU.JI_MAIN[P.Y.j]], ['M', P.M.g], ['M', SAJU.JI_MAIN[P.M.j]], ['D', SAJU.JI_MAIN[P.D.j]], ['H', P.H && P.H.g], ['H', P.H && SAJU.JI_MAIN[P.H.j]]].find(([, g]) => has(g));
+  const k = at ? at[0] : (S.sex === '남자' ? 'H' : 'Y');
+  return { Y: [`${y - 5}~${y - 3}년생`, '너보다 3~5살 많아'], M: [`${y - 1}~${y + 1}년생`, '거의 또래, 한두 살 차이'], D: [`${y}년생 전후`, '동갑이거나 딱 한 살 차이'], H: [`${y + 2}~${y + 4}년생`, '너보다 2~4살 어려'] }[k];
+}
+// ---- 입력에 따라 달라지는 결과 (연애 상태 · 하는 일 · 고민) ----
+const TOC_A = [['그날의 시간대', '저녁 7시 무렵, 두 번째 자리'], ['그 사람의 인상', '흑발, 웃을 때 눈이 휘는 사람'], ['어떻게 만나는지', '네가 먼저 말 걸 필요 없어'], ['알아보는 법과 첫마디', '두 번 눈 마주치는 사람'], ['조심할 날과 지나가는 사람', '그 전에 한 명이 헷갈리게 해'], ['노엘의 마지막 한마디', '그날 아침 다시 꺼내 볼 문장']];
+const TOC_B = [['다음 문이 열리는 달', '내년 봄, 따뜻해질 무렵'], ['그 사람의 인상', '조용한데 눈이 오래 머무는 사람'], ['올겨울 정리할 인연', '연락 끊긴 듯 안 끊긴 사람'], ['노엘의 마지막 한마디', '그때까지 지킬 것 하나']];
+const TOC_T = [['그날의 시간대', '저녁, 둘만 남는 시간'], ['둘에게 필요한 한마디', '먼저 꺼내야 할 말'], ['조심할 날', '서운함이 커지는 하루'], ['둘의 다음 문', '내년에 같이 넘을 것'], ['노엘의 마지막 한마디', '그날 아침 다시 꺼내 볼 문장']];
+const RES = {
+  solo: { A: [n => `"${n}, 너 지금<br>만나기 직전이야."`, '"크리스마스 전에 온다."'], B: [n => `"${n}, 올해는 아니야."`, '"근데 끝난 거 아니니까<br>울지 마."'],
+    place: '그 사람을 만나는 곳', todo: '지금 옆의 인연을 정리하기', lock: '"그 사람이 누군지는<br>열쇠를 꽂아야 보여."', tocA: TOC_A, tocB: TOC_B },
+  crush: { A: [n => `"${n}, 그 사람 마음<br>곧 들킨다."`, '"크리스마스 전에."'], B: [n => `"${n}, 올해 안엔<br>확인 못 해."`, '"근데 끝난 것도<br>아니야."'],
+    place: '그 마음이 보이는 곳', todo: '먼저 묻지 말고 한 번 더 지켜보기', lock: '"그 사람이 너를 어떻게 보는지는<br>열쇠를 꽂아야 보여."',
+    tocA: [['그 사람의 진짜 마음', '생각보다 오래 너를 봤어'], ...TOC_A.slice(0, 1), ...TOC_A.slice(3)], tocB: [['그 사람의 진짜 마음', '아직 정하지 못했어'], ...TOC_B.slice(0, 1), ...TOC_B.slice(3)] },
+  breakup: { A: [n => `"${n}, 크리스마스 전에<br>문 하나가 다시 열려."`, '"그게 그 사람일지,<br>새 사람일지는…"'], B: [n => `"${n}, 올겨울은<br>정리하는 계절이야."`, '"그래야 다음 문이 열려."'],
+    place: '그 문이 열리는 곳', todo: '그 사람 프로필 그만 눌러보기', lock: '"다시 열리는 문이 누구 건지는<br>열쇠를 꽂아야 보여."',
+    tocA: [['다시 열리는 문의 주인', '그 사람일까, 새 사람일까'], ...TOC_A.slice(0, 1), ...TOC_A.slice(3)], tocB: [['그 사람이 다시 연락할까', '답은 생각보다 분명해'], ...TOC_B] },
+  partner: { A: [n => `"${n}, 둘 사이 문<br>한 번 더 열린다."`, '"그날 놓치면 후회해."'], B: [n => `"${n}, 올겨울은<br>지키는 계절이야."`, '"문은 크리스마스 뒤에<br>다시 열려."'],
+    place: '그날 둘이 있을 곳', todo: '서운했던 거 한 번은 말하기', lock: '"둘 사이에 남은 문은<br>열쇠를 꽂아야 보여."', tocA: TOC_T, tocB: TOC_T },
+  married: { A: [n => `"${n}, 크리스마스 전에<br>둘의 문이 한 번 더 열려."`, '"익숙함 말고,<br>설렘 쪽으로."'], B: [n => `"${n}, 올겨울은<br>지키는 계절이야."`, '"문은 크리스마스 뒤에<br>다시 열려."'],
+    place: '그날 둘이 있을 곳', todo: '고맙다는 말 한 번 먼저 하기', lock: '"둘의 다음 문은<br>열쇠를 꽂아야 보여."', tocA: TOC_T, tocB: TOC_T },
+};
+// 고민 주제 분류 → 노엘의 반응
+const WORRY = {
+  ex: { re: /전\s?(애인|남친|여친|남자친구|여자친구)|재회|헤어|다시 연락|전에 만나던/, after: '"그 사람 얘기구나. …다시 열릴 문인지, 문 너머에서 같이 보자."', lock: '"그 사람한테 다시 연락해도 되는지는<br>열쇠를 꽂아야 보여."' },
+  crush: { re: /짝사랑|좋아하는|썸|그 사람|마음|고백/, after: '"그 사람 마음이 궁금하구나. …문 너머에 답이 있어."', lock: '"그 사람 마음은<br>열쇠를 꽂아야 보여."' },
+  marry: { re: /결혼|남편|아내|와이프|시댁|처가|상견례/, after: '"결혼 얘기구나. 가볍게 보지 않을게."', lock: '"네가 물어본 결혼 얘기는<br>열쇠를 꽂아야 보여."' },
+  work: { re: /회사|이직|취업|직장|퇴사|일|면접|승진|사업/, after: '"일 고민이구나. 연애랑 같이 엮여 있어. 같이 볼게."', lock: '"네가 물어본 일 얘기도<br>열쇠를 꽂아야 보여."' },
+  money: { re: /돈|재물|투자|대출|빚|월급/, after: '"돈 얘기구나. 그것도 문이 알려줄 거야."', lock: '"네가 물어본 돈 얘기도<br>열쇠를 꽂아야 보여."' },
+  new: { re: /새 인연/, after: '', lock: '"새 인연이 언제 오는지는<br>열쇠를 꽂아야 보여."' },
+  other: { re: /.*/, after: '"…그 고민, 문 너머에서 같이 봐줄게."', lock: '"네가 물어본 고민의 답은<br>열쇠를 꽂아야 보여."' },
+};
+function worryKind(t) { if (!t) return null; if (S.wk && WORRY[S.wk]) return S.wk; return Object.keys(WORRY).find(k => WORRY[k].re.test(t)); }
+// 하는 일 × 2026 병오년이 일간에게 주는 기운
+const WORK_PLACE = { student: '학교에서도', seek: '준비하는 동안에도', office: '회사에서도', biz: '사업하면서도', free: '일하면서도', rest: '쉬는 동안에도' };
+const WORK_LINE = { 비겁: '사람 사이에서 신경 쓸 일이 많았어.', 식상: '하고 싶은 말, 해보고 싶은 게 많았던 해야.', 재성: '성과랑 돈 생각이 머리를 꽤 차지했어.', 관성: '책임질 일이 늘었어.', 인성: '배우고 정리하는 시간이 길었어.' };
+const STATUS = [['solo', '아무도 없어요'], ['crush', '마음 가는 사람이 있어요'], ['partner', '만나는 사람 있어요'], ['breakup', '얼마 전에 헤어졌어요'], ['married', '결혼했어요']];
+const JOBS = [['student', '학생이에요'], ['seek', '일 구하고 있어요'], ['office', '직장 다녀요'], ['biz', '사업해요'], ['free', '프리랜서예요'], ['rest', '쉬고 있어요']];
+// ---- 음력 → 양력 (1959~2008 음력년, 한국천문연구원 기준 korean-lunar-calendar로 만든 표. 행: [음력년, 설날의 epoch 일수, 윤달(0=없음), 달 길이 비트(1=30일), 달 수]) ----
+const LUNAR = [[1959,-3980,0,1366,12],[1960,-3626,6,2741,13],[1961,-3242,0,2773,12],[1962,-2887,0,1746,12],[1963,-2533,4,3749,13],[1964,-2149,0,3749,12],[1965,-1794,0,3658,12],[1966,-1440,3,3222,13],[1967,-1057,0,2715,12],[1968,-702,7,5462,13],[1969,-318,0,1386,12],[1970,36,0,2905,12],[1971,391,5,5970,13],[1972,775,0,1874,12],[1973,1129,0,1829,12],[1974,1483,4,5707,13],[1975,1867,0,2635,12],[1976,2221,8,4779,13],[1977,2605,0,685,12],[1978,2959,0,1387,12],[1979,3314,6,2921,13],[1980,3698,0,3497,12],[1981,4053,0,3474,12],[1982,4407,4,6949,13],[1983,4791,0,3365,12],[1984,5145,10,6733,13],[1985,5529,0,2646,12],[1986,5883,0,694,12],[1987,6237,6,5549,13],[1988,6622,0,1748,12],[1989,6976,0,3497,12],[1990,7331,5,7570,13],[1991,7715,0,3730,12],[1992,8069,0,3366,12],[1993,8423,3,2646,13],[1994,8806,0,2647,12],[1995,9161,8,4790,13],[1996,9545,0,2906,12],[1997,9900,0,1748,12],[1998,10254,5,3785,13],[1999,10638,0,1865,12],[2000,10992,0,1683,12],[2001,11346,4,5415,13],[2002,11730,0,1323,12],[2003,12084,0,2651,12],[2004,12439,2,5466,13],[2005,12823,0,874,12],[2006,13177,7,6997,13],[2007,13562,0,2980,12],[2008,13916,0,2889,12]];
+function lunar2solar(y, m, d, leap) {
+  const r = LUNAR.find(x => x[0] === y); if (!r) return null;
+  const [, start, lm, bits] = r;
+  if (leap && lm !== m) return null;
+  const idx = m - 1 + (lm && (m > lm || (m === lm && leap)) ? 1 : 0);
+  let day = start; for (let i = 0; i < idx; i++) day += 29 + ((bits >> i) & 1);
+  if (d > 29 + ((bits >> idx) & 1)) return null;
+  const t = new Date((day + d - 1) * 86400000); return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
+}
+const WORRIES = [['crush', '그 사람 마음이 궁금해'], ['ex', '다시 연락해도 될지'], ['new', '새 인연은 언제 올지'], ['marry', '결혼할 수 있을지'], ['work', '일이랑 연애 사이'], ['none', '그냥 다 궁금해']];
+const QS = [
+  { say: () => S.pro ? ['"앉아. 오래 걸리진 않아."', '"나는 노엘. 내가 뭔지는… 곧 알게 될 거야."', '"너한테 줄 게 있어. 근데 아무한테나 주는 건 아니라서."'] : ['"또 그냥 지나칠 뻔했지? 이 문 앞."', '"나는 노엘. 내가 뭔지는… 곧 알게 될 거야."', '"너한테 줄 게 있어. 근데 아무한테나 주는 건 아니라서."'],
+    html: () => `<button type="button" class="btn" data-v="go" data-show="…뭔데?">뭔데?</button>`,
+    apply: () => {} },
+  { say: () => ['"그건 아직 비밀."', '"네가 받을 사람이 맞는지, 확인부터 해야 하거든."', '"우선… 널 뭐라고 부르면 돼?"'],
+    html: () => `<input id="nm" maxlength="12" autocomplete="given-name" placeholder="이름 또는 불리고 싶은 이름" value="${esc(S.name)}"><button class="btn" type="submit">이렇게 불러줘</button>`,
+    parse: f => { const name = f.querySelector('#nm').value.trim(); return name ? { name, show: name } : '부를 이름을 알려줘.'; },
+    apply: r => { S.name = r.name; } },
+  { say: () => [`"${S.name}."`, '"이름 듣고 나니까 조금 보이네."', '"근데 인연은 방향이 있거든. 넌 어느 쪽이야?"'],
+    html: () => `<div class="chips">${['여자', '남자'].map(o => `<button type="button" class="chip" data-v="${o}" aria-pressed="${S.sex === o}">${o}</button>`).join('')}</div>`,
+    apply: r => { S.sex = r.v; } },
+  { say: () => ['"좋아. 이제 좀 더 깊이 볼게."', '"네 인연은 네가 태어난 순간에 이미 적혀 있어."', `"${S.name}, 언제 태어났어? 시간까지."`],
+    html: () => {
+      const yy = []; for (let y = 2008; y >= 1960; y--) yy.push(y);
+      const sel = (id, label, arr, cur) => `<select id="${id}" aria-label="${label}"><option value="">${label}</option>${arr.map(v => `<option value="${v}" ${cur == v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+      const cal = S.cal || 'solar', B = cal === 'lunar' ? S.lb || {} : { y: S.y, m: S.m, d: S.d };
+      return `<span class="cap">생년월일</span>
+      <div class="chips">${[['solar', '양력'], ['lunar', '음력']].map(([k, t]) => `<button type="button" class="chip" data-cal="${k}" aria-pressed="${cal === k}">${t}</button>`).join('')}</div>
+      <div class="row">${sel('yy', '년', yy, B.y)}${sel('mm', '월', [...Array(12)].map((_, i) => i + 1), B.m)}${sel('dd', '일', [...Array(31)].map((_, i) => i + 1), B.d)}</div>
+      <label class="check" id="lpw" ${cal === 'lunar' ? '' : 'hidden'}><input type="checkbox" id="lp" ${S.leap ? 'checked' : ''}> 윤달이에요</label>
+      <label class="cap" for="tm">태어난 시각</label>
+      <input id="tm" type="time" value="${S.time || '12:00'}" ${S.noTime ? 'disabled' : ''}>
+      <label class="check"><input type="checkbox" id="nt" ${S.noTime ? 'checked' : ''}> 시간은 몰라요</label>
+      <button class="btn" type="submit">이렇게 태어났어</button>
+      <button type="button" class="btn ghost" id="skipall">나머지 질문 건너뛰고 바로 보기</button>`;
+    },
+    init: f => {
+      f.querySelectorAll('[data-cal]').forEach(c => c.addEventListener('click', () => {
+        f.querySelectorAll('[data-cal]').forEach(x => x.setAttribute('aria-pressed', String(x === c))); f.querySelector('#lpw').hidden = c.dataset.cal !== 'lunar';
+      }));
+      f.querySelector('#nt').addEventListener('change', e => { f.querySelector('#tm').disabled = e.target.checked; });
+      f.querySelector('#skipall').addEventListener('click', () => { S.fast = true; f.requestSubmit(); });
+    },
+    parse: f => {
+      const cal = f.querySelector('[data-cal][aria-pressed="true"]').dataset.cal;
+      const y = +f.querySelector('#yy').value, m = +f.querySelector('#mm').value, d = +f.querySelector('#dd').value;
+      if (!y || !m || !d) return '태어난 년, 월, 일을 모두 골라주세요.';
+      const leap = cal === 'lunar' && f.querySelector('#lp').checked;
+      let sol;
+      if (cal === 'lunar') { sol = lunar2solar(y, m, d, leap); if (!sol) return leap ? `음력 ${y}년에는 윤${m}월이 없거나, 그 달에 ${d}일이 없어요.` : `음력 ${y}년 ${m}월에는 ${d}일이 없어요.`; }
+      else { const t = new Date(y, m - 1, d); if (t.getMonth() !== m - 1) return `${m}월에는 ${d}일이 없어요.`; sol = { y, m, d }; }
+      const nt = f.querySelector('#nt').checked, tv = f.querySelector('#tm').value; if (!nt && !tv) return '시각을 고르거나 "시간은 몰라요"를 체크해 주세요.';
+      const [h, mi] = nt ? [] : tv.split(':').map(Number);
+      const dateTxt = cal === 'lunar' ? `음력 ${y}년 ${leap ? '윤' : ''}${m}월 ${d}일 (양력 ${sol.m}월 ${sol.d}일)` : `${y}년 ${m}월 ${d}일`;
+      return { cal, leap, lb: { y, m, d }, sol, nt, tv, show: `${dateTxt} · ${nt ? '시간 모름' : `${h < 12 ? '오전' : '오후'} ${h % 12 || 12}시 ${mi}분`}` };
+    },
+    apply: r => { Object.assign(S, { cal: r.cal, leap: r.leap, lb: r.lb, y: r.sol.y, m: r.sol.m, d: r.sol.d, noTime: r.nt, time: r.nt ? '' : r.tv }); } },
+  { say: () => '"요즘 네 옆엔, 누가 있어?"',
+    html: () => `<div class="chips col">${STATUS.map(([k, t]) => `<button type="button" class="chip" data-v="${k}" aria-pressed="${S.status === k}">${t}</button>`).join('')}</div>`,
+    apply: r => { S.status = r.v; } },
+  { say: () => '"취향은? 결과가 달라지니까 잘 골라."',
+    html: () => `<div class="chips col">${[['hetero', '이성을 좋아해요 (헤테로)'], ['queer', '동성을 좋아해요 (LGBT+)']].map(([k, t]) => `<button type="button" class="chip" data-v="${k}" aria-pressed="${S.orient === k}">${t}</button>`).join('')}</div>`,
+    apply: r => { S.orient = r.v; } },
+  { say: () => '"무슨 일 해?"',
+    html: () => `<div class="chips">${JOBS.map(([k, t]) => `<button type="button" class="chip" data-v="${k}" aria-pressed="${S.job === k}">${t}</button>`).join('')}</div>`,
+    apply: r => { S.job = r.v; } },
+  { say: () => '"마지막. 제일 궁금한 거 하나만 골라."',
+    html: () => `<div class="chips col">${WORRIES.map(([k, t]) => `<button type="button" class="chip" data-v="${k}" data-show="${t}" aria-pressed="${S.wk === k}">${t}</button>`).join('')}</div>`,
+    apply: r => { S.wk = r.v; S.worry = r.v === 'none' ? '' : r.show; } },
+];
+let chatRun = 0;
+const ANS = [];
+function runChat() { ANS.length = 0; goQ(0); }
+function goQ(i) {
+  const my = ++chatRun; clearInterval(typing);
+  const chat = document.getElementById('chat'), ask = document.getElementById('ask');
+  const down = () => { panel.scrollTop = panel.scrollHeight; };
+  const bubble = (cls, t) => { const p = document.createElement('p'); p.className = 'msg ' + cls; p.textContent = t; chat.append(p); return p; };
+  const meBubble = (j, t) => {
+    const p = document.createElement('button'); p.type = 'button'; p.className = 'msg me'; p.textContent = t; p.title = '눌러서 고치기';
+    p.addEventListener('click', () => { sfx('flip'); goQ(j); }); chat.append(p); return p;
+  };
+  const say = async t => { const p = bubble('g', ''); down(); await type(p, t, 32); down(); };
+  // 지난 대화는 그대로 다시 그린다
+  chat.innerHTML = ''; ask.innerHTML = '';
+  for (let j = 0; j < i; j++) { [].concat(QS[j].say()).forEach(t => bubble('g', t)); meBubble(j, ANS[j].show); }
+  ANS.length = i;
+  (async () => {
+    for (const t of [].concat(QS[i].say())) { await say(t); if (my !== chatRun) return; await wait(180); }
+    const q = QS[i];
+    ask.innerHTML = `<form class="box fade" id="af">${q.html()}<p class="err" id="er"></p>${i > 0 ? '<div class="backrow"><button type="button" class="back" id="bk">← 이전으로</button><span>위의 내 답을 눌러도 고칠 수 있어요</span></div>' : ''}</form>`; down();
+    const f = document.getElementById('af'); q.init?.(f);
+    const done = async r => {
+      if (my !== chatRun) return;
+      sfx('flip'); q.apply(r); ask.innerHTML = '';
+      ANS[i] = { show: r.show };
+      meBubble(i, r.show); down(); await wait(250);
+      if (S.fast) { S.fast = false; Object.assign(S, { status: S.status || 'solo', orient: S.orient || 'hetero', job: S.job || 'office', wk: S.wk || 'none' }); if (S.wk === 'none') S.worry = ''; }
+      else if (i + 1 < QS.length) return goQ(i + 1);
+      await say('"…알겠어. 잠깐만."'); if (my !== chatRun) return;
+      await wait(500); panel.classList.remove('tall'); next(6, 'chime');
+    };
+    f.addEventListener('submit', e => { e.preventDefault(); const r = q.parse(f); typeof r === 'string' ? (document.getElementById('er').textContent = r) : done(r); });
+    f.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => done({ v: b.dataset.v, show: b.dataset.show || b.textContent })));
+    document.getElementById('bk')?.addEventListener('click', () => { sfx('flip'); goQ(i - 1); });
+  })();
+}
+function wait(ms) { return new Promise(r => setTimeout(r, reduce ? 0 : ms)); }
+function ln() { return document.getElementById('ln'); }
+function on(id, fn) { document.getElementById(id).addEventListener('click', fn); }
+function val(id) { return document.getElementById(id).value; }
+function err(m) { document.getElementById('er').textContent = m; }
+function form(fn) { document.getElementById('f').addEventListener('submit', e => { e.preventDefault(); fn(); }); }
+function esc(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function next(n, sound = 'flip') { sfx(sound); S.step = n; STEPS[n](); }
+document.getElementById('restart').addEventListener('click', () => { Object.assign(S, { cal: 'solar', leap: false, lb: null, wk: '', orient: '', job: '', worry: '', time: '13:00', sex: '남자', name: '태준', y: 1989, m: 3, d: 18, fast: false, hour: '', noTime: false, status: '' }); panel.classList.remove('tall'); document.getElementById('toon')?.remove(); document.getElementById('pro')?.remove(); next(0); });
+
+// ---- drifting gold dust ----
+(function dust() {
+  const c = document.getElementById('dust'), x = c.getContext('2d'); let W, H, P = [];
+  function size() { const r = c.getBoundingClientRect(); W = c.width = r.width * devicePixelRatio; H = c.height = r.height * devicePixelRatio; }
+  size(); addEventListener('resize', size);
+  for (let i = 0; i < 46; i++) P.push({ x: Math.random(), y: Math.random(), r: Math.random() * 1.6 + .4, v: Math.random() * .00035 + .0001, a: Math.random() * Math.PI * 2 });
+  function f() {
+    x.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.y -= p.v; p.a += .01; if (p.y < -0.02) { p.y = 1.02; p.x = Math.random(); }
+      const al = .35 + .35 * Math.sin(p.a);
+      x.beginPath(); x.arc((p.x + Math.sin(p.a) * .01) * W, p.y * H, p.r * devicePixelRatio, 0, 7);
+      x.fillStyle = `rgba(240,210,147,${al})`; x.fill();
+    }
+    if (!reduce) requestAnimationFrame(f);
+  }
+  f();
+})();
+
+STEPS[0]();
+</script>
