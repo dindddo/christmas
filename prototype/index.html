@@ -270,6 +270,7 @@ input[type=date], input[type=time] { color-scheme: dark; min-height: 48px; }
 .narr.tl { top: 14px; left: 14px; } .narr.tr { top: 14px; right: 14px; } .narr.br { bottom: 14px; right: 14px; }
 .narr.big { left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 86%; text-align: center; font-size: 20px; color: var(--gold); border-width: 2px; }
 .narr.big.in { transform: translate(-50%, -50%); }
+.narr.big.up, .narr.big.up.in { top: 21%; width: 80%; transform: translate(-50%, 0); font-size: 18px; }
 .bb2 { position: absolute; z-index: 3; margin: 0; max-width: 70%; padding: 11px 16px; border-radius: 20px; font: 700 15.5px/1.55 var(--f-voice); text-wrap: balance; }
 .bb2.l { left: 16px; } .bb2.r { right: 16px; text-align: right; }
 .bb2.say { background: #f7f1e6; color: #1a1208; box-shadow: 0 6px 18px rgba(0,0,0,.45); }
@@ -624,7 +625,7 @@ const STEPS = {
       ['P4', '9/14', 'img:p4', ['그래서 크리스마스가 오면, 창문을 하나하나 들여다봐.', 'tl'], [['r', 36, '"올해는… 연락 올까."', 'say'], ['l', 52, '"그 사람, 잘 지내려나."', 'say'], ['r', 84, '그리고 딱 한 사람에게만, 선물을 줘.', 'narr']], ''],
       ['P5', '9/14', 'img:p5', ['그 사람이 곁을 지나가는 순간,', 'big'], [['l', 78, '그걸 알아챌 수 있게.', 'narr']], '반짝'],
       ['P6', '9/14', 'img:p6', ['올해 창문을 들여다보다가, 유난히 마음이 복잡한 사람 하나가 눈에 밟혔어.', 'tl'], [['r', 50, '몇 번이나 문 앞까지 왔다가,<br>그냥 지나친 사람.', 'narr'], ['l', 82, '그게, 너야.', 'narr']], ''],
-      ['P7', '9/14', 'img:p7', ['그해 겨울, 노엘은 처음으로 인간 앞에 모습을 드러냈다.', 'big'], [['l', 6, '그래서 이번엔, 선물만 두고 가지 않기로 했어.', 'narr'], ['r', 86, '…바로, 네 앞에.', 'narr']], ''],
+      ['P7', '9/14', 'img:p7', ['그해 겨울, 노엘은 처음으로 인간 앞에 모습을 드러냈다.', 'big up'], [['l', 3, '그래서 이번엔, 선물만 두고 가지 않기로 했어.', 'narr'], ['r', 86, '…바로, 네 앞에.', 'narr']], ''],
       ['B1', '9/14', 'img:b1', null, [['l', 74, '(…여기, 원래 문이 있었나?)', 'think']], ''],
       ['B2 지나치려는 순간, 문 안에서 들려오는 목소리', '9/10', 'linear-gradient(#2a1c22,#120e14)', null, [['r', 30, '"또 그냥 가려고?"', 'off'], ['l', 74, '(…나한테 하는 말이야?)', 'think']], '끼익—'],
       ['B3', '9/14', 'img:b3', null, [['r', 14, '"올해만 벌써 몇 번째야.<br>이 앞을 그냥 지나친 게."', 'off'], ['l', 76, '"마음이 복잡하면,<br>원래 문이 잘 안 보이거든."', 'off']], ''],
@@ -634,11 +635,11 @@ const STEPS = {
     const FX = {
       P1: { kb: ['50%', '20%', '0', '3%'], snow: 2 },
       P2: { kb: ['45%', '45%', '-2%', '0'] },
-      P3: { kb: ['50%', '40%', '0', '-2%'], glow: [50, 38], fe: [[48, 18, 240, 0], [30, 8, 200, 2.6]] },
+      P3: { kb: ['45%', '60%', '0', '-2%'], glow: [45, 25], fe: [[70, 8, 230, 1.2]] },
       P4: { kb: ['60%', '50%', '-2%', '-1%'], snow: 2 },
       P5: { kb: ['55%', '55%', '0', '-2%'], glow: [55, 52] },
       P6: { kb: ['50%', '60%', '0', '-3%'], snow: 1, glow: [62, 48] },
-      P7: { kb: ['50%', '45%', '0', '-2%'], snow: 2, fe: [[56, 6, 300, .4]] },
+      P7: { kb: ['55%', '65%', '0', '-2%'], snow: 2, glow: [55, 62] },
       B1: { kb: ['50%', '55%', '0', '-2%'], snow: 1, glow: [52, 52] },
       B2: { shake: 1 },
       B3: { kb: ['50%', '40%', '0', '-2%'], fe: [[40, 6, 320, 1]] },
