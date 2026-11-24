@@ -4,7 +4,7 @@ import { computeChart, elG, fam, god, GAN_K, JI_K, JI_MAIN, monthFlow, sunSign, 
 import { PARTNER, TXT } from '@/content/reading';
 import { VERDICT } from '@/content/act1';
 import { chapters } from '@/content/act2';
-import { passIndex, promiseCtx } from '@/lib/flow/teaser';
+import { promiseCtx } from '@/lib/flow/teaser';
 import type { SavedInput } from '@/lib/flow/flow';
 
 const WD = '일월화수목금토';
@@ -66,7 +66,7 @@ export function buildFacts(s: SavedInput) {
     // 1막에서 이미 보여준 것 (2막은 이것과 모순되면 안 됨)
     shown: {
       image: `${TXT.season(P.M.j)} ${TXT.img[dG]}`,
-      verdict: `${verdict.name} — ${verdict.desc} (→ ${verdict.point}) / 올해 문 앞을 그냥 지나친 지수 ${passIndex(c)}%`,
+      verdict: `${verdict.name} — ${verdict.desc} / 마음이 움직일 때: ${verdict.start} / 서운할 때: ${verdict.hurt}`,
       year: c.doors.length
         ? c.doors.map(d => `${d.mo}월: ${plain((together ? TXT.story[d.type].s : TXT.story[d.type].l[k]).replace(/^\{월\}쯤?, /, ''))}`).join(' / ')
         : '조용했던 해 (큰 사건 없음)',

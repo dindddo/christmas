@@ -86,6 +86,7 @@ export const QUESTIONS = {
 
 // 로딩(변신 직전) 대사: [대사, 다음 대사까지 기다릴 ms]
 export const LOADING: [string, number][] = [['…됐어. 다 봤어.', 800], ['역시, 너 맞네.', 900], ['아까 내가 뭔지 궁금해하던 얼굴이던데.', 900], ['이제 숨길 필요 없겠다.', 1400]];
-export const LOADING_SUB = '노엘이 진짜 모습을 드러내는 중';
+// (2026-11-25) '빛 ━━ 이름' 표시가 이상하다는 피드백 → 진행 막대 + 지금 하는 일을 그대로
+export const LOADING_SUB = '{이름}의 여덟 글자를 펼쳐 보는 중';
 
 export const TITLE = { tagline: '크리스마스 전, 딱 한 번 열리는 문', start: '노엘과 사주 보기', approach: '노엘에게 다가가기', skip: '건너뛰기' };

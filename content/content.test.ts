@@ -1,7 +1,7 @@
 // CLAUDE.md 절대 규칙 중 자동으로 검사할 수 있는 것들
 import { describe, expect, it } from 'vitest';
 import { PROLOGUE as C } from './prologue';
-import { ACT1, SHAKE } from './act1';
+import { ACT1, SHAKE, VERDICT } from './act1';
 import * as reading from './reading';
 import { LOADING, LOADING_SUB, QUESTIONS } from './chat';
 import { KKUMIM } from './pricing';
@@ -37,5 +37,9 @@ describe('문구 절대 규칙', () => {
   });
   it('가격 카드에 이모지를 쓰지 않는다(한자 도장·번호로 통일)', () => {
     expect(all(KKUMIM)).not.toMatch(/\p{Extended_Pictographic}/u);
+  });
+  it('1막 풀이 문구(2026·핵심 특징·장면)에 확인형 말투("~잖아", "~지?")가 없다', () => {
+    const txt = all([VERDICT, reading.GAN_DETAIL, reading.CORE.more, reading.TXT.year, reading.TXT.scene, reading.TXT.story, reading.YEAR26, reading.CORE.loveMean, reading.CORE.heard.heavy.map(x => x[1]), reading.CORE.heard.miss.map(x => x[1])]);
+    expect(txt).not.toMatch(/잖아|[했었였갔왔봤겠맞]지\?/);
   });
 });

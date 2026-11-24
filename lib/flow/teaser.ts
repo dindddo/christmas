@@ -8,29 +8,18 @@ import { bizLines, LEGAL_LINKS } from '@/content/legal';
 
 const fill = (t: string, v: Record<string, string | number>) => Object.entries(v).reduce((s, [k, x]) => s.split(`{${k}}`).join(String(x)), t);
 
-/** 올해 문 앞을 그냥 지나친 지수(재미용): 올해 장면 신호 세기 + 12월 스쳐가는 날 수 + 연애 기운이 숨은 정도 */
-export function passIndex(c: Pick<Chart, 'doors' | 'dec' | 'A'>): number {
-  const s = c.doors.reduce((a, d) => a + d.score, 0);
-  const v = 38 + Math.min(s, 18) * 1.9 + Math.min(c.dec.passers.length, 10) * 1.7 + (c.A.loveState === 'none' ? 9 : c.A.loveState === 'many' ? 5 : 0);
-  return Math.max(31, Math.min(97, Math.round(v)));
-}
-export const passLevel = (v: number) => (v < 50 ? 0 : v < 63 ? 1 : v < 76 ? 2 : v < 88 ? 3 : 4);
-
-export function verdictHtml(c: Chart, nm: string) {
-  const T = VERDICT.types[c.A.loveState] || VERDICT.types.clean, v = passIndex(c), lv = passLevel(v);
+/** 연애 유형 카드 (2026-11-24): 게이지 대신 유형별 상세 4칸 */
+export function verdictType(c: Pick<Chart, 'A'>) { return VERDICT.types[c.A.loveState] || VERDICT.types.clean; }
+export function verdictHtml(c: Chart, nm: string, status: string) {
+  const T = verdictType(c), H = VERDICT.heads;
+  const together = status === 'partner' || status === 'married', grp = together ? 'together' : status;
+  const sec = (h: string, t: string, cls = '') => `<section class="vsec${cls}"><b>${h}</b><p>${t}</p></section>`;
   return `<section class="verdict rv" id="verdict">
     <small class="kicker">${VERDICT.caption} · ${nm}</small>
     <h3>${T.name}</h3>
     <p class="desc">${T.desc}</p>
-    <p class="point">→ ${T.point}</p>
-    <div class="gauge" style="--v:${v}">
-      <div class="g-head"><span>${VERDICT.gaugeTitle}</span><b>${v}<i>%</i></b></div>
-      <div class="g-bar"><span></span></div>
-      <ol class="g-steps">${VERDICT.levels.map((l, i) => `<li class="${i === lv ? 'on' : ''}">${l}</li>`).join('')}</ol>
-      <p class="g-line">${VERDICT.levelLine[lv]}</p>
-    </div>
+    ${sec(H.start, T.start)}${sec(H.dating, T.dating)}${sec(H.now, VERDICT.now[status] || VERDICT.now.solo, ' now')}${sec(H.hurt, together ? T.hurtT : T.hurt)}${sec(H.tip, (grp !== 'solo' && T.tips[grp]) || T.tip, ' tip')}
     <p class="fine">${VERDICT.note}</p>
-    <button class="btn ghost" id="vshare" type="button">${VERDICT.share}</button>
   </section>`;
 }
 
@@ -71,26 +60,40 @@ export function tocParts(c: Chart, together: boolean, ctx: Record<string, string
   return { chapters: chs, total };
 }
 
-/** v2 목차: 챕터 제목만 */
-export function tocTitlesHtml(chs: { title: string }[], kicker: string) {
+/** '열쇠를 꽂으면 받는 것': 챕터 제목 + 실제 결과에서 채운 한 줄 힌트 (+ 고민을 골랐으면 그 답) */
+export function tocTitlesHtml(chs: { title: string; hint: string }[], kicker: string, ctx: Record<string, string | number>, worry: string) {
+  const rows = chs.map(ch => [ch.title.replace(/<br>/g, ' '), fill(ch.hint, ctx)]);
+  if (worry) rows.push([`네가 물어본 “${worry}”`, '그 고민에 대한 노엘의 답']);
   return `<section class="chap-card rv"><header><small>${kicker}</small></header>
-    <ol>${chs.map((ch, i) => `<li><i>${String(i + 1).padStart(2, '0')}</i><span><b>${ch.title.replace(/<br>/g, ' ')}</b></span></li>`).join('')}</ol>
+    <ol>${rows.map(([t, h], i) => `<li><i>${String(i + 1).padStart(2, '0')}</i><span><b>${t}</b><small class="hint">${h}</small></span></li>`).join('')}</ol>
   </section>`;
 }
 
-/** v2 잠긴 편지: 첫 인사만 보이고, 나머지 문장과 운명의 상대 값은 더미 문장을 흐린다 */
-export function letterHtml(nm: string, together: boolean, faceImg: string) {
-  const L = V2.letter, D = BLUR_DUMMY, rows = together ? L.rows.together : L.rows.solo;
+/** 잠긴 편지 (2026-11-25): 공감 → 끊긴 문장 → 운명의 상대는 실제 결과의 '앞부분만' 보이고 나머지는 흐림.
+ *  peek: 항목 이름 → 보여줄 앞부분(실제 값의 첫 마디). 없는 항목은 통째로 흐림. 흐린 부분은 더미 문장(실제 값은 DOM에 없음) */
+export function letterHtml(o: { nm: string; status: string; together: boolean; faceImg: string; image: string; worry: string; peek: Record<string, string> }) {
+  const L = V2.letter, D = BLUR_DUMMY, rows = o.together ? L.rows.together : L.rows.solo;
+  const blur = (t: string) => `<span class="blur" aria-hidden="true">${t}</span>`;
   const blurP = (t: string) => `<p class="blur" aria-hidden="true">${t}</p>`;
+  const sub = (t: string) => `<p class="lsub">${t}</p>`;
+  const tease = L.fateTease[o.together ? 'together' : o.status] || L.fateTease.solo;
+  const dd = (r: string) => `<dd>${o.peek[r] ? `${o.peek[r]} ` : ''}${blur(D.value[r] || '…')}</dd>`;
   return `<article class="paper letter rv" aria-label="노엘의 편지 (잠김)">
-    <header><small>${L.kicker}</small><h3>${fill(L.to, { 이름: nm })}</h3></header>
+    <header><small>${L.kicker}</small><h3>${fill(L.to, { 이름: o.nm })}</h3></header>
     ${L.open.map(t => `<p>${t}</p>`).join('')}
-    ${blurP(D.line[0])}${blurP(D.line[1])}
-    <div class="lfate"><small>${together ? L.fate.together : L.fate.solo}</small>
-      ${together ? '' : `<div class="face"><div class="fimg" style="background-image:url(/img/${faceImg}.jpg)"></div></div>`}
-      <dl>${rows.filter(r => r !== '얼굴').map((r, i) => `<dt>${r}</dt><dd class="blur" aria-hidden="true">${D.value[(i + 1) % D.value.length]}</dd>`).join('')}</dl>
+    <p>${L.empathy[o.status] || L.empathy.solo}</p>
+    ${o.worry ? `<p>${fill(L.worry, { 고민: o.worry })} ${blur(D.line[1])}</p>` : ''}
+    <p>${fill(L.hook, { 이미지: o.image })} ${blur(D.line[0])}</p>
+    ${sub(L.rest)}${blurP(D.line[1])}
+    ${sub(L.todo)}
+    <ol class="ltodo">${D.todo.map(t => `<li>${blur(t)}</li>`).join('')}</ol>
+    <div class="lfate"><small>${o.together ? L.fate.together : L.fate.solo}</small>
+      <p class="ltease">${tease}</p>
+      ${o.together ? '' : `<div class="face"><div class="fimg" style="background-image:url(/img/${o.faceImg}.jpg)"></div></div>`}
+      <dl>${rows.filter(r => r !== '얼굴').map(r => `<dt>${r}</dt>${dd(r)}`).join('')}</dl>
     </div>
-    ${blurP(D.line[2])}
+    ${sub(L.next)}${blurP(D.line[2])}
+    <p class="llast">${L.last}</p>${blurP(D.line[3])}
     <p class="sign">${L.sign}</p>
     <div class="lseal"><span class="seal">封</span>${L.seal}</div>
   </article>`;
