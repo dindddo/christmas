@@ -1,0 +1,8 @@
+# 배포에 필요 없는 원본·작업 파일 (앱은 public/img/*.jpg, public/vid/enter.mp4만 씀)
+public/img/v2
+public/img/v3
+public/vid/s0_loop.mp4
+assets
+docs/compare
+prototype
+public/vid
