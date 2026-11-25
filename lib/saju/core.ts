@@ -163,13 +163,23 @@ export function analyze(P: Pillars, male: boolean, queer: boolean): Analysis {
   return { el, ratio, strength, gyeok, loveState, natal, missing, heavy, famN, yearGood: helps.includes(fireFam) && el[1] < 3 };
 }
 
+/** 달력 범위 (KST): 12월 전이면 12/1부터, 12월이면 오늘부터, 끝은 12/31. 31일이 지나도 31일 하루는 남긴다 */
+export function decWindow(now = new Date()): { from: number; to: number } {
+  const k = new Date(now.getTime() + 9 * 3600e3), y = k.getUTCFullYear(), m = k.getUTCMonth() + 1, d = k.getUTCDate();
+  if (y < 2026 || (y === 2026 && m < 12)) return { from: 1, to: 31 };
+  if (y === 2026 && m === 12) return { from: d, to: 31 };
+  return { from: 31, to: 31 };
+}
+
 export type DecDay = { d: number; s: number; wd: number; X: Pillar; clash: boolean };
 export type December = { A: boolean; strong: boolean; best: DecDay; shake: DecDay | null; passers: number[]; days: DecDay[] };
-/** 2026-12-08 ~ 12-24 일진 점수 → 결과 A(문 열림)/B, best day, shake day */
-export function december(P: Pillars, male: boolean, queer: boolean): December {
+/** 2026-12-{from} ~ 12-{to} 일진 점수 → best day, shake day.
+ *  기본 8~24는 시안 정답지(테스트) 기준. 화면·2막은 decWindow()로 '오늘(12월 전이면 1일)부터 31일까지'를 넘긴다 (2026-11-25):
+ *  고정 17일이면 12월 중순에 산 사람에게 이미 지난 날짜를 알려주게 된다. */
+export function december(P: Pillars, male: boolean, queer: boolean, from = 8, to = 24): December {
   const L = loveSet(male, queer), dG = P.D.g, dJ = P.D.j, dh = new Set([DOHWA(P.Y.j), DOHWA(dJ)]);
   const days: DecDay[] = [];
-  for (let d = 8; d <= 24; d++) {
+  for (let d = from; d <= to; d++) {
     const X = dayP(2026, 12, d), gg = god(dG, X.g);
     let s = 0;
     if (queer ? (gg === '정관' || gg === '정재') : gg === (male ? '정재' : '정관')) s += 3;
@@ -180,7 +190,9 @@ export function december(P: Pillars, male: boolean, queer: boolean): December {
     days.push({ d, s, wd, X, clash: (dJ + 6) % 12 === X.j });
   }
   const weekend = (x: DecDay) => (x.wd === 5 || x.wd === 6 ? 1 : 0);
-  const best = [...days].sort((a, b) => b.s - a.s || (weekend(b) - weekend(a)) || b.d - a.d)[0];
+  // 같은 점수면 크리스마스(25일)까지의 날 → 주말 → 늦은 날 순 (8~24 범위에선 첫 조건이 늘 같아 시안과 동일)
+  const xmas = (x: DecDay) => (x.d <= 25 ? 1 : 0);
+  const best = [...days].sort((a, b) => b.s - a.s || (xmas(b) - xmas(a)) || (weekend(b) - weekend(a)) || b.d - a.d)[0];
   // strong (2026-11-25): A(시안 정답지)는 17일이면 항상 참이 돼서(정관·정재 일진이 반드시 낌) 의미가 없다.
   // 연애 신호 두 개가 같은 날 겹칠 때(점수 5+)만 '크리스마스 전 강한 날'로 본다 → 약 73%. 화면·2막은 strong을 쓴다
   return { A: best.s >= 3, strong: best.s >= 5, best, shake: days.find(x => x.clash && x.d !== best.d) || null, passers: days.filter(x => x.s === 1).map(x => x.d), days };

@@ -49,3 +49,4 @@ next-env.d.ts
 /public/img/_backup_*/
 /assets/master/v3/
 /public/vid/s0_loop.mp4
+/out

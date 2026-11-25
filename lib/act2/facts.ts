@@ -3,7 +3,7 @@
 import { computeChart, elG, fam, god, GAN_K, JI_K, JI_MAIN, monthFlow, sunSign, type Pillar } from '@/lib/saju';
 import { PARTNER, TXT, YEAR26 } from '@/content/reading';
 import { VERDICT } from '@/content/act1';
-import { chapters } from '@/content/act2';
+import { chapters, groupOf } from '@/content/act2';
 import { innate, promiseCtx } from '@/lib/flow/teaser';
 import type { SavedInput } from '@/lib/flow/flow';
 
@@ -25,7 +25,9 @@ const plain = (t: string) => t.replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '
 
 export function buildFacts(s: SavedInput) {
   const male = s.sex === '남자', queer = s.orient === 'queer';
-  const c = computeChart({ y: s.y, m: s.m, d: s.d, time: s.noTime ? null : s.time, sex: s.sex as '여자' | '남자', orient: (s.orient || 'hetero') as 'hetero' | 'queer' });
+  // 달력 범위는 1막을 본 날짜 기준(asOf) → 1막 달력과 같은 날짜
+  const asOf = s.asOf ? new Date(s.asOf) : new Date();
+  const c = computeChart({ y: s.y, m: s.m, d: s.d, time: s.noTime ? null : s.time, sex: s.sex as '여자' | '남자', orient: (s.orient || 'hetero') as 'hetero' | 'queer' }, asOf);
   const { P, A, dec } = c, dG = P.D.g;
   const pk = (p: Pillar | null) => (p ? GAN_K[p.g] + JI_K[p.j] : '모름');
   const together = ['partner', 'married'].includes(s.status);
@@ -36,9 +38,15 @@ export function buildFacts(s: SavedInput) {
   const verdict = VERDICT.types[c.love] || VERDICT.types.clean;
   const IN = innate(c, male, queer); // 1막 화면과 같은 함수 → 핵심 특징·이미지·연애 문장이 같다
   const k = seed % 2;
-  const ctx = promiseCtx(c, sign, male, queer);
+  const ctx = promiseCtx(c, sign, male, queer, { 장소: where, 이미지: IN.image });
   const TYPE_KO: Record<string, string> = { knock: '다가오는 사람', half: '거의 닿는 인연', slam: '크게 정리하는 일', key: '시선이 몰림', wrong: '말이 앞서는 일', off: '엇갈림' };
-  const flow2027 = monthFlow(P, male, queer, 2027).map(m => `${m.mo}월 ${m.score >= 6 ? '아주 강함' : m.score >= 4 ? '강함' : m.score >= 2 ? '약간' : '조용'}${m.score ? `(${TYPE_KO[m.type]})` : ''}`).join(', ');
+  const mf = monthFlow(P, male, queer, 2027);
+  // 2027 조심할 달: 일지와 부딪히거나(충)·어긋나는(원진) 달
+  const careful = mf.filter(m => m.score && (m.type === 'slam' || m.type === 'off' || m.type === 'wrong')).map(m => `${m.mo}월(${TYPE_KO[m.type]})`);
+  // 힘이 되는 색: 비어 있는 기운(없으면 가장 적은 기운)의 색
+  const COLOR = ['초록·연두', '빨강·분홍', '베이지·노랑', '흰색·은색', '검정·남색'];
+  const weak = A.missing.length ? A.missing[0] : A.el.indexOf(Math.min(...A.el));
+  const flow2027 = mf.map(m => `${m.mo}월 ${m.score >= 6 ? '아주 강함' : m.score >= 4 ? '강함' : m.score >= 2 ? '약간' : '조용'}${m.score ? `(${TYPE_KO[m.type]})` : ''}`).join(', ');
 
   return {
     // 사람
@@ -48,6 +56,7 @@ export function buildFacts(s: SavedInput) {
     status: STATUS_KO[s.status] || s.status,
     job: JOB_KO[s.job] || s.job,
     worry: s.worry || '(특별히 고른 고민 없음)',
+    group: { solo: '혼자', crush: '마음 가는 사람이 있음(짝사랑·썸)', breakup: '최근 이별', together: '연애 중·결혼' }[groupOf(s.status)],
     together,
     birth: `${s.y}년 ${s.m}월 ${s.d}일${s.noTime ? ' (시간 모름)' : ` ${s.time}`}`,
     // 사주
@@ -64,7 +73,8 @@ export function buildFacts(s: SavedInput) {
     sinsal: IN.sal.map(x => x.name).join(', ') || '없음',
     natal: A.natal || '없음',
     dayBranchGod: fam(god(dG, JI_MAIN[P.D.j])),
-    zodiac: `${sign}자리`,
+    year2026: A.yearGood ? '반가운 해(기운이 많이 들어와 바빴던 해: 버거움 = 들어온 게 많아서)' : '버거운 해(2026 불 기운이 이 사주와 결이 달라 애를 많이 쓴 해)',
+    colorHint: `${COLOR[weak]} (${EL[weak]} 기운${A.missing.length ? '이 비어 있어서' : '이 가장 적어서'})`,
     // 1막에서 이미 보여준 것 (2막은 이것과 모순되면 안 됨)
     shown: {
       image: IN.image,
@@ -80,27 +90,30 @@ export function buildFacts(s: SavedInput) {
         `마음: ${YEAR26.mind[s.wk] || YEAR26.mind.none}`,
       ].filter(Boolean).join(' / '),
       yearTitle: c.doors[0] ? TXT.story[c.doors[0].type].title : '조용했던 해',
-      result: dec.strong ? `크리스마스 전 인연 운이 가장 강한 날: 12월 ${dec.best.d}일(${WD[dec.best.wd]}) 무렵 (연애 신호 두 개가 겹침)` : `크리스마스 전엔 큰 바람 없음. 흐름은 크리스마스 지나고 바뀜 (17일 중 그나마 나은 날은 12월 ${dec.best.d}일)`,
+      result: dec.strong ? `올해가 가기 전 인연 운이 가장 강한 날: 12월 ${dec.best.d}일(${WD[dec.best.wd]}) (연애 신호 두 개가 겹침. '만나는 날'이 아니라 '기회가 가장 큰 날')` : `올해 남은 날엔 연애 신호가 겹치는 날 없음 → 큰 바람 없음. 흐름은 내년 ${ctx.뜨거운달}월에 크게 바뀜. 특정 날짜를 강조하지 말 것`,
       meetPlace: where,
       shakeDay: dec.shake ? `12월 ${dec.shake.d}일` : '없음',
       partner: together
         ? `지금 연인과의 하루. 속마음 일부: "${PF.mind}"`
-        : `나이 ${c.partnerAge[0]}(${c.partnerAge[1]}), 직업 ${PF.job}, 인상 "${PF.look}", 성격 "${PF.mind}", 첫마디 "혹시 아까 저 보셨어요?"`,
+        : `나이 ${c.partnerAge[0]}(${c.partnerAge[1]}), 직업 ${PF.job}, 인상 "${PF.look}", 성격 "${PF.mind}"`,
     },
     // 2027년 월별 인연 흐름 (엔진 계산, 가장 센 달 = ${'{'}뜨거운달{'}'})
     flow2027,
     hottestMonth2027: `${ctx.뜨거운달}월`,
-    // 12월 17일 달력 (엔진 점수 그대로)
+    carefulMonths2027: careful.join(', ') || '크게 부딪히는 달 없음',
+    // 남은 날 달력 (오늘~12/31, 엔진 점수 그대로)
+    today: `12월 ${dec.days[0].d}일부터 31일까지가 '올해 남은 날'`,
     december: dec.days.map(x => {
-      const tag = x.d === dec.best.d ? (dec.strong ? '인연 운이 가장 강한 날' : '17일 중 가장 나은 날') : dec.shake && x.d === dec.shake.d ? '흔들릴 날' : dec.passers.includes(x.d) ? '스쳐가는 사람' : x.s >= 2 ? '기운 좋음' : '평범';
+      const tag = x.d === dec.best.d && dec.strong ? '인연 운이 가장 강한 날' : dec.shake && x.d === dec.shake.d ? '흔들릴 날' : dec.passers.includes(x.d) ? '스쳐가는 사람' : x.s >= 2 ? '기운 좋음' : '평범';
       return `12/${x.d}(${WD[x.wd]}) ${tag}`;
     }).join(', '),
-    // 2막 목차 (1막에서 잠긴 채로 보여준 약속)
-    chapters: chapters(together).map((ch, i) => ({
+    // 2막 목차 (1막에서 잠긴 채로 보여준 약속). 고민은 2장 맨 앞
+    chapters: chapters(s.status, dec.strong, s.worry).map((ch, i) => ({
       no: i + 1,
+      key: ch.key,
       title: plain(ch.title),
       items: ch.items.map(([h, t]) => ({ title: fill(h, ctx), promise: fill(t, ctx) })),
-    })).map((ch, i) => (i === 3 && s.worry ? { ...ch, items: [...ch.items, { title: `“${s.worry}”`, promise: '네가 물어본 고민에 대한 노엘의 답' }] } : ch)),
+    })),
   };
 }
 export type Facts = ReturnType<typeof buildFacts>;

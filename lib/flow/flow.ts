@@ -20,6 +20,7 @@ export type SavedInput = {
   name: string; sex: string; y: number; m: number; d: number; time: string; noTime: boolean;
   status: string; orient: string; job: string; wk: string; worry: string;
   email?: string; eveOptin?: boolean; // 대화 마지막 이메일(선택). 결제 서버로 넘겨 결과 링크 발송·이브 메시지에 쓴다
+  asOf?: string; // 1막을 본 시각(ISO). 남은 날 달력 범위 기준 → 2막도 같은 범위로 계산해 1막과 날짜가 어긋나지 않게
 };
 
 // 운영 빌드에서는 상수 false → 테스트 기본값·건너뛰기 버튼 코드가 번들에서 통째로 빠진다
@@ -127,7 +128,9 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   // ---- 계산: 입력 → 사주 → 1막 문구 ----
   function calc() {
     const male = S.sex === '남자', queer = S.orient === 'queer', T = TXT;
-    const c = computeChart({ y: +S.y, m: +S.m, d: +S.d, time: S.noTime ? null : S.time, sex: S.sex, orient: S.orient || 'hetero' });
+    // 개발 모드: ?asOf=2026-12-20 으로 달력 기준 날짜를 바꿔 볼 수 있다
+    S.asOf = S.asOf || (dev && new URLSearchParams(location.search).get('asOf') ? new Date(new URLSearchParams(location.search).get('asOf') + 'T12:00:00+09:00').toISOString() : new Date().toISOString());
+    const c = computeChart({ y: +S.y, m: +S.m, d: +S.d, time: S.noTime ? null : S.time, sex: S.sex, orient: S.orient || 'hetero' }, new Date(S.asOf));
     const { P, A } = c, dG = P.D.g;
     S.adj = c.kst;
     const yr = [...T.year[elG(dG)]]; if (male && T.yearM[elG(dG)]) yr[0] = T.yearM[elG(dG)];
@@ -177,7 +180,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
 
   function saved(): SavedInput {
-    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin };
+    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin, asOf: S.asOf };
   }
 
   const cleanups: (() => void)[] = [];
@@ -259,7 +262,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
     7() {
       calc(); logo.style.opacity = '0'; panel.innerHTML = ''; setBg('book');
       try { sessionStorage.setItem('door:input', JSON.stringify(saved())); } catch { /* 저장 못 해도 진행 */ }
-      track('act1_view', { result: S.R.dec.A ? 'A' : 'B', status: S.status });
+      track('act1_view', { result: S.R.dec.strong ? 'A' : 'B', status: S.status });
       const R = S.R, P = R.P, nm = esc(S.name), IN = introLines();
       const k = seed() % 2;
       const together = isTogether();
@@ -313,18 +316,19 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
       // 구매 포인트 재료 (전부 엔진 결과에서)
       const sign = sunSign(+S.m, +S.d);
-      const ctx = promiseCtx(R, sign, S.sex === '남자', S.orient === 'queer');
+      const where = (together ? TXT.whereP : (TXT.where[S.job] || TXT.where.rest))[seed() % 4];
+      const ctx = promiseCtx(R, sign, S.sex === '남자', S.orient === 'queer', { 장소: where, 이미지: R.image });
       const worryShort = S.worry ? (S.worry.length > 24 ? S.worry.slice(0, 24) + '…' : S.worry) : '';
-      const TOC = tocParts(R, together, ctx, worryShort);
+      const TOC = tocParts(R, S.status, esc(worryShort));
       // '너'(여성 뒷모습)가 나오는 컷은 여성 이용자에게만. 그 외에는 노엘 단독 컷으로 대체
       const you = S.sex === '여자';
       // 편지 속 운명의 상대: 실제 결과의 첫 마디만 보여준다 (2막 facts.ts와 같은 계산: 장소=seed%4, 인상·속마음=PARTNER)
       const PF = PARTNER[R.partnerEl], first = (t: string, n = 2) => esc(t.split(/[ ,]+/).slice(0, n).join(' '));
-      const where = (together ? TXT.whereP : (TXT.where[S.job] || TXT.where.rest))[seed() % 4];
       const peek: Record<string, string> = together
         ? { 장소: first(where, 1), '그 사람의 속마음': first(PF.mind) }
-        : { 인상: first(PF.look), '만나는 곳': first(where, 1), '그 사람의 첫마디': '"혹시' };
+        : { 인상: first(PF.look), 성격: first(PF.mind, 1), '만나는 곳': first(where, 1) };
       const REST = V2.rest[R.dec.strong ? (S.status || 'solo') : 'later'] || V2.rest.solo;
+      const restHead = fill(REST.head, { 뜨거운달: ctx.뜨거운달 });
 
       // ---- 1막 콘티 (2026-11-24 v2 확정): 알아봐 줄게 → 올해 수고했어 → 남은 날들 → 노엘의 편지 ----
       // 결제 버튼 2곳 + 하단 바. 흔들리는 노엘은 문패·눈맞춤/열쇠 두 번만.
@@ -365,7 +369,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         { t: 'space', h: 60, bg: '#0c0b10' },
         chapter('日', V2.restTitle, '#1a0f12'),
         { t: 'panel', img: 'last_w', ratio: 9 / 14, focus: '45% 35%', items: [{ k: 'say', text: V2.restHead[0], x: 'l', y: 74 }] },
-        say(REST.head, 'c', 'l'),
+        say(restHead, 'c', 'l'),
         { t: 'html', html: calendarHtml(R, true) },
         // 대화에서 고른 '제일 궁금한 것'을 받아준다
         say(S.worry ? fill(V2.worryLine, { 고민: esc(S.worry) }) : S.wk === 'none' ? V2.worryAll : V2.calCaption, 'r'),
@@ -373,7 +377,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         { t: 'space', h: 60, bg: '#0b0a10' },
         chapter('信', V2.letterTitle, '#1c1016'),
         say(V2.tocHead, 'c'),
-        { t: 'html', html: tocTitlesHtml(TOC.chapters, V2.tocKicker, ctx, esc(S.worry)) },
+        { t: 'html', html: tocTitlesHtml(TOC.chapters, V2.tocKicker, ctx) },
         { t: 'space', h: 30 },
         { t: 'space', h: 40 },
         say(V2.letterHead[0], 'l'), say(V2.letterHead[1], 'r', 'l'),

@@ -1,7 +1,7 @@
 // data/saju-test-vectors.json (시안 엔진으로 뽑은 정답지 40건)과 완전히 같아야 한다.
 import { describe, expect, it } from 'vitest';
 import vectors from '../../data/saju-test-vectors.json';
-import { computeChart, GAN_K, JI_K, lunar2solar, type Pillar } from './index';
+import { computeChart, decWindow, GAN_K, JI_K, lunar2solar, type Pillar } from './index';
 
 const pk = (p: Pillar | null) => (p ? GAN_K[p.g] + JI_K[p.j] : null);
 
@@ -73,6 +73,22 @@ describe('loveView · sinsal · december.strong', () => {
     for (const [y, m, d] of [[1990, 1, 1], [1995, 7, 2], [2001, 11, 30]]) {
       const c = computeChart({ y, m, d, time: '09:00', sex: '여자', orient: 'hetero' });
       expect(c.dec.strong).toBe(c.dec.best.s >= 5);
+    }
+  });
+});
+
+describe('남은 날 달력 범위 (decWindow)', () => {
+  const at = (s: string) => new Date(s + 'T12:00:00+09:00');
+  it('12월 전이면 1~31, 12월이면 오늘~31, 끝나면 31일 하루', () => {
+    expect(decWindow(at('2026-11-25'))).toEqual({ from: 1, to: 31 });
+    expect(decWindow(at('2026-12-15'))).toEqual({ from: 15, to: 31 });
+    expect(decWindow(at('2027-01-02'))).toEqual({ from: 31, to: 31 });
+  });
+  it('가장 강한 날은 항상 기준일 이후', () => {
+    for (const [y, m, d] of [[1993, 5, 2], [1989, 3, 18], [2000, 1, 1]]) {
+      const c = computeChart({ y, m, d, time: '12:00', sex: '여자', orient: 'hetero' }, at('2026-12-20'));
+      expect(c.dec.best.d).toBeGreaterThanOrEqual(20);
+      expect(c.dec.days[0].d).toBe(20);
     }
   });
 });
