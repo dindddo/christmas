@@ -20,6 +20,7 @@ export type FlowOptions = { dev: boolean; onPay?: (s: SavedInput) => void };
 export type SavedInput = {
   name: string; sex: string; y: number; m: number; d: number; time: string; noTime: boolean;
   status: string; orient: string; job: string; wk: string; worry: string;
+  email?: string; eveOptin?: boolean; // 대화 마지막 이메일(선택). 결제 서버로 넘겨 결과 링크 발송·이브 메시지에 쓴다
 };
 
 // 운영 빌드에서는 상수 false → 테스트 기본값·건너뛰기 버튼 코드가 번들에서 통째로 빠진다
@@ -40,7 +41,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   const DEFAULTS = DEV_BUILD && dev
     ? { sex: '남자', name: '태준', y: 1989, m: 3, d: 18, time: '13:00' } // 테스트용 기본값: 개발 모드에서만
     : { sex: '', name: '', y: 0, m: 0, d: 0, time: '' };
-  const fresh = () => ({ cal: 'solar', leap: false, lb: null as any, wk: '', orient: '', job: '', worry: '', R: null as any, fast: false, noTime: false, status: '', step: 0, pro: false, adj: null as any, ...DEFAULTS });
+  const fresh = () => ({ cal: 'solar', leap: false, lb: null as any, wk: '', orient: '', job: '', worry: '', email: '', eveOptin: false, R: null as any, fast: false, noTime: false, status: '', step: 0, pro: false, adj: null as any, ...DEFAULTS });
   let S: any = fresh();
   let alive = true;
   const timers = new Set<ReturnType<typeof setTimeout>>();
@@ -191,7 +192,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
 
   function saved(): SavedInput {
-    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry };
+    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin };
   }
 
   const cleanups: (() => void)[] = [];
@@ -568,6 +569,20 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
       apply: (r: any) => { S.wk = r.v; S.worry = r.v === 'none' ? '' : r.show; },
       echo: (r: any) => r.show + '.',
       react: (r: any) => r.v === 'none' ? Q.worryNone : [unq(WORRY[r.v]?.after || '') || '그 얘기, 문 너머에서 같이 보자.'] },
+    // 8. 이메일 (선택, 건너뛰기 가능)
+    { say: () => Q.email,
+      html: () => `<label class="say-in"><span>${Q.emailPrefix}</span><input id="em" type="email" inputmode="email" autocomplete="email" maxlength="80" placeholder="${Q.emailPlaceholder}" value="${esc(S.email)}"></label>
+        <label class="check"><input type="checkbox" id="eo" ${S.eveOptin ? 'checked' : ''}> ${Q.emailOptin}</label>
+        <p class="note">${Q.emailNote}</p>
+        <button class="btn" type="submit">${Q.emailButton}</button>
+        <button class="btn ghost" type="button" data-v="skip" data-show="${Q.emailSkipEcho}">${Q.emailSkip}</button>`,
+      parse: (f: HTMLElement) => {
+        const email = f.querySelector<HTMLInputElement>('#em')!.value.trim();
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? { email, optin: f.querySelector<HTMLInputElement>('#eo')!.checked } : Q.emailError;
+      },
+      apply: (r: any) => { if (r.v === 'skip') { S.email = ''; S.eveOptin = false; } else { S.email = r.email; S.eveOptin = r.optin; } },
+      echo: (r: any) => r.v === 'skip' ? Q.emailSkipEcho : fill(Q.emailEcho, { 이메일: r.email }),
+      react: (r: any) => r.v === 'skip' ? Q.emailSkipReact : Q.emailReact },
   ];
 
   let chatRun = 0;
