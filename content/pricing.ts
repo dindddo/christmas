@@ -5,8 +5,9 @@
 // 결제 연동 시 서버도 이 표를 읽어 금액을 검증한다(브라우저가 보낸 금액을 그대로 믿지 않음).
 
 export const BASE = 19900;
+// (2026-11-25) PG 심사 기간(포트원): 가격이 방문자마다 다르면 반려 위험 → A/B 끄고 19,900원 고정. 심사 끝나면 on: true로 되돌려 A/B 재개
 export const TEST = {
-  on: true,
+  on: false,
   arms: { A: 19900, B: 9900 } as Record<string, number>,
 };
 export const PRICE_CONFIRMED = false;

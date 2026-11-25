@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '크리스마스에 운명의 문을 열어 버렸다',
     description: '크리스마스 전, 딱 한 번 열리는 문',
-    images: ['/img/s0.jpg'],
+    images: ['/img/noel_m.jpg'],
     locale: 'ko_KR',
     type: 'website',
   },

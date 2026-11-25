@@ -57,12 +57,18 @@ export const PROLOGUE: Beat[] = [
   { t: 'space', h: 40, bg: '#120d0a' },
   { t: 'panel', img: 'b1', ratio: 9 / 15, focus: '50% 55%', fx: { snow: 1, glow: [62, 50] },
     items: [{ k: 'think', text: '(…여기, 원래 문이 있었나?)', x: 'l', y: 80 }] },
-  { t: 'panel', ratio: 1, fill: 'linear-gradient(#1c1310, #0d0a0b)', fx: { shake: 1 },
+  // (2026-11-25) B2: 그라데이션 → 문이 한 뼘 열리고 금빛이 새어 나오는 컷
+  { t: 'panel', img: 'v6_B2d', ratio: 1, focus: '50% 45%', fx: { shake: 1, snow: 1 },
     items: [{ k: 'sfx', text: '끼익—', x: 'l', y: 14 }, { k: 'off', text: '"…기다렸어."', x: 'r', y: 40 }, { k: 'think', text: '(…누구야, 너는?)', x: 'l', y: 74 }] },
-  { t: 'panel', img: 'b3', ratio: 9 / 14, focus: '50% 40%', fx: { fe: [[40, 10, 320, 1]] }, bg: '#0b0c16',
-    items: [{ k: 'off', text: '"널 꽤 오래 봐 온 사람."', x: 'r', y: 10 }, { k: 'off', text: '"넌 매번 이 앞에서 멈췄다가,<br>그냥 갔거든."', x: 'l', y: 72 }] },
-  { t: 'panel', img: 's0', ratio: 9 / 14, focus: '50% 28%', bg: '#120c0c',
+  // B3·B4는 문틈 너머로 엿보는 거리(밖) → 입장 영상에서 1인칭으로 들어간다. 거리가 계속 줄어들게
+  { t: 'panel', img: 'v6_B3d', ratio: 9 / 14, focus: '50% 45%', fx: { fe: [[40, 10, 320, 1]] }, bg: '#0b0c16',
+    items: [{ k: 'off', text: '"널 꽤 오래 봐 온 사람."', x: 'r', y: 10 }, { k: 'off', text: '"이 문, 늘 여기 있었어.<br>네가 못 알아봤을 뿐."', x: 'l', y: 72 }] },
+  // (2026-11-25 v6) B3 두 번째 대사: "넌 매번 이 앞에서 멈췄다가, 그냥 갔거든." → B1 "원래 문이 있었나?"와 모순이라 교체, P3 핵심 문장 반복
+  { t: 'panel', img: 'v6_B4d', vid: 'v6_M16', ratio: 9 / 14, focus: '50% 40%', bg: '#120c0c',
     items: [{ k: 'say', text: '"이번엔 그냥 못 보내.<br>들어와."', x: 'r', y: 74 }] },
 ];
+
+// 들어가는 순간(1인칭 입장 영상) 위에 잠깐 떠오르는 지문: 차가운 밖 → 따뜻한 안
+export const ENTER_CAP = '문턱을 넘자, 등 뒤의 눈 소리가 멎었다.';
 
 export const FEATHER = '<svg viewBox="0 0 40 40"><path d="M33 4C22 6 11 15 7 30l-2 6 2-1C12 22 20 13 33 4z" fill="#fffaf0"/><path d="M33 4C25 13 17 21 7 33" stroke="#e9dcc0" stroke-width="1.2" fill="none"/></svg>';

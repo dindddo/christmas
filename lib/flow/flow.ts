@@ -2,7 +2,7 @@
 // 화면 흐름: 타이틀 → 프롤로그(세로 웹툰) → 채팅 입력 → 로딩 → 1막(세로 웹툰) → 결제 CTA
 // prototype/index.html 의 STEPS 를 연출 그대로 옮겼다. 문구는 content/, 계산은 lib/saju/.
 import { computeChart, sunSign, elG, fam, god, GAN_K, JI_K, jeolAt, lunar2solar, sijin, toMin, type Pillar } from '@/lib/saju';
-import { PROLOGUE } from '@/content/prologue';
+import { PROLOGUE, ENTER_CAP } from '@/content/prologue';
 import { attachStrip, renderStrip, type Beat } from '@/lib/flow/strip';
 import { JOBS, LOADING, LOADING_SUB, QUESTIONS, STATUS, TITLE, WORRIES, type Choice } from '@/content/chat';
 import { ACT1, DEADLINE, SHAKE, V2 } from '@/content/act1';
@@ -20,6 +20,7 @@ export type FlowOptions = { dev: boolean; onPay?: (s: SavedInput) => void };
 export type SavedInput = {
   name: string; sex: string; y: number; m: number; d: number; time: string; noTime: boolean;
   status: string; orient: string; job: string; wk: string; worry: string;
+  email?: string; eveOptin?: boolean; // 대화 마지막 이메일(선택). 결제 서버로 넘겨 결과 링크 발송·이브 메시지에 쓴다
 };
 
 // 운영 빌드에서는 상수 false → 테스트 기본값·건너뛰기 버튼 코드가 번들에서 통째로 빠진다
@@ -30,9 +31,53 @@ const DEV_BUILD = process.env.NODE_ENV !== 'production';
 // 대화 배경: 질문 순서대로(인사·이름·성별·생일·옆사람·취향·일·고민). 1인칭, 질문마다 카메라가 다가감
 // (2026-11-24) 글로시 실사풍(실사 70% + 일러스트 30%, 한국 미형 노엘)으로 교체. 원본 public/img/v3/gl_chat_N.png
 // 이전 반실사판은 v3/chat_v3_N.png, 더 예전 컷은 chat1~8.jpg로 남겨 둠
-const CHAT_BG = ['chatv1', 'chatv2', 'chatv3', 'chatv4', 'chatv5', 'chatv6', 'chatv7', 'chatv8'];
-const ENTER_IMG = '/img/enter.jpg'; // 들어가는 순간: 문 너머 원탁의 노엘 (원본 public/img/v3/enter_start.png)
-const BG_KEYS = ['s0', 'box', 'book', 'loading', 'closed', 'last', 'resA', 'resB', 'lock', ...new Set(CHAT_BG)];
+// (2026-11-25 v6) 배경은 '질문'이 아니라 '대사 한 줄'에 붙는다 (docs/BEATSHEET_v6.md 4장).
+// 장면 이름 → 이미지 파일. 새 컷이 나오면 이 표의 파일명만 바꾸면 된다. (지금은 기존 컷으로 임시 배치)
+//  c1 등받이에 기대 앉음 · c2 턱 괴고 이름 곱씹기 · c3 몸 기울여 낮게 부름 · c4 책 펼침 · c5 책 위로 눈만 듦
+//  c6 정면, 진지한 눈 · c7 웃음 삼키기(혼자일 때만) · c8 옆자리로 옮겨 앉음 · c9 책 덮고 가까이서 정면
+const SCENE_IMG: Record<string, string> = {
+  // (2026-11-25) 새 얼굴 v6 컷으로 교체. 원본 public/img/v3/v6/*.png
+  c1: 'v6_c1', c2: 'v6_c2', c3: 'v6_c3', c4: 'v6_c4', c5: 'v6_c5', c6: 'v6_c6', c7: 'v6_c7', c8: 'v6_c8', c9: 'v6_c9',
+};
+// 질문이 시작될 때의 장면 (인사·이름·성별·생일·연애 상태·취향·일·고민)
+const SCENE_Q = ['c1', 'c1', 'c2', 'c4', 'c6', 'c8', 'c8', 'c8'];
+const CHAT_BG = SCENE_Q.map(s => SCENE_IMG[s]);
+// 1막 장면 → 이미지. undefined면 그 컷은 아직 없으니 건너뛴다(글만 나옴)
+const ACT_IMG: Record<string, string | undefined> = {
+  angel: 'angel_m',         // (2026-11-25 확정) 검은 정장 + 흰 날개, 같은 방 달빛. 원본 v3/angel_master.png
+  book: 'v6_A1',
+  plateGaze: 'noel_m',      // (카드를 내려놓으며) 턱 괴고 오래 봄 = 기준 얼굴 컷. 당황 컷(noel_flustered)은 공감 대사와 안 맞아 교체
+  yearPage: 'v6_A2',        // 종이 한 장을 밀어 줌, 손끝이 스침
+  comfortF: 'v6_A3',        // (네 뒤로 와서, 귓가에 낮게) 수고했어 — '너'(여성)가 보이는 컷이라 여성 이용자만
+  comfort: undefined,       // 그 외 이용자용 노엘 단독 컷 (아직 없음 → 대사만)
+  restWindow: 'v6_A4',      // 창가, 촛불 몇 개만
+  letter: 'v6_A5',          // 봉인된 편지를 꺼내 내밂
+  eyesF: 'v6_A6', eyes: 'v6_A7', key: 'v6_A8', earF: 'v6_A9',
+};
+// 1막 장면 → 영상(public/vid/*.mp4). 영상이 준비된 장면만 넣는다(없으면 정지 컷만)
+// (2026-11-25) 전부 Kling 3.0 Pro 5초 → 720p 압축. 원본 public/img/v3/v6/vid
+const ACT_VID: Record<string, string> = {
+  angel: 'v6_M7',      // 날개가 숨 쉬듯 (반복)
+  book: 'v6_M15',      // 책을 펼치자 금빛 글자가 피어오름
+  plateGaze: 'v6_M8',  // 턱 괴고 보다가 웃으며 다가옴
+  comfortF: 'v6_M9',   // 귓가로 다가와 날개가 감쌈
+  restWindow: 'v6_M10', // 보타이를 당기며 너를 봄, 창밖 불빛 하나
+  letter: 'v6_M11',    // 편지를 꺼내 내밂
+  eyesF: 'v6_M12',     // 턱 끝을 드는 손가락 — 입이 닿기 전 2.2초에서 자름(수위)
+  eyes: 'v6_M13',      // 몸을 기울여 다가옴
+  key: 'v6_M14',       // 열쇠 위로 손가락을 접어 쥐여 줌
+};
+const ENTER_IMG = '/img/v6_E1.jpg'; // 1인칭: 문을 밀고 들어감, 노엘이 의자 옆에 서 있음
+// (2026-11-25) 들어가는 순간 영상: 문틈 너머 노엘이 눈을 들고 맞은편 의자를 손짓 (카메라 고정, Kling 3.0 Pro). 재생 실패·모션 줄이기면 ENTER_IMG 확대 연출
+const ENTER_VID = '/vid/v6_M17.mp4'; // 1인칭으로 걸어 들어가고 노엘이 의자를 빼 줌 (이전: v6_M0 빈 방 원경) // 들어가는 순간: 문 너머 원탁의 노엘 (원본 public/img/v3/enter_start.png)
+// (2026-11-25) 타이틀 배경: 새 기준 얼굴(noel_m.jpg, 원본 v3/noel_face_master_4k.png). 옛 s0는 프롤로그 B4에만 남음
+const TITLE_BG = 'noel_title'; // noel_m 위에 어두운 여백을 붙여 얼굴을 로고 아래로 내림
+// 로딩 → 1막 공개 시퀀스 (BEATSHEET_v6 5장). 샷 → 배경 이미지 파일. 영상은 BG_VIDEOS에 같은 파일명 키로 넣으면 겹쳐 재생된다
+//  r1 일어서며 보타이를 끌어내림 · r2 등 뒤로 빛, 깃털 · r3 눈을 감았다 뜸 · r4 날개가 펼쳐지며 촛불이 꺼짐 · r5 달빛이 쏟아짐
+const REV: Record<string, string> = { r1: 'v6_V1f', r2: 'v6_V2f', r3: 'v6_V3f', r4: 'v6_V4f', r5: 'angel_m' };
+// LOADING 대사 i번째가 나올 때의 샷
+const REV_LINE = ['r1', 'r1', 'r2', 'r3'];
+const BG_KEYS = [TITLE_BG, ...new Set([...Object.values(REV), ...Object.values(SCENE_IMG)])];
 const WD = '일월화수목금토';
 
 export function mountFlow(root: HTMLElement, opts: FlowOptions) {
@@ -40,7 +85,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   const DEFAULTS = DEV_BUILD && dev
     ? { sex: '남자', name: '태준', y: 1989, m: 3, d: 18, time: '13:00' } // 테스트용 기본값: 개발 모드에서만
     : { sex: '', name: '', y: 0, m: 0, d: 0, time: '' };
-  const fresh = () => ({ cal: 'solar', leap: false, lb: null as any, wk: '', orient: '', job: '', worry: '', R: null as any, fast: false, noTime: false, status: '', step: 0, pro: false, adj: null as any, ...DEFAULTS });
+  const fresh = () => ({ cal: 'solar', leap: false, lb: null as any, wk: '', orient: '', job: '', worry: '', email: '', eveOptin: false, R: null as any, fast: false, noTime: false, status: '', step: 0, pro: false, adj: null as any, ...DEFAULTS });
   let S: any = fresh();
   let alive = true;
   const timers = new Set<ReturnType<typeof setTimeout>>();
@@ -67,23 +112,31 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   // 배경 위에 겹치는 영상(키 → 경로). 이미지 위에 겹쳐 두고 재생되면 페이드인, 실패하면 정지 이미지 유지.
   // 움직임 줄이기 설정이면 영상 대신 정지 이미지만 쓴다.
   // (2026-11-23) 타이틀 반복 영상(s0_loop.mp4)은 퀄리티 문제로 뺌 → 영상은 '들어가는 순간' 1개만 쓴다
-  const BG_VIDEOS: Record<string, string> = {};
+  // (2026-11-25 v6) 공개 시퀀스 샷 영상 (Kling 3.0 Pro → 720p 압축, 원본 public/img/v3/v6/vid)
+  const BG_VIDEOS: Record<string, string> = {
+    [REV.r1]: '/vid/v6_M2.mp4', [REV.r2]: '/vid/v6_M3.mp4', [REV.r3]: '/vid/v6_M4.mp4', [REV.r4]: '/vid/v6_M5.mp4', [REV.r5]: '/vid/v6_M6.mp4',
+  };
+  // 반복하지 않고 한 번만 재생할 배경 영상(공개 시퀀스 샷). 마지막 프레임에서 멈춘다.
+  // 타이틀에서 미리 받지 않고 채팅이 시작되면 받기 시작한다(loadBgVids)
+  const BG_ONCE = new Set<string>(Object.values(REV));
   const vids: Record<string, HTMLVideoElement> = {};
   const reduceMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduceMotion) Object.entries(BG_VIDEOS).forEach(([k, src]) => {
     // Safari는 src보다 muted/playsinline 속성이 먼저 있어야 음소거 자동재생을 허용한다 → 속성을 먼저 달고 src는 마지막에
     const v = document.createElement('video');
     v.className = 'bgvid';
-    ['muted', 'playsinline', 'webkit-playsinline', 'loop', 'autoplay'].forEach(a => v.setAttribute(a, ''));
-    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.loop = true; v.preload = 'auto';
+    const loop = !BG_ONCE.has(k);
+    ['muted', 'playsinline', 'webkit-playsinline', ...(loop ? ['loop'] : []), 'autoplay'].forEach(a => v.setAttribute(a, ''));
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.loop = loop; v.preload = 'auto';
     v.addEventListener('playing', () => { if (curBg === k) v.classList.add('on'); });
-    v.src = src;
+    if (BG_ONCE.has(k)) { v.preload = 'none'; v.dataset.src = src; } else v.src = src;
     bg.appendChild(v); vids[k] = v;
   });
   // 자동재생이 막힌 브라우저: 첫 터치·클릭·스크롤 때 다시 시도
   const retryPlay = () => { if (curBg && vids[curBg]?.paused) vids[curBg].play().catch(() => {}); };
   ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(ev => root.addEventListener(ev, retryPlay, { passive: true }));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) retryPlay(); });
+  const loadBgVids = () => Object.values(vids).forEach(v => { if (!v.src && v.dataset.src) { v.preload = 'auto'; v.src = v.dataset.src; } });
   let curBg: string | null = null;
   function setBg(k: string) {
     if (curBg === k) return;
@@ -92,6 +145,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
     void imgs[k].offsetWidth; imgs[k].classList.add('on'); curBg = k;
     // (2026-11-23) 대화 컷 CSS 효과(.bg.live: 숨쉬기·촛불·금빛 먼지)는 "효과 별로" 피드백으로 끔. 다시 켜려면 아래 주석 해제
     // bg.classList.toggle('live', k.startsWith('chat'));
+    if (vids[k] && BG_ONCE.has(k)) vids[k].currentTime = 0;
     vids[k]?.play().catch(() => { /* 자동재생 막히면 정지 이미지 유지 */ });
   }
 
@@ -191,7 +245,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
 
   function saved(): SavedInput {
-    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry };
+    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin };
   }
 
   const cleanups: (() => void)[] = [];
@@ -206,7 +260,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   const STEPS: Record<number, () => void> = {
     // 0. 타이틀
     0() {
-      setBg('s0'); logo.style.opacity = '1';
+      setBg(TITLE_BG); logo.style.opacity = '1';
       panel.innerHTML = `<p class="tagline fade">${TITLE.tagline}</p>
         <button class="btn fade" id="go" type="button">${TITLE.start}</button>
         ${bizFooterHtml('mini fade')}`;
@@ -226,12 +280,18 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
       // 들어가는 순간 (2026-11-23, A안): AI 영상은 화질이 뭉개져서 뺌 → 4K 정지 이미지 2장 연출.
       // 문 너머 원탁의 노엘(enter.jpg)로 천천히 다가감 → 금빛으로 하얗게 번짐 → 대화 1번 배경(CHAT_BG[0])이 드러남. 탭하면 건너뜀.
       const pre = new Image(); pre.src = ENTER_IMG; // 프롤로그 보는 동안 미리 받아 둔다
+      // 영상도 프롤로그 보는 동안 미리 받는다 (Safari: muted/playsinline 속성을 src보다 먼저)
+      const ev = document.createElement('video');
+      ['muted', 'playsinline', 'webkit-playsinline'].forEach(a => ev.setAttribute(a, ''));
+      ev.muted = true; ev.playsInline = true; ev.preload = reduceMotion ? 'none' : 'auto';
+      if (!reduceMotion) ev.src = ENTER_VID;
       const end = () => { detach(); o.remove(); skip.remove(); setBg(CHAT_BG[0]); next(20); };
       const enter = () => {
         detach(); skip.remove(); setBg(CHAT_BG[0]);
         const seq = document.createElement('div');
         seq.className = 'enter-seq';
-        seq.innerHTML = `<img src="${ENTER_IMG}" alt=""><i class="flood"></i>`;
+        seq.innerHTML = `<img src="${ENTER_IMG}" alt=""><i class="flood"></i><p class="enter-cap">${ENTER_CAP}</p>`;
+        seq.insertBefore(ev, seq.querySelector('.flood'));
         root.append(seq);
         let done = false;
         const timers: number[] = [];
@@ -243,35 +303,49 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         cleanups.push(() => { timers.forEach(clearTimeout); seq.remove(); });
         seq.addEventListener('click', finish);
         requestAnimationFrame(() => { seq.classList.add('on'); o.style.opacity = '0'; });
-        timers.push(window.setTimeout(() => seq.classList.add('glow'), 2600)); // 빛이 번지기 시작
-        timers.push(window.setTimeout(finish, 3500));
+        // 영상이 재생되면 영상 길이(5초)에 맞춰 빛 번짐, 안 되면 정지 이미지 확대(3.5초)
+        const plan = (glow: number, end: number) => { timers.push(window.setTimeout(() => seq.classList.add('glow'), glow), window.setTimeout(finish, end)); };
+        if (reduceMotion) plan(2600, 3500);
+        else ev.play().then(() => { if (!done) { seq.classList.add('vid'); plan(4200, 5000); } }).catch(() => { if (!done) plan(2600, 3500); });
       };
       o.querySelector('#pgo')!.addEventListener('click', () => { track('prologue_done'); enter(); });
       skip.addEventListener('click', () => { S.pro = false; track('prologue_skip'); end(); });
     },
     // 2. 채팅형 정보 입력
     20() {
-      setBg(CHAT_BG[0]); panel.classList.add('tall');
+      setBg(CHAT_BG[0]); panel.classList.add('tall'); loadBgVids();
       // 노엘 대사는 말풍선 없는 글자, 내 답만 말풍선 (2026-11-22 확정)
       panel.innerHTML = `<div class="chat plain" id="chat"></div><div id="ask"></div>`;
       runChat();
     },
     // 3. 로딩 (변신 직전)
+    // (2026-11-25 v6) 공개 시퀀스: 대사마다 샷이 바뀌고(r1~r3), 대사가 끝나면 날개(r4) → 달빛(r5) → 1막. 화면을 누르면 건너뜀
     6() {
-      setBg('loading');
+      setBg(REV[REV_LINE[0]]);
       panel.innerHTML = `<div class="fade"><div class="speaker">노엘</div><p class="line" id="ln"></p></div>
         <div class="box fade"><div class="key"><b></b></div><p class="sub">${fill(LOADING_SUB, { 이름: esc(S.name) })}</p></div>`;
+      let done = false;
+      const go = () => { if (done || S.step !== 6) return; done = true; root.removeEventListener('click', skip); next(7); };
+      const skip = () => go();
+      root.addEventListener('click', skip);
+      cleanups.push(() => root.removeEventListener('click', skip));
       (async () => {
-        for (const [t, w] of LOADING) {
-          if (S.step !== 6 || !alive) return;
+        for (const [i, [t, w]] of LOADING.entries()) {
+          if (S.step !== 6 || !alive || done) return;
+          setBg(REV[REV_LINE[i] || 'r3']);
           await type(ln(), t, 45); await wait(w);
         }
-        if (S.step === 6) next(7);
+        if (S.step !== 6 || done) return;
+        panel.innerHTML = '';
+        setBg(REV.r4); sound.play('whoosh'); await wait(2600);
+        if (S.step !== 6 || done) return;
+        setBg(REV.r5); sound.play('sparkle'); await wait(1800);
+        go();
       })();
     },
     // 4. 1막 (세로 웹툰 스크롤) + 결제 CTA
     7() {
-      calc(); logo.style.opacity = '0'; panel.innerHTML = ''; setBg('book');
+      calc(); logo.style.opacity = '0'; panel.innerHTML = ''; setBg(REV.r5); // 1막 뒤 배경 = 달빛의 천사
       try { sessionStorage.setItem('door:input', JSON.stringify(saved())); } catch { /* 저장 못 해도 진행 */ }
       track('act1_view', { result: S.R.dec.A ? 'A' : 'B', status: S.status });
       const R = S.R, P = R.P, nm = esc(S.name), IN = introLines();
@@ -338,20 +412,22 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         ? { 장소: first(where, 1), '그 사람의 속마음': first(PF.mind) }
         : { 인상: first(PF.look), '만나는 곳': first(where, 1), '그 사람의 첫마디': '"혹시' };
       const REST = V2.rest[R.dec.A ? (S.status || 'solo') : 'later'] || V2.rest.solo;
-
+      // 장면 컷: ACT_IMG에 그림이 있으면 컷, 없으면 빈 배열(대사만). 영상이 준비된 장면은 영상 컷
+      const cut = (key: string, p: Omit<Extract<Beat, { t: 'panel' }>, 't' | 'img' | 'vid'>): Beat[] =>
+        ACT_IMG[key] ? [{ t: 'panel', img: ACT_IMG[key], vid: ACT_VID[key], ...p }] : [];
       // ---- 1막 콘티 (2026-11-24 v2 확정): 알아봐 줄게 → 올해 수고했어 → 남은 날들 → 노엘의 편지 ----
       // 결제 버튼 2곳 + 하단 바. 흔들리는 노엘은 문패·눈맞춤/열쇠 두 번만.
       const beats: Beat[] = [
         // ① 알아봐 줄게
 
         { t: 'space', h: 40, bg: '#07070b' },
-        { t: 'panel', img: 'angel', ratio: 9 / 15, focus: '50% 30%', bg: '#14121c', flash: true, items: [
+        ...cut('angel', { ratio: 9 / 15, focus: '50% 30%', bg: '#14121c', flash: true, loop: true, items: [
           { k: 'sfx', text: ACT1.reveal.sfxBig, x: 'l', y: 6, size: 80 },
           { k: 'sfx', text: ACT1.reveal.sfxSmall, x: 'r', y: 38, size: 40 },
           { k: 'say', text: ACT1.reveal.who, x: 'l', y: 62 },
-          { k: 'say', text: ACT1.reveal.gift, x: 'r', y: 84 }] },
-        { t: 'panel', img: 'book_w', ratio: 1, focus: '50% 36%', items: [
-          { k: 'say', text: ACT1.book[0], x: 'l', y: 8 }, { k: 'say', text: fill(ACT1.book[1], { 이름: nm }), x: 'r', y: 90 }] },
+          { k: 'say', text: ACT1.reveal.gift, x: 'r', y: 84 }] }),
+        ...cut('book', { ratio: 1, focus: '50% 36%', items: [
+          { k: 'say', text: ACT1.book[0], x: 'l', y: 8 }, { k: 'say', text: fill(ACT1.book[1], { 이름: nm }), x: 'r', y: 90 }] }),
         { t: 'space', h: 40 },
         say(`${IN.date}<br>${IN.born}`, 'l'),
         ...(IN.tz ? [say(IN.tz, 'r')] : []),
@@ -361,23 +437,27 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         // 타고난 너(핵심 특징) → 연애할 때의 너(연애 유형). 둘 다 같은 특징에서 이어진다
         say(ACT1.oneLine[0], 'l'), say(ACT1.oneLine[1], 'r', 'l'),
         { t: 'html', html: plate, bg: '#1a1622' },
+        // (카드를 내려놓으며) → 턱 괴고 오래 봄 → …애써 왔네 → (의자를 당김) → 가까운 얘기
         say(SHAKE.plate[0], 'l'),
-        { t: 'panel', img: 'noel_flustered', ratio: 4 / 5, focus: '50% 30%', enter: 'blur', items: [] },
-        say(SHAKE.plate[1], 'r', 'l'), say(SHAKE.plate[2], 'l'),
+        ...cut('plateGaze', { ratio: 4 / 5, focus: '50% 30%', enter: 'blur', items: [] }),
+        say(SHAKE.plate[1], 'r', 'l'), say(SHAKE.plate[2], 'l'), say(SHAKE.plate[3], 'r'),
         { t: 'space', h: 30 },
         say(V2.loveLead, 'c'),
         { t: 'html', html: verdictHtml(R, nm, S.status), bg: '#160f16' },
         // ② 올해 수고했어
         { t: 'space', h: 40 },
         chapter('年', '너의 올해', '#11131f'),
-        { t: 'panel', img: 'closed', ratio: 1, focus: '50% 50%', items: [
-          { k: 'say', text: ACT1.yearPanel[0], x: 'r', y: 12 }, { k: 'say', text: ACT1.yearPanel[1], x: 'l', y: 82 }] },
+        ...cut('yearPage', { ratio: 1, focus: '50% 50%', items: [
+          { k: 'say', text: ACT1.yearPanel[0], x: 'r', y: 12 }, { k: 'say', text: ACT1.yearPanel[1], x: 'l', y: 82 }] }),
         { t: 'html', html: story },
-        say(V2.yearComfort[0], 'l'), say(V2.yearComfort[1], 'r'), say(fill(V2.yearComfort[2], { 이름: nm }), 'c', 'l'),
+        // (끝까지 읽고) → …버거웠겠다 → [등 뒤에서 귓가로] → 수고했어
+        say(V2.yearComfort[0], 'l'), say(V2.yearComfort[1], 'r'), say(V2.yearComfort[2], 'l'),
+        ...cut(you ? 'comfortF' : 'comfort', { ratio: 4 / 5, focus: '50% 35%', enter: 'blur', items: [] }),
+        say(fill(V2.yearComfort[3], { 이름: nm }), 'c', 'l'),
         // ③ 남은 날들 (문 열리는 날은 잠김)
         { t: 'space', h: 60, bg: '#0c0b10' },
         chapter('日', V2.restTitle, '#1a0f12'),
-        { t: 'panel', img: 'last_w', ratio: 9 / 14, focus: '45% 35%', items: [{ k: 'say', text: V2.restHead[0], x: 'l', y: 74 }] },
+        ...cut('restWindow', { ratio: 9 / 14, focus: '45% 35%', items: [{ k: 'say', text: V2.restHead[0], x: 'l', y: 74 }] }),
         say(REST.head, 'c', 'l'),
         { t: 'html', html: calendarHtml(R, true) },
         // 대화에서 고른 '제일 궁금한 것'을 받아준다
@@ -389,17 +469,20 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         { t: 'html', html: tocTitlesHtml(TOC.chapters, V2.tocKicker, ctx, esc(S.worry)) },
         { t: 'space', h: 30 },
         { t: 'space', h: 40 },
-        say(V2.letterHead[0], 'l'), say(V2.letterHead[1], 'r', 'l'),
+        // "그리고 이건…" → [재킷에서 편지를 꺼내 쥐여 줌] → "너한테 쓴 편지야."
+        say(V2.letterHead[0], 'l'),
+        ...cut('letter', { ratio: 4 / 5, focus: '50% 40%', enter: 'blur', items: [] }),
+        say(V2.letterHead[1], 'r', 'l'),
         { t: 'html', html: letterHtml({ nm, status: S.status, together, faceImg: face, image: R.image, worry: esc(S.worry), peek }) },
         say(SHAKE.eyes, 'c'),
-        you
-          ? { t: 'panel', img: 'two_chin_f', ratio: 9 / 13, focus: '55% 25%', enter: 'blur', items: [] }
-          : { t: 'panel', img: 'chatv8', ratio: 16 / 10, focus: '50% 27%', zoom: 1.05, enter: 'blur', items: [] },
+        ...(you ? cut('eyesF', { ratio: 9 / 13, focus: '55% 25%', enter: 'blur', items: [] })
+          : cut('eyes', { ratio: 16 / 10, focus: '50% 27%', zoom: 1.05, enter: 'blur', items: [] })),
         { t: 'tap', label: SHAKE.keyTap, beats: [
-          { t: 'panel', img: 'lock_w', ratio: 1, focus: '50% 45%', flash: true, items: [] },
+          ...cut('key', { ratio: 1, focus: '50% 45%', flash: true, items: [] }),
           say(SHAKE.keyLines[0], 'c', 'l'),
-          ...(you ? [{ t: 'panel', img: 'two_near_f', ratio: 4 / 5, focus: '55% 28%', enter: 'iris', items: [] } as Beat] : []),
-          say(SHAKE.keyLines[1], 'r'),
+          say(SHAKE.keyLines[1], 'l'),
+          ...(you ? cut('earF', { ratio: 4 / 5, focus: '55% 28%', enter: 'iris', items: [] }) : []),
+          say(SHAKE.keyLines[2], 'r'),
           buy('key', V2.buyKey),
           { t: 'html', html: `<ul class="pay-note rv">${V2.payNote.map(t => `<li>${t}</li>`).join('')}</ul><p class="pay-notice rv">${PAY_NOTICE}</p>` },
           { t: 'html', html: `<button class="btn ghost rv" id="share" type="button">${ACT1.shareButton}</button><p class="note" id="nt" role="status"></p>` },
@@ -411,7 +494,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
       const t = document.createElement('div'); t.className = 'toon strip'; t.id = 'toon';
       // [구매 포인트 12] 하단 고정 결제 바: 판결 이후 계속 보인다. 진짜 마감(크리스마스)만 표시
       t.innerHTML = renderStrip(beats, '#07070b')
-        + `<div class="ctabar" id="cta"><div class="bar"><span class="ava" style="background-image:url(/img/s0.jpg)"></span>
+        + `<div class="ctabar" id="cta"><div class="bar"><span class="ava" style="background-image:url(/img/noel_ava.jpg)"></span>
             <div class="dl"><b>${deadline()}</b><small>${DEADLINE.sub}</small></div>
             <button class="btn" id="pay" type="button" data-buy="bar">${fill(DEADLINE.button, { 가격: priceText() })}</button></div></div>`;
       root.appendChild(t);
@@ -568,6 +651,20 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
       apply: (r: any) => { S.wk = r.v; S.worry = r.v === 'none' ? '' : r.show; },
       echo: (r: any) => r.show + '.',
       react: (r: any) => r.v === 'none' ? Q.worryNone : [unq(WORRY[r.v]?.after || '') || '그 얘기, 문 너머에서 같이 보자.'] },
+    // 8. 이메일 (선택, 건너뛰기 가능)
+    { say: () => Q.email,
+      html: () => `<label class="say-in"><span>${Q.emailPrefix}</span><input id="em" type="email" inputmode="email" autocomplete="email" maxlength="80" placeholder="${Q.emailPlaceholder}" value="${esc(S.email)}"></label>
+        <label class="check"><input type="checkbox" id="eo" ${S.eveOptin ? 'checked' : ''}> ${Q.emailOptin}</label>
+        <p class="note">${Q.emailNote}</p>
+        <button class="btn" type="submit">${Q.emailButton}</button>
+        <button class="btn ghost" type="button" data-v="skip" data-show="${Q.emailSkipEcho}">${Q.emailSkip}</button>`,
+      parse: (f: HTMLElement) => {
+        const email = f.querySelector<HTMLInputElement>('#em')!.value.trim();
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? { email, optin: f.querySelector<HTMLInputElement>('#eo')!.checked } : Q.emailError;
+      },
+      apply: (r: any) => { if (r.v === 'skip') { S.email = ''; S.eveOptin = false; } else { S.email = r.email; S.eveOptin = r.optin; } },
+      echo: (r: any) => r.v === 'skip' ? Q.emailSkipEcho : fill(Q.emailEcho, { 이메일: r.email }),
+      react: (r: any) => r.v === 'skip' ? Q.emailSkipReact : Q.emailReact },
   ];
 
   let chatRun = 0;
@@ -576,6 +673,17 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   let heartHinted = false;
   try { heartHinted = localStorage.getItem('door:hearthint') === '1'; } catch { /* 무시 */ }
   function runChat() { ANS.length = 0; hearts.clear(); goQ(0); }
+  // 이 대사가 나오는 순간 배경 장면을 바꾼다 (자리 채움 {이름} 없는 줄만 — 채운 뒤에도 글자가 같아야 하므로)
+  const LINE_SCENE = new Map<string, string>([
+    [Q.nameReact[1], 'c2'],                    // (입속으로 한 번 더 불러보고)
+    [Q.nameChoices[1].reply[0], 'c3'],         // (몸을 조금 기울이고, 낮게)
+    [Q.birthReact[0], 'c5'],                   // (책장을 넘기다 멈추고)
+    [Q.birthReactNoTime[0], 'c5'],
+    [Q.statusReact.solo[0], 'c7'],             // (아주 잠깐 웃었다가, 표정을 지우며) — 혼자일 때만
+    [Q.statusTail[0], 'c6'],                   // 나도 하나 말해줄까… (웃음 컷에서 돌아옴)
+    [Q.statusTail[1], 'c8'],                   // (맞은편에서 일어나, 네 옆 의자로 옮겨 앉는다)
+    [Q.done[0], 'c9'],                         // (책을 덮고, 너를 똑바로 본다)
+  ]);
   function goQ(i: number) {
     const my = ++chatRun; clearInterval(typing);
     const chat = $('chat'), ask = $('ask');
@@ -591,6 +699,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
       p.addEventListener('click', () => { if (j >= 0) goQ(j); }); chat.append(p); return p;
     };
     const say = async (t: string) => {
+      const sc = LINE_SCENE.get(t); if (sc) setBg(SCENE_IMG[sc]);
       if (isDir(t)) { const p = bubble(t); p.classList.add('rise'); down(); await wait(650); return; }
       const dots = document.createElement('p'); dots.className = 'msg g dots'; dots.innerHTML = '<i></i><i></i><i></i>'; chat.append(dots); down();
       await wait(Math.min(900, 300 + t.length * 18));

@@ -57,9 +57,18 @@ img { max-width: 100%; }
 /* 들어가는 순간 (A안, 정지 이미지 연출): 문 너머 장면으로 천천히 다가감 → 금빛으로 번짐 → 아래 깔린 대화 1번 배경이 드러남 */
 .enter-seq { position: absolute; inset: 0; z-index: 20; overflow: hidden; background: #05070f; cursor: pointer; opacity: 0; transition: opacity .6s ease; }
 .enter-seq.on { opacity: 1; }
-.enter-seq img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 45%;
-  transform-origin: 70% 56%; transform: scale(1); }
+.enter-seq img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%;
+  transform-origin: 54% 62%; transform: scale(1); }
 .enter-seq.on img { transform: scale(1.32); transition: transform 3.6s cubic-bezier(.45,0,.25,1); }
+.enter-seq video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; opacity: 0; transition: opacity .4s ease; }
+/* 영상이 재생되면: 정지 이미지 확대 대신 영상 + 아주 느린 밀기(자연스럽게) */
+.enter-seq.vid video { opacity: 1; } /* 1인칭으로 걸어 들어가는 영상이라 CSS 밀기 없음 */
+.enter-seq .enter-cap { position: absolute; left: 0; right: 0; bottom: 18%; margin: 0; padding: 0 28px; text-align: center; z-index: 2;
+  font-family: var(--f-cap); font-size: 15px; color: rgba(255,246,228,.92); text-shadow: 0 2px 12px rgba(0,0,0,.8);
+  opacity: 0; animation: enterCap 3.4s ease .6s both; pointer-events: none; }
+@keyframes enterCap { 0% { opacity: 0; transform: translateY(6px); } 25%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+.enter-seq.vid img { transform: none; transition: none; }
+@keyframes enterPush { from { transform: scale(1); } to { transform: scale(1.08); } }
 .enter-seq .flood { position: absolute; inset: 0; pointer-events: none; opacity: 0;
   background: radial-gradient(60% 45% at 62% 50%, #fff8e8 0%, #ffe2a8 45%, rgba(255,214,150,.0) 100%); transition: opacity .9s ease-in; }
 .enter-seq.glow .flood { opacity: .95; }
@@ -266,6 +275,10 @@ input[type=date], input[type=time] { color-scheme: dark; min-height: 50px; }
 .cut .art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   transform: translateY(calc(var(--p, 0) * -1.5%)) scale(calc(var(--z, 1) * (1.03 - var(--p, 0) * .01))); will-change: transform;
   filter: contrast(1.05) saturate(1.08); }
+/* 영상 컷: 정지 컷(img) 위에 겹쳐 두고 재생되면 페이드인. 실패하면 투명한 채로 남아 정지 컷이 보인다 */
+.cut .art video.cutvid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease;
+  transform: translateY(calc(var(--p, 0) * -1.5%)) scale(calc(var(--z, 1) * (1.03 - var(--p, 0) * .01))); filter: contrast(1.05) saturate(1.08); }
+.cut .art video.cutvid.on { opacity: 1; }
 .cut:not(.in) .art { opacity: 0; }
 .cut.in[data-enter="zoom"] .art { animation: e-zoom .9s cubic-bezier(.2,.8,.2,1) both; }
 .cut.in[data-enter="left"] .art { animation: e-left .8s cubic-bezier(.2,.8,.2,1) both; }

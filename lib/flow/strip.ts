@@ -16,7 +16,9 @@ export type Fx = { snow?: number; glow?: number[]; fe?: number[][]; shake?: numb
 export type Beat =
   | { t: 'space'; h: number; bg?: string }
   | { t: 'cap'; text: string; voice: 'noel' | 'narrator' | 'say'; align?: 'l' | 'c' | 'r'; size?: 'l'; small?: string; bg?: string }
-  | { t: 'panel'; img?: string; fill?: string; ratio: number; focus?: string; zoom?: number; tight?: boolean; flash?: boolean; scene?: 'light-feather'; enter?: 'zoom' | 'left' | 'right' | 'blur' | 'iris' | 'pop'; fx?: Fx; items?: Item[]; bg?: string }
+  // vid: public/vid/{vid}.mp4. img를 포스터로 깔고, 컷이 화면에 들어오면 1번 재생 → 마지막 프레임에서 멈춤(loop면 반복).
+  //      재생 실패·모션 줄이기·저전력 모드면 img만 보인다.
+  | { t: 'panel'; img?: string; vid?: string; loop?: boolean; fill?: string; ratio: number; focus?: string; zoom?: number; tight?: boolean; flash?: boolean; scene?: 'light-feather'; enter?: 'zoom' | 'left' | 'right' | 'blur' | 'iris' | 'pop'; fx?: Fx; items?: Item[]; bg?: string }
   | { t: 'html'; html: string; bg?: string; id?: string }
   // 탭해서 넘기는 장면: 버튼(행동 지문)을 눌러야 뒤 장면이 열린다
   | { t: 'tap'; label: string; beats: Beat[]; bg?: string };
@@ -78,7 +80,9 @@ export function renderStrip(beats: Beat[], start = '#0b0a10'): string {
     const fx = b.fx || {};
     const focus = b.focus || '50% 40%';
     const art = b.scene ? `<div class="art scene ${b.scene}">${SCENES[b.scene]}</div>` : b.img
-      ? `<div class="art"><img src="/img/${b.img}.jpg" alt="" loading="lazy" style="object-position:${focus};transform-origin:${focus};--z:${b.zoom || 1}"></div>`
+      ? `<div class="art"><img src="/img/${b.img}.jpg" alt="" loading="lazy" style="object-position:${focus};transform-origin:${focus};--z:${b.zoom || 1}">${b.vid
+        // Safari 음소거 자동재생: muted/playsinline 속성을 src보다 먼저. src는 화면 근처에 오면 넣는다(data-src)
+        ? `<video class="cutvid" muted playsinline webkit-playsinline preload="none"${b.loop ? ' loop' : ''} data-src="/vid/${b.vid}.mp4" style="object-position:${focus};transform-origin:${focus};--z:${b.zoom || 1}"></video>` : ''}</div>`
       : `<div class="art" style="background:${b.fill || cur}"></div>`;
     const enter = b.enter || (b.tight ? 'pop' : ENTRANCES[entr++ % ENTRANCES.length]);
     return `<figure class="cut${b.tight ? ' tight' : ''}${fx.shake ? ' shake' : ''}${b.flash ? ' flash' : ''}" data-enter="${enter}" style="--r:${b.ratio};${ground}">
@@ -97,10 +101,25 @@ export type StripHooks = { onTap?: () => void; onReveal?: (el: Element) => void 
 export function attachStrip(scroller: HTMLElement, hooks: StripHooks = {}) {
   const { onTap, onReveal } = hooks;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 영상 컷: 화면 근처(아래 600px)에 오면 받기 시작, 컷이 보이면 재생. 재생되면 .on으로 포스터 위에 페이드인
+  const playVid = (cut: Element) => {
+    const v = cut.querySelector<HTMLVideoElement>('video.cutvid');
+    if (!v || reduce) return;
+    if (!v.src) v.src = v.dataset.src!;
+    v.muted = true;
+    v.play().then(() => v.classList.add('on')).catch(() => { /* 자동재생 막힘 → 정지 컷 유지 */ });
+  };
+  const pre = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const v = e.target.querySelector<HTMLVideoElement>('video.cutvid');
+    if (v && !v.src && !reduce) { v.preload = 'auto'; v.src = v.dataset.src!; }
+    pre.unobserve(e.target);
+  }), { root: scroller, rootMargin: '0px 0px 600px 0px' });
   const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); onReveal?.(e.target); }
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); onReveal?.(e.target); playVid(e.target); }
   }), { root: scroller, threshold: .35, rootMargin: '0px 0px -8% 0px' });
   scroller.querySelectorAll('.rv, .cut').forEach(el => io.observe(el));
+  scroller.querySelectorAll('.cut').forEach(el => { if (el.querySelector('video.cutvid')) pre.observe(el); });
 
   const cuts = [...scroller.querySelectorAll<HTMLElement>('.cut')];
   let raf = 0;
@@ -124,5 +143,6 @@ export function attachStrip(scroller: HTMLElement, hooks: StripHooks = {}) {
     requestAnimationFrame(() => { tick(); box.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
   };
   scroller.addEventListener('click', taps);
-  return () => { scroller.removeEventListener('click', taps); io.disconnect(); scroller.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  return () => { scroller.removeEventListener('click', taps); io.disconnect(); pre.disconnect();
+    scroller.querySelectorAll<HTMLVideoElement>('video.cutvid').forEach(v => v.pause()); scroller.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
 }
