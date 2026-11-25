@@ -1,6 +1,8 @@
 // 1막 구매 포인트 계산·그리기. 숫자는 전부 엔진 결과에서 나온다(지어낸 숫자 없음).
 import { monthFlow, type Chart } from '@/lib/saju';
-import { PARTNER } from '@/content/reading';
+import { CORE, HEARD, HEARD_LOVE, PARTNER, SAL, TXT } from '@/content/reading';
+import { FREQ } from '@/content/freq';
+import { FREQX } from '@/content/freq-extra';
 import { BLUR_DUMMY, CALENDAR, DEADLINE, V2, VERDICT } from '@/content/act1';
 import { chapters } from '@/content/act2';
 import { KKUMIM } from '@/content/pricing';
@@ -9,7 +11,7 @@ import { bizLines, LEGAL_LINKS } from '@/content/legal';
 const fill = (t: string, v: Record<string, string | number>) => Object.entries(v).reduce((s, [k, x]) => s.split(`{${k}}`).join(String(x)), t);
 
 /** 연애 유형 카드 (2026-11-24): 게이지 대신 유형별 상세 4칸 */
-export function verdictType(c: Pick<Chart, 'A'>) { return VERDICT.types[c.A.loveState] || VERDICT.types.clean; }
+export function verdictType(c: Pick<Chart, 'love'>) { return VERDICT.types[c.love] || VERDICT.types.clean; }
 export function verdictHtml(c: Chart, nm: string, status: string) {
   const T = verdictType(c), H = VERDICT.heads;
   const together = status === 'partner' || status === 'married', grp = together ? 'together' : status;
@@ -21,6 +23,49 @@ export function verdictHtml(c: Chart, nm: string, status: string) {
     ${sec(H.start, T.start)}${sec(H.dating, T.dating)}${sec(H.now, VERDICT.now[status] || VERDICT.now.solo, ' now')}${sec(H.hurt, together ? T.hurtT : T.hurt)}${sec(H.tip, (grp !== 'solo' && T.tips[grp]) || T.tip, ' tip')}
     <p class="fine">${VERDICT.note}</p>
   </section>`;
+}
+
+/** 타고난 핵심 (2026-11-25): 1막 화면과 2막 사실 묶음이 반드시 같은 함수를 쓴다.
+ *  핵심 특징 = 오행 넘침/없음·연애 판정 중 가장 드문 것(25% 이하). 없으면 신살 조합(2개 이상, 25% 이하), 그것도 없으면 일간. */
+export type Core = { kind: 'heavy' | 'miss' | 'love' | 'sal'; i: number; p: number };
+export function innate(c: Chart, male: boolean, queer: boolean) {
+  const { P, A } = c, dG = P.D.g, T = TXT, E = T.elName as string[];
+  const fk = (P.H ? 'H' : 'N') + (queer ? 'q' : male ? 'm' : 'f'), F = FREQ[fk], FX = FREQX[fk];
+  const cands: Core[] = [];
+  A.el.forEach((n, i) => {
+    if (n === 0) cands.push({ p: F['miss' + i], kind: 'miss', i });
+    if (n >= (P.H ? 4 : 3)) cands.push({ p: F['heavy' + i], kind: 'heavy', i });
+  });
+  if (c.love !== 'clean') cands.push({ p: (c.love === 'none' || c.love === 'hidden' ? FX : F)['love_' + c.love], kind: 'love', i: -1 });
+  let core: Core | null = cands.filter(x => x.p && x.p <= 25).sort((a, b) => a.p - b.p)[0] || null;
+  if (!core && c.sal.length >= 2) {
+    // 이 조합을 '포함하는' 사람 비율 (정확히 같은 조합만 세면 과소평가)
+    const p = Object.entries(FX).filter(([k]) => k.startsWith('sal:') && c.sal.every(s => k.slice(4).split('+').includes(s))).reduce((a, [, v]) => a + v, 0);
+    if (p <= 25) core = { kind: 'sal', i: -1, p };
+  }
+  const el = core && (core.kind === 'heavy' || core.kind === 'miss') ? core : null;
+  const salNames = c.sal.map(s => SAL.items[s].name);
+  const fact = !core ? '' : core.kind === 'miss' ? `여덟 글자 중에 ${E[core.i]} 기운이 하나도 없어.`
+    : core.kind === 'heavy' ? `${E[core.i]} 기운이 ${A.el[core.i]}개나 몰려 있어.`
+    : core.kind === 'sal' ? `${salNames.join(salNames.length === 2 ? '과 ' : ', ')}이 같이 있어.`
+    : ({ none: '인연 기운이 겉에도, 땅속 글자에도 잘 안 보여.', hidden: '인연 기운이 겉에는 없고, 깊숙이 숨어 있어.', many: '인연 기운이 여러 겹으로 깔려 있어.', mixed: '끌리는 기운이 두 갈래로 갈라져 있어.', sharp: '좋아하는 마음과 날 선 말이 한 사주에 같이 있어.' } as Record<string, string>)[c.love];
+  const h = HEARD[dG];
+  const loveH = HEARD_LOVE[c.love] || (A.el[1] === 0 ? HEARD_LOVE.fire0 : A.el[1] >= (P.H ? 4 : 3) ? HEARD_LOVE.fire4 : h[1]);
+  const hd = el ? CORE.heard[el.kind as 'heavy' | 'miss'][el.i] : [h[0], h[2]];
+  const ls = queer && (c.love === 'none' || c.love === 'hidden') ? c.love + 'Q' : male && ['none', 'hidden', 'mixed'].includes(c.love) ? c.love + 'M' : c.love;
+  const bridge = el?.kind === 'heavy' && (c.love === 'none' || c.love === 'hidden') ? CORE.bridge.replace('{기운}', E[el.i])
+    : el?.kind === 'miss' && c.love === 'clean' && CORE.bridgeClean[el.i] ? CORE.bridgeClean[el.i] : '';
+  return {
+    core, fact,
+    image: el ? CORE.img[el.kind as 'heavy' | 'miss'][el.i] : T.img[dG] as string,
+    mean: el ? (el.kind === 'heavy' ? T.heavy : T.missing)[el.i] as string
+      : core?.kind === 'love' ? CORE.loveMean[c.love] : core?.kind === 'sal' ? SAL.items[c.sal[0]].mean : T.trait[dG] as string,
+    more: el ? CORE.more[el.kind as 'heavy' | 'miss'][el.i] : '',
+    heard: { p: hd[0], l: loveH, inner: hd[1] },
+    // 연애 한 줄: 연결 문장 + (핵심이 연애 판정이 아니면) 판정 문장 + 원국 합·충. 연애 상태 장면은 화면이 붙인다
+    love: [bridge, core?.kind === 'love' ? '' : T.loveState[ls], A.natal ? T.natal[A.natal] : ''].filter(Boolean).join(' '),
+    sal: c.sal.map(s => SAL.items[s]),
+  };
 }
 
 /** 크리스마스 마감: 진짜 날짜만 쓴다 (KST 기준) */

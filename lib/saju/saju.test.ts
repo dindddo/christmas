@@ -54,3 +54,25 @@ describe('monthPillar', () => {
     expect(monthPillar(2026, 12)).toEqual({ g: 6, j: 0 }); // 2026-12 경자
   });
 });
+
+// (2026-11-25) 화면·2막용 판정: 지장간 연애 기운(hidden), 원국 신살, 12월 strong
+describe('loveView · sinsal · december.strong', () => {
+  it('1989-03-18 13:00 여자: 丑 속 癸水 → hidden, 연지 巳 기준 도화 午·화개 丑, best 5점 → strong', () => {
+    const c = computeChart({ y: 1989, m: 3, d: 18, time: '13:00', sex: '여자', orient: 'hetero' });
+    expect(c.A.loveState).toBe('none'); // 시안 정답지 값은 그대로
+    expect(c.love).toBe('hidden');
+    expect(c.sal).toEqual(['도화', '화개']);
+    expect(c.dec.best.s).toBe(5);
+    expect(c.dec.strong).toBe(true);
+  });
+  it('남자는 재성(금)을 보므로 같은 사주라도 판정이 다를 수 있다', () => {
+    const c = computeChart({ y: 1989, m: 3, d: 18, time: '13:00', sex: '남자', orient: 'hetero' });
+    expect(c.love).toBe('hidden'); // 巳 속 庚金
+  });
+  it('strong은 best 점수 5 이상과 같다', () => {
+    for (const [y, m, d] of [[1990, 1, 1], [1995, 7, 2], [2001, 11, 30]]) {
+      const c = computeChart({ y, m, d, time: '09:00', sex: '여자', orient: 'hetero' });
+      expect(c.dec.strong).toBe(c.dec.best.s >= 5);
+    }
+  });
+});

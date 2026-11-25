@@ -39,7 +39,7 @@ describe('문구 절대 규칙', () => {
     expect(all(KKUMIM)).not.toMatch(/\p{Extended_Pictographic}/u);
   });
   it('1막 풀이 문구(2026·핵심 특징·장면)에 확인형 말투("~잖아", "~지?")가 없다', () => {
-    const txt = all([VERDICT, reading.GAN_DETAIL, reading.CORE.more, reading.TXT.year, reading.TXT.scene, reading.TXT.story, reading.YEAR26, reading.CORE.loveMean, reading.CORE.heard.heavy.map(x => x[1]), reading.CORE.heard.miss.map(x => x[1])]);
+    const txt = all([VERDICT, reading.SAL, reading.CORE.bridgeClean, reading.GAN_DETAIL, reading.CORE.more, reading.TXT.year, reading.TXT.scene, reading.TXT.story, reading.YEAR26, reading.CORE.loveMean, reading.CORE.heard.heavy.map(x => x[1]), reading.CORE.heard.miss.map(x => x[1])]);
     expect(txt).not.toMatch(/잖아|[했었였갔왔봤겠맞]지\?/);
   });
 });

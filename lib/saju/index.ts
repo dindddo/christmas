@@ -1,5 +1,5 @@
 // 입력 하나로 원국 + 분석 + 올해/12월 + 운명의 상대 기운까지 한 번에 계산한다. (시안 calc()의 계산 부분)
-import { analyze, december, doors, elG, fam, god, GAN_K, JI_K, JI_MAIN, HAP, pillars, type Pillars } from './core';
+import { analyze, december, doors, elG, fam, god, GAN_K, JI_K, JI_MAIN, HAP, loveView, pillars, sinsal, type Pillars } from './core';
 import { sijin, toKST, toMin, type KST } from './calendar';
 
 export * from './core';
@@ -18,6 +18,8 @@ export function computeChart(input: BirthInput) {
   const A = analyze(P, male, queer);
   return {
     kst, sijin: sj, P, A,
+    love: loveView(P, A, male, queer), // 화면·2막용 연애 판정 (hidden 포함)
+    sal: sinsal(P),
     ilju: GAN_K[P.D.g] + JI_K[P.D.j],
     doors: doors(P, male, queer),
     dec: december(P, male, queer),

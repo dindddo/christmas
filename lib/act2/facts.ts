@@ -1,10 +1,10 @@
 // 2막 생성용 '사실 묶음'. 1막 화면이 쓴 계산을 그대로 재사용해서, 2막 본문이 1막과 어긋나지 않게 한다.
 // 서버 전용(Claude 프롬프트에 들어감). 성적 지향은 '상대 성별'로만 바꿔 넣고 따로 저장하지 않는다.
 import { computeChart, elG, fam, god, GAN_K, JI_K, JI_MAIN, monthFlow, sunSign, type Pillar } from '@/lib/saju';
-import { PARTNER, TXT } from '@/content/reading';
+import { PARTNER, TXT, YEAR26 } from '@/content/reading';
 import { VERDICT } from '@/content/act1';
 import { chapters } from '@/content/act2';
-import { promiseCtx } from '@/lib/flow/teaser';
+import { innate, promiseCtx } from '@/lib/flow/teaser';
 import type { SavedInput } from '@/lib/flow/flow';
 
 const WD = '일월화수목금토';
@@ -33,7 +33,8 @@ export function buildFacts(s: SavedInput) {
   const where = (together ? TXT.whereP : (TXT.where[s.job] || TXT.where.rest))[seed % 4];
   const sign = sunSign(s.m, s.d);
   const PF = PARTNER[c.partnerEl];
-  const verdict = VERDICT.types[A.loveState] || VERDICT.types.clean;
+  const verdict = VERDICT.types[c.love] || VERDICT.types.clean;
+  const IN = innate(c, male, queer); // 1막 화면과 같은 함수 → 핵심 특징·이미지·연애 문장이 같다
   const k = seed % 2;
   const ctx = promiseCtx(c, sign, male, queer);
   const TYPE_KO: Record<string, string> = { knock: '다가오는 사람', half: '거의 닿는 인연', slam: '크게 정리하는 일', key: '시선이 몰림', wrong: '말이 앞서는 일', off: '엇갈림' };
@@ -59,19 +60,27 @@ export function buildFacts(s: SavedInput) {
     strength: A.strength,
     gyeok: A.gyeok,
     loveFamily: male && !queer ? '재성(여성 인연)' : !male && !queer ? '관성(남성 인연)' : '관성·재성 모두',
-    loveState: A.loveState,
+    loveState: `${c.love} (none=겉·지장간 모두 없음, hidden=겉엔 없고 지장간에 숨어 있음)`,
+    sinsal: IN.sal.map(x => x.name).join(', ') || '없음',
     natal: A.natal || '없음',
     dayBranchGod: fam(god(dG, JI_MAIN[P.D.j])),
     zodiac: `${sign}자리`,
     // 1막에서 이미 보여준 것 (2막은 이것과 모순되면 안 됨)
     shown: {
-      image: `${TXT.season(P.M.j)} ${TXT.img[dG]}`,
+      image: IN.image,
+      coreFact: IN.fact || '(드문 특징 없음 → 일간 기질 중심)',
+      coreMeaning: IN.mean,
+      heard: `주변에서 듣는 말 "${IN.heard.p}" / "${IN.heard.l}" → ${IN.heard.inner}`,
+      sinsal: IN.sal.map(x => `${x.name}: ${x.line}`).join(' / ') || '없음',
       verdict: `${verdict.name} — ${verdict.desc} / 마음이 움직일 때: ${verdict.start} / 서운할 때: ${verdict.hurt}`,
-      year: c.doors.length
-        ? c.doors.map(d => `${d.mo}월: ${plain((together ? TXT.story[d.type].s : TXT.story[d.type].l[k]).replace(/^\{월\}쯤?, /, ''))}`).join(' / ')
-        : '조용했던 해 (큰 사건 없음)',
+      // 1막 '너의 2026' 카드와 같은 문장 (사랑·일·마음)
+      year: [
+        `사랑: ${YEAR26.love[s.status] || YEAR26.love.solo} ${c.doors[0] ? plain((together ? TXT.story[c.doors[0].type].s : TXT.story[c.doors[0].type].l[k]).replace('{월}', `${c.doors[0].mo}월`)) : YEAR26.quiet}`,
+        s.job ? `일: ${YEAR26.workOpen[s.job]} ${YEAR26.work[fam(god(dG, 2))]}` : '',
+        `마음: ${YEAR26.mind[s.wk] || YEAR26.mind.none}`,
+      ].filter(Boolean).join(' / '),
       yearTitle: c.doors[0] ? TXT.story[c.doors[0].type].title : '조용했던 해',
-      result: dec.A ? `결과 A: 12월 ${dec.best.d}일(${WD[dec.best.wd]}) 무렵 문이 열림` : '결과 B: 올해 안에는 안 열림, 크리스마스 지나고 바로',
+      result: dec.strong ? `크리스마스 전 인연 운이 가장 강한 날: 12월 ${dec.best.d}일(${WD[dec.best.wd]}) 무렵 (연애 신호 두 개가 겹침)` : `크리스마스 전엔 큰 바람 없음. 흐름은 크리스마스 지나고 바뀜 (17일 중 그나마 나은 날은 12월 ${dec.best.d}일)`,
       meetPlace: where,
       shakeDay: dec.shake ? `12월 ${dec.shake.d}일` : '없음',
       partner: together
@@ -83,7 +92,7 @@ export function buildFacts(s: SavedInput) {
     hottestMonth2027: `${ctx.뜨거운달}월`,
     // 12월 17일 달력 (엔진 점수 그대로)
     december: dec.days.map(x => {
-      const tag = dec.A && x.d === dec.best.d ? '문 열리는 날' : dec.shake && x.d === dec.shake.d ? '흔들릴 날' : dec.passers.includes(x.d) ? '스쳐가는 사람' : x.s >= 2 ? '기운 좋음' : '평범';
+      const tag = x.d === dec.best.d ? (dec.strong ? '인연 운이 가장 강한 날' : '17일 중 가장 나은 날') : dec.shake && x.d === dec.shake.d ? '흔들릴 날' : dec.passers.includes(x.d) ? '스쳐가는 사람' : x.s >= 2 ? '기운 좋음' : '평범';
       return `12/${x.d}(${WD[x.wd]}) ${tag}`;
     }).join(', '),
     // 2막 목차 (1막에서 잠긴 채로 보여준 약속)

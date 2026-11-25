@@ -9,6 +9,9 @@ export type Fam = '비겁' | '식상' | '재성' | '관성' | '인성';
 export type DoorType = 'knock' | 'half' | 'slam' | 'key' | 'wrong' | 'off';
 export type LoveState = 'none' | 'clean' | 'mixed' | 'many' | 'sharp';
 export type Strength = '신강' | '신약' | '중화';
+// (2026-11-25) 1막·2막이 쓰는 연애 판정: none 중 지장간에 연애 기운이 숨어 있으면 hidden. 시안 정답지의 loveState는 그대로 둔다
+export type LoveView = LoveState | 'hidden';
+export type Sal = '도화' | '홍염' | '역마' | '화개';
 
 export const GAN = '甲乙丙丁戊己庚辛壬癸';
 export const GAN_K = '갑을병정무기경신임계';
@@ -58,6 +61,31 @@ export const HAP = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]; // 육합 짝
 const WON = [7, 6, 9, 8, 11, 10, 1, 0, 3, 2, 5, 4]; // 원진 짝
 const DOHWA = (j: number) => [9, 6, 3, 0][[0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1][j]]; // 신자진→유, 사유축→오, 인오술→묘, 해묘미→자
 const HONG = [6, 6, 2, 7, 4, 4, 10, 9, 0, 8]; // 일간별 홍염 지지
+// (2026-11-25) 원국 신살·지장간. 삼합 그룹: 0 신자진 · 1 사유축 · 2 인오술 · 3 해묘미
+const SAMHAP = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];
+const YEOKMA = [2, 11, 8, 5], HWAGAE = [4, 1, 10, 7], DOHWA_T = [9, 6, 3, 0];
+/** 지장간 (여기·중기·정기), 천간 번호 0갑~9계 */
+export const HIDDEN: readonly (readonly number[])[] = [[8, 9], [9, 7, 5], [4, 2, 0], [0, 1], [1, 9, 4], [4, 6, 2], [2, 5, 3], [3, 1, 5], [4, 8, 6], [6, 7], [7, 3, 4], [4, 0, 8]];
+const branches = (P: Pillars) => [P.Y.j, P.M.j, P.D.j, ...(P.H ? [P.H.j] : [])];
+
+/** 연애 판정(화면용): 겉(본기)에 연애 기운이 없어도 지장간에 숨어 있으면 'hidden' */
+export function loveView(P: Pillars, A: Pick<Analysis, 'loveState'>, male: boolean, queer: boolean): LoveView {
+  if (A.loveState !== 'none') return A.loveState;
+  const L = loveSet(male, queer);
+  return branches(P).some(j => HIDDEN[j].some(s => L.includes(fam(god(P.D.g, s))))) ? 'hidden' : 'none';
+}
+
+/** 원국에 있는 신살 (긍정적으로 풀 수 있는 4가지만). 도화·역마·화개는 연지·일지 기준 삼합, 홍염은 일간 기준 */
+export function sinsal(P: Pillars): Sal[] {
+  const js = branches(P), base = [0, 2]; // 연지·일지
+  const by = (t: number[]) => base.some(b => js.some((j, i) => i !== b && j === t[SAMHAP[js[b]]]));
+  const out: Sal[] = [];
+  if (by(DOHWA_T)) out.push('도화');
+  if (js.includes(HONG[P.D.g])) out.push('홍염');
+  if (by(YEOKMA)) out.push('역마');
+  if (by(HWAGAE)) out.push('화개');
+  return out;
+}
 // 2026 각 달 월주 (1월=기축 … 11월=기해)
 const MONTHS_2026: { mo: number; g: number; j: number }[] = ([[1, 5, 1], [2, 6, 2], [3, 7, 3], [4, 8, 4], [5, 9, 5], [6, 0, 6], [7, 1, 7], [8, 2, 8], [9, 3, 9], [10, 4, 10], [11, 5, 11]] as const)
   .map(([mo, g, j]) => ({ mo, g, j }));
@@ -136,7 +164,7 @@ export function analyze(P: Pillars, male: boolean, queer: boolean): Analysis {
 }
 
 export type DecDay = { d: number; s: number; wd: number; X: Pillar; clash: boolean };
-export type December = { A: boolean; best: DecDay; shake: DecDay | null; passers: number[]; days: DecDay[] };
+export type December = { A: boolean; strong: boolean; best: DecDay; shake: DecDay | null; passers: number[]; days: DecDay[] };
 /** 2026-12-08 ~ 12-24 일진 점수 → 결과 A(문 열림)/B, best day, shake day */
 export function december(P: Pillars, male: boolean, queer: boolean): December {
   const L = loveSet(male, queer), dG = P.D.g, dJ = P.D.j, dh = new Set([DOHWA(P.Y.j), DOHWA(dJ)]);
@@ -153,7 +181,9 @@ export function december(P: Pillars, male: boolean, queer: boolean): December {
   }
   const weekend = (x: DecDay) => (x.wd === 5 || x.wd === 6 ? 1 : 0);
   const best = [...days].sort((a, b) => b.s - a.s || (weekend(b) - weekend(a)) || b.d - a.d)[0];
-  return { A: best.s >= 3, best, shake: days.find(x => x.clash && x.d !== best.d) || null, passers: days.filter(x => x.s === 1).map(x => x.d), days };
+  // strong (2026-11-25): A(시안 정답지)는 17일이면 항상 참이 돼서(정관·정재 일진이 반드시 낌) 의미가 없다.
+  // 연애 신호 두 개가 같은 날 겹칠 때(점수 5+)만 '크리스마스 전 강한 날'로 본다 → 약 73%. 화면·2막은 strong을 쓴다
+  return { A: best.s >= 3, strong: best.s >= 5, best, shake: days.find(x => x.clash && x.d !== best.d) || null, passers: days.filter(x => x.s === 1).map(x => x.d), days };
 }
 
 /** 그 해 각 달 20일 무렵(절기 이후)의 월주. 절기 표(1959~2009) 밖의 연도용 산술 계산.
