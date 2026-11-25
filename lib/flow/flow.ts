@@ -278,7 +278,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
           ${R.more ? `<p>${R.more}</p>` : ''}
           <div class="heard"><small>${V2.heardCap}</small><q>${R.heard.p}</q><q>${R.heard.l}</q></div>
           <p class="inner">${R.heard.inner}</p>
-          <section class="ytopic"><b>${H.center}</b><p>${fill(coreEl >= 0 ? V2.centerBridge : V2.centerPlain, { 겉: R.image, 속: R.centerImg, 이야: josa(R.centerImg) })} ${R.center}</p></section>
+          <section class="ytopic"><b>${H.center}</b><p>${R.image === R.centerImg ? '' : `${fill(coreEl >= 0 ? V2.centerBridge : V2.centerPlain, { 겉: R.image, 속: R.centerImg, 이야: josa(R.centerImg) })} `}${R.center}</p></section>
           <section class="ytopic"><b>${V2.plateMore.strong}</b><p>${R.detail.strong}</p></section>
           <section class="ytopic"><b>${V2.plateMore.tired}</b><p>${R.detail.tired}</p></section>
           <section class="ytopic"><b>${V2.plateMore.hidden}</b><p>${R.detail.hidden}</p></section>
