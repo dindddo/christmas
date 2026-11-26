@@ -60,4 +60,6 @@ const chapters = [
 
 fs.mkdirSync('out', { recursive: true });
 fs.writeFileSync('out/mock1993.json', JSON.stringify({ input, facts, letter, chapters, stats: { mock: true } }, null, 2));
-console.log('저장: out/mock1993.json');
+// 검토용(운영 /act2?review=1 에서도 보임): 화면에 필요한 것만 담은 가벼운 사본. 가상 인물·손글씨 예시라 개인정보 없음
+fs.writeFileSync('data/act2-mock.json', JSON.stringify({ input, image: facts.shown.image, letter, chapters }, null, 2));
+console.log('저장: out/mock1993.json, data/act2-mock.json');

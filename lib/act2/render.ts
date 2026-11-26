@@ -34,7 +34,7 @@ export function act2Beats(v: Act2View) {
     ? [['그날', best], ['장소', where], ['그 사람의 속마음', PF.mind], ['그날 네가 해야 할 말', '편지 아래 3장에']]
     : [['인상', PF.look], ['나이', `${c.partnerAge[0]} · ${c.partnerAge[1]}`], ['성격', PF.mind], ['만나는 곳', where], ['인연 운이 가장 강한 날', best]];
   const face = male === queer ? 'fm' : 'ff'; // 1막 flow.ts와 같은 규칙 (여자·이성애 → 남자 얼굴)
-  const letter = `<article class="paper letter open" aria-label="노엘의 편지">
+  const letter = `<article class="paper letter open" aria-label="노엘의 편지" data-mark="노엘의 편지">
     <header><small>${L.kicker}</small><h3>${fill(L.to, { 이름: nm })}</h3></header>
     ${L.open.map(t => `<p>${t}</p>`).join('')}
     <p>${L.empathy[s.status] || L.empathy.solo} ${esc(W.opening)}</p>
@@ -69,7 +69,7 @@ export function act2Beats(v: Act2View) {
     const visual = key === 'days' ? calendarHtml(c, false) : key === 'next' ? flowHtml : key === 'fate' ? fateTable : '';
     return [
       { t: 'space', h: 40 },
-      { t: 'html', html: `<div class="chapter rv" id="ch-${key}"><b>${GLYPH[key] || '章'}</b><span>${String(i + 1).padStart(2, '0')} · ${esc(ch.title.replace(/<br>/g, ' '))}</span></div>` },
+      { t: 'html', html: `<div class="chapter rv" id="ch-${key}" data-mark="${i + 1}장 · ${esc(ch.title.replace(/<br>/g, ' '))}"><b>${GLYPH[key] || '章'}</b><span>${String(i + 1).padStart(2, '0')} · ${esc(ch.title.replace(/<br>/g, ' '))}</span></div>` },
       say(esc(ch.intro), i % 2 ? 'r' : 'l'),
       { t: 'html', html: `<section class="sum rv"><small>${ACT2.summary}</small><p>${esc(ch.summary)}</p></section>` },
       ...(visual ? [{ t: 'html', html: visual } as Beat] : []),
@@ -85,10 +85,11 @@ export function act2Beats(v: Act2View) {
     say(ACT2.open[1], 'l'), say(ACT2.open[2], 'r', 'l'),
     { t: 'html', html: letter, bg: '#1c1016' },
     { t: 'space', h: 60, bg: '#0b0a10' },
-    { t: 'html', html: `<div class="chapter rv"><b>頁</b><span>${ACT2.appendix}</span></div>` },
+    { t: 'html', html: `<div class="chapter rv" data-mark="${ACT2.appendix}"><b>頁</b><span>${ACT2.appendix}</span></div>` },
     say(ACT2.appendixLead, 'c'),
     ...v.chapters.flatMap(chapterBeats),
     { t: 'space', h: 60, bg: '#0c0b10' },
+    { t: 'html', html: '<div class="psmark" data-mark="추신"></div>' },
     { t: 'panel', img: 'last_w', ratio: 9 / 14, focus: '45% 35%', items: [] },
     say(ACT2.ps[0], 'l'), say(ACT2.ps[1], 'r'), say(ACT2.ps[2], 'c', 'l'),
     { t: 'space', h: 120 },
@@ -96,19 +97,37 @@ export function act2Beats(v: Act2View) {
   return beats;
 }
 
-/** 2막 화면을 root에 붙인다. 돌려주는 함수로 정리 */
-export function mountAct2(root: HTMLElement, v: Act2View) {
+/** 2막 화면을 root에 붙인다. review: 맨 위 ◀ ▶ 구간 이동 + 예시 원고 표시. 돌려주는 함수로 정리 */
+export function mountAct2(root: HTMLElement, v: Act2View, opts: { review?: boolean; note?: string } = {}) {
   const t = document.createElement('div'); t.className = 'toon strip act2'; t.id = 'toon';
-  t.innerHTML = renderStrip(act2Beats(v), '#07070b');
+  t.innerHTML = (opts.note ? `<p class="mocknote">${esc(opts.note)}</p>` : '') + renderStrip(act2Beats(v), '#07070b');
   root.appendChild(t);
+  const topOf = (el: Element) => el.getBoundingClientRect().top - t.getBoundingClientRect().top + t.scrollTop;
+  const go = (el: Element | null) => { if (el) t.scrollTo({ top: topOf(el) - 64, behavior: 'smooth' }); };
   // '자세히 →' 는 같은 스크롤 안에서 부드럽게 이동
   t.addEventListener('click', e => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a.lmore');
     if (!a) return;
     e.preventDefault();
-    const el = t.querySelector(a.getAttribute('href')!);
-    if (el) t.scrollTo({ top: el.getBoundingClientRect().top - t.getBoundingClientRect().top + t.scrollTop - 20, behavior: 'smooth' });
+    go(t.querySelector(a.getAttribute('href')!));
   });
+  let nav: HTMLElement | null = null;
+  if (opts.review) {
+    // 검토용 구간 이동 (1막 ?review=1 과 같은 모양): 편지 → 편지에 다 못 쓴 이야기 → 1~5장 → 추신
+    const marks = [...t.querySelectorAll<HTMLElement>('[data-mark]')];
+    nav = document.createElement('div'); nav.className = 'revnav top';
+    nav.innerHTML = '<button type="button" data-d="-1" aria-label="이전 구간">◀</button><span></span><button type="button" data-d="1" aria-label="다음 구간">▶</button>';
+    root.appendChild(nav);
+    const lab = nav.querySelector('span')!;
+    const cur = () => { let i = -1; marks.forEach((el, k) => { if (topOf(el) <= t.scrollTop + 120) i = k; }); return i; };
+    const show = () => { const i = cur(); lab.textContent = i < 0 ? `시작 · ${marks.length}구간` : `${i + 1}/${marks.length} ${marks[i].dataset.mark}`; };
+    nav.addEventListener('click', e => {
+      const d = Number((e.target as HTMLElement).closest<HTMLElement>('[data-d]')?.dataset.d || 0); if (!d) return;
+      const i = cur() + d;
+      if (i < 0) t.scrollTo({ top: 0, behavior: 'smooth' }); else go(marks[Math.min(marks.length - 1, i)]);
+    });
+    t.addEventListener('scroll', show, { passive: true }); show();
+  }
   const off = attachStrip(t);
-  return () => { off(); t.remove(); };
+  return () => { off(); nav?.remove(); t.remove(); };
 }
