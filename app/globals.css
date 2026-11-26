@@ -76,6 +76,30 @@ img { max-width: 100%; }
 .enter-seq.reveal .flood { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .enter-seq.on img { transition: none; } }
 
+/* 원테이크 (2026-11-25): 문틈 → 영상 3개 이어 붙임. 뒤 영상이 재생되면 앞 영상 위에 덮인다(DOM 순서) */
+.enter-seq.ot img.ot-still { transform: none; transition: none; object-position: 50% 45%; }
+.enter-seq.ot img.ot-still.top { z-index: 1; }
+.enter-seq.ot video.ot-v { opacity: 0; transition: none; object-position: 50% 45%; }
+.enter-seq.ot video.ot-v.on { opacity: 1; }
+.enter-seq.ot::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 48%; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(5,7,15,.72), rgba(5,7,15,.35) 55%, rgba(5,7,15,0)); }
+.ot-lines { position: absolute; left: 0; right: 0; bottom: 20%; z-index: 2; padding: 0 28px; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; }
+.ot-l { margin: 0; text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .7s ease, transform .7s ease;
+  font-family: var(--f-cap); font-size: 16px; line-height: 1.5; color: rgba(255,246,228,.95); text-shadow: 0 2px 14px rgba(0,0,0,.9); }
+.ot-l.on { opacity: 1; transform: none; }
+.ot-l.sfx { font-size: 22px; letter-spacing: .08em; color: #f3d08a; }
+.ot-l.think { font-style: italic; color: rgba(225,230,245,.85); }
+.ot-l.say { font-size: 19px; }
+.ot-l.cap { font-size: 15px; }
+.ot-hint { position: absolute; left: 0; right: 0; bottom: 8%; z-index: 2; margin: 0; text-align: center; font-size: 12.5px; color: rgba(255,255,255,.6);
+  opacity: 0; transition: opacity .6s ease; pointer-events: none; }
+.enter-seq.hint .ot-hint { opacity: 1; animation: otBlink 2.2s ease-in-out infinite; }
+@keyframes otBlink { 50% { opacity: .35; } }
+.enter-seq .ot-go { position: absolute; left: 24px; right: 24px; width: auto; bottom: 8%; z-index: 3; opacity: 0; pointer-events: none; transition: opacity .6s ease; }
+.enter-seq.ask .ot-go { opacity: 1; pointer-events: auto; }
+.pend { height: 45vh; display: flex; align-items: center; justify-content: center; color: rgba(255,240,210,.5); cursor: pointer; }
+.pend span { animation: otBlink 2s ease-in-out infinite; }
+
 /* 대화 컷 생동감 (2026-11-23): 영상 대신 정지 이미지 + CSS. 숨 쉬듯 확대, 촛불 일렁임(아래쪽 따뜻한 빛), 떠오르는 금빛 먼지 */
 .bg.live img.on { animation: breathe 9s ease-in-out infinite alternate; transform-origin: 50% 30%; }
 @keyframes breathe { from { transform: scale(1); } to { transform: scale(1.035) translateY(-0.6%); } }

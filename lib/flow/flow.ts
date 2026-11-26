@@ -2,7 +2,7 @@
 // 화면 흐름: 타이틀 → 프롤로그(세로 웹툰) → 채팅 입력 → 로딩 → 1막(세로 웹툰) → 결제 CTA
 // prototype/index.html 의 STEPS 를 연출 그대로 옮겼다. 문구는 content/, 계산은 lib/saju/.
 import { computeChart, sunSign, elG, fam, god, GAN_K, JI_K, jeolAt, lunar2solar, sijin, toMin, type Pillar } from '@/lib/saju';
-import { PROLOGUE, ENTER_CAP } from '@/content/prologue';
+import { PROLOGUE, DOORWAY, DOOR_HINT } from '@/content/prologue';
 import { attachStrip, renderStrip, type Beat } from '@/lib/flow/strip';
 import { JOBS, LOADING, LOADING_SUB, QUESTIONS, STATUS, TITLE, WORRIES, type Choice } from '@/content/chat';
 import { ACT1, DEADLINE, SHAKE, V2 } from '@/content/act1';
@@ -67,9 +67,7 @@ const ACT_VID: Record<string, string> = {
   eyes: 'v6_M13',      // 몸을 기울여 다가옴
   key: 'v6_M14',       // 열쇠 위로 손가락을 접어 쥐여 줌
 };
-const ENTER_IMG = '/img/v6_E1.jpg'; // 1인칭: 문을 밀고 들어감, 노엘이 의자 옆에 서 있음
-// (2026-11-25) 들어가는 순간 영상: 문틈 너머 노엘이 눈을 들고 맞은편 의자를 손짓 (카메라 고정, Kling 3.0 Pro). 재생 실패·모션 줄이기면 ENTER_IMG 확대 연출
-const ENTER_VID = '/vid/v6_M17.mp4'; // 1인칭으로 걸어 들어가고 노엘이 의자를 빼 줌 (이전: v6_M0 빈 방 원경) // 들어가는 순간: 문 너머 원탁의 노엘 (원본 public/img/v3/enter_start.png)
+// (2026-11-25) 들어가는 순간: 정지 이미지 확대(v6_E1)·단독 입장 영상(v6_M17) → 원테이크(content/prologue.ts DOORWAY, v6_O1~O3)
 // (2026-11-25) 타이틀 배경: 새 기준 얼굴(noel_m.jpg, 원본 v3/noel_face_master_4k.png). 옛 s0는 프롤로그 B4에만 남음
 const TITLE_BG = 'noel_title'; // noel_m 위에 어두운 여백을 붙여 얼굴을 로고 아래로 내림
 // 로딩 → 1막 공개 시퀀스 (BEATSHEET_v6 5장). 샷 → 배경 이미지 파일. 영상은 BG_VIDEOS에 같은 파일명 키로 넣으면 겹쳐 재생된다
@@ -270,45 +268,80 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
     30() {
       panel.innerHTML = ''; S.pro = true;
       const o = document.createElement('div'); o.className = 'toon strip'; o.id = 'pro';
+      // 웹툰은 B1(문 발견)까지. 끝까지 내리면(또는 누르면) 전체화면 원테이크로 넘어간다
       o.innerHTML = renderStrip(PROLOGUE, '#05070f')
-        + `<div class="gap end" style="background:#120c0c"><button class="btn" id="pgo" type="button">${TITLE.approach}</button></div>`;
+        + `<div class="gap end pend" id="pend" style="background:#120d0a"><span>▼</span></div>`;
       const skip = document.createElement('button');
       skip.className = 'pskip'; skip.id = 'pskip'; skip.type = 'button'; skip.textContent = TITLE.skip;
       root.append(o, skip);
       const detach = attachStrip(o, { onReveal: reveal });
       cleanups.push(detach);
-      // 들어가는 순간 (2026-11-23, A안): AI 영상은 화질이 뭉개져서 뺌 → 4K 정지 이미지 2장 연출.
-      // 문 너머 원탁의 노엘(enter.jpg)로 천천히 다가감 → 금빛으로 하얗게 번짐 → 대화 1번 배경(CHAT_BG[0])이 드러남. 탭하면 건너뜀.
-      const pre = new Image(); pre.src = ENTER_IMG; // 프롤로그 보는 동안 미리 받아 둔다
-      // 영상도 프롤로그 보는 동안 미리 받는다 (Safari: muted/playsinline 속성을 src보다 먼저)
-      const ev = document.createElement('video');
-      ['muted', 'playsinline', 'webkit-playsinline'].forEach(a => ev.setAttribute(a, ''));
-      ev.muted = true; ev.playsInline = true; ev.preload = reduceMotion ? 'none' : 'auto';
-      if (!reduceMotion) ev.src = ENTER_VID;
-      const end = () => { detach(); o.remove(); skip.remove(); setBg(CHAT_BG[0]); next(20); };
+      // 원테이크 (2026-11-25): 문틈 → 영상1 → 멈춤 → 영상2 → 멈춤+다가가기 → 영상3(1인칭 입장) → 채팅.
+      // 앞 영상의 끝 프레임 = 다음 영상의 첫 프레임이라 이어 붙이면 한 컷처럼 보인다. 영상 3개는 프롤로그 보는 동안 미리 받는다.
+      // 영상 재생이 안 되거나 모션 줄이기면 각 단계의 끝 정지 컷(end)으로 바꿔 보여준다.
+      const vids = DOORWAY.map(d => {
+        if (!d.vid) return null;
+        const v = document.createElement('video');
+        ['muted', 'playsinline', 'webkit-playsinline'].forEach(a => v.setAttribute(a, '')); // Safari: src보다 먼저
+        v.muted = true; v.playsInline = true; v.preload = reduceMotion ? 'none' : 'auto'; v.className = 'ot-v';
+        if (!reduceMotion) v.src = `/vid/${d.vid}.mp4`;
+        return v;
+      });
+      DOORWAY.forEach(d => { const i = new Image(); i.src = `/img/${d.end}.jpg`; });
+      let seq: HTMLDivElement | null = null;
+      const timers: number[] = [];
+      const clearT = () => { timers.forEach(clearTimeout); timers.length = 0; };
+      cleanups.push(() => { clearT(); seq?.remove(); vids.forEach(v => v?.pause()); });
+      const end = () => { clearT(); detach(); o.remove(); skip.remove(); seq?.remove(); vids.forEach(v => v?.pause()); setBg(CHAT_BG[0]); next(20); };
+      let entered = false;
       const enter = () => {
-        detach(); skip.remove(); setBg(CHAT_BG[0]);
-        const seq = document.createElement('div');
-        seq.className = 'enter-seq';
-        seq.innerHTML = `<img src="${ENTER_IMG}" alt=""><i class="flood"></i><p class="enter-cap">${ENTER_CAP}</p>`;
-        seq.insertBefore(ev, seq.querySelector('.flood'));
-        root.append(seq);
-        let done = false;
-        const timers: number[] = [];
-        const finish = () => {
-          if (done) return; done = true; timers.forEach(clearTimeout);
-          o.remove(); seq.classList.add('reveal'); next(20);
-          setTimeout(() => seq.remove(), 1200);
+        if (entered) return; entered = true; track('doorway');
+        detach(); setBg(CHAT_BG[0]);
+        const s = seq = document.createElement('div');
+        s.className = 'enter-seq ot';
+        s.innerHTML = `<img class="ot-still" src="/img/${DOORWAY[0].still}.jpg" alt=""><div class="ot-lines"></div>`
+          + `<p class="ot-hint">${DOOR_HINT}</p><button class="btn ot-go" type="button">${TITLE.approach}</button>`;
+        const still = s.querySelector('.ot-still') as HTMLImageElement;
+        const box = s.querySelector('.ot-lines') as HTMLDivElement;
+        vids.forEach(v => v && s.insertBefore(v, box));
+        root.append(s); skip.style.zIndex = '30';
+        let stage = 0, waiting = false;
+        const lines = (i: number, now = false) => {
+          box.innerHTML = '';
+          DOORWAY[i].lines.forEach(([k, t, at]) => {
+            const p = document.createElement('p'); p.className = `ot-l ${k}`; p.innerHTML = t;
+            box.append(p); timers.push(window.setTimeout(() => p.classList.add('on'), now ? 80 : at));
+          });
         };
-        cleanups.push(() => { timers.forEach(clearTimeout); seq.remove(); });
-        seq.addEventListener('click', finish);
-        requestAnimationFrame(() => { seq.classList.add('on'); o.style.opacity = '0'; });
-        // 영상이 재생되면 영상 길이(5초)에 맞춰 빛 번짐, 안 되면 정지 이미지 확대(3.5초)
-        const plan = (glow: number, end: number) => { timers.push(window.setTimeout(() => seq.classList.add('glow'), glow), window.setTimeout(finish, end)); };
-        if (reduceMotion) plan(2600, 3500);
-        else ev.play().then(() => { if (!done) { seq.classList.add('vid'); plan(4200, 5000); } }).catch(() => { if (!done) plan(2600, 3500); });
+        // 멈춤: 마지막 단계 전엔 '누르면 계속', 영상2 뒤엔 다가가기 버튼
+        const pause = (i: number) => {
+          waiting = true;
+          if (i === 2) s.classList.add('ask'); else timers.push(window.setTimeout(() => s.classList.add('hint'), 900));
+        };
+        const finish = () => { clearT(); o.remove(); skip.remove(); s.classList.add('reveal'); next(20); setTimeout(() => s.remove(), 900); };
+        const play = (i: number) => {
+          stage = i; waiting = false; s.classList.remove('hint', 'ask'); clearT();
+          const v = vids[i]; const d = DOORWAY[i];
+          const last = i === DOORWAY.length - 1;
+          const after = () => last ? timers.push(window.setTimeout(finish, 1400)) : pause(i);
+          const fallback = () => { still.src = `/img/${d.end}.jpg`; still.classList.add('top'); lines(i, true); timers.push(window.setTimeout(after, last ? 1600 : 400)); };
+          if (!v || reduceMotion) return fallback();
+          v.onended = after;
+          v.currentTime = 0;
+          v.play().then(() => { v.classList.add('on'); lines(i); }).catch(fallback);
+        };
+        s.addEventListener('click', e => {
+          if ((e.target as HTMLElement).closest('.ot-go')) return;
+          if (waiting && stage < 2) play(stage + 1);
+        });
+        (s.querySelector('.ot-go') as HTMLButtonElement).addEventListener('click', () => { track('prologue_done'); play(3); });
+        requestAnimationFrame(() => { s.classList.add('on'); o.style.opacity = '0'; });
+        lines(0); timers.push(window.setTimeout(() => pause(0), 2400));
       };
-      o.querySelector('#pgo')!.addEventListener('click', () => { track('prologue_done'); enter(); });
+      const pend = o.querySelector('#pend') as HTMLElement;
+      const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); enter(); } }, { threshold: 0.6 });
+      io.observe(pend); cleanups.push(() => io.disconnect());
+      pend.addEventListener('click', enter);
       skip.addEventListener('click', () => { S.pro = false; track('prologue_skip'); end(); });
     },
     // 2. 채팅형 정보 입력
