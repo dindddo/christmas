@@ -46,7 +46,7 @@ const CHAT_BG = SCENE_Q.map(s => SCENE_IMG[s]);
 const ACT_IMG: Record<string, string | undefined> = {
   angel: 'angel_m',         // (2026-11-25 확정) 검은 정장 + 흰 날개, 같은 방 달빛. 원본 v3/angel_master.png
   book: 'v6_A1',
-  plateGaze: 'noel_m',      // (카드를 내려놓으며) 턱 괴고 오래 봄 = 기준 얼굴 컷. 당황 컷(noel_flustered)은 공감 대사와 안 맞아 교체
+  plateGaze: 'v6_c6',       // (카드를 내려놓으며) 정면, 진지한 눈. (2026-11-26) noel_m(히죽 웃음·붉은 벨벳 방)은 '애쓰며 살아왔네' 위로 대사와 안 맞아 채팅 방 컷으로 교체
   yearPage: 'v6_A2',        // 종이 한 장을 밀어 줌, 손끝이 스침
   comfortF: 'v6_A3',        // (네 뒤로 와서, 귓가에 낮게) 수고했어 — '너'(여성)가 보이는 컷이라 여성 이용자만
   comfort: undefined,       // 그 외 이용자용 노엘 단독 컷 (아직 없음 → 대사만)
@@ -59,7 +59,7 @@ const ACT_IMG: Record<string, string | undefined> = {
 const ACT_VID: Record<string, string> = {
   angel: 'v6_M7',      // 날개가 숨 쉬듯 (반복)
   book: 'v6_M15',      // 책을 펼치자 금빛 글자가 피어오름
-  plateGaze: 'v6_M8',  // 턱 괴고 보다가 웃으며 다가옴
+  // plateGaze: v6_M8(턱 괴고 웃으며 다가옴) 제외 (2026-11-26) — 위로 대사에 웃는 표정이 안 맞음
   comfortF: 'v6_M9',   // 귓가로 다가와 날개가 감쌈
   restWindow: 'v6_M10', // 보타이를 당기며 너를 봄, 창밖 불빛 하나
   letter: 'v6_M11',    // 편지를 꺼내 내밂
