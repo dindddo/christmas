@@ -1,7 +1,7 @@
 // data/saju-test-vectors.json (시안 엔진으로 뽑은 정답지 40건)과 완전히 같아야 한다.
 import { describe, expect, it } from 'vitest';
 import vectors from '../../data/saju-test-vectors.json';
-import { computeChart, GAN_K, JI_K, lunar2solar, type Pillar } from './index';
+import { computeChart, decWindow, GAN_K, JI_K, lunar2solar, type Pillar } from './index';
 
 const pk = (p: Pillar | null) => (p ? GAN_K[p.g] + JI_K[p.j] : null);
 
@@ -52,5 +52,43 @@ describe('monthPillar', () => {
     const T = [[1, 5, 1], [2, 6, 2], [3, 7, 3], [4, 8, 4], [5, 9, 5], [6, 0, 6], [7, 1, 7], [8, 2, 8], [9, 3, 9], [10, 4, 10], [11, 5, 11]];
     for (const [mo, g, j] of T) expect(monthPillar(2026, mo)).toEqual({ g, j });
     expect(monthPillar(2026, 12)).toEqual({ g: 6, j: 0 }); // 2026-12 경자
+  });
+});
+
+// (2026-11-25) 화면·2막용 판정: 지장간 연애 기운(hidden), 원국 신살, 12월 strong
+describe('loveView · sinsal · december.strong', () => {
+  it('1989-03-18 13:00 여자: 丑 속 癸水 → hidden, 연지 巳 기준 도화 午·화개 丑, best 5점 → strong', () => {
+    const c = computeChart({ y: 1989, m: 3, d: 18, time: '13:00', sex: '여자', orient: 'hetero' });
+    expect(c.A.loveState).toBe('none'); // 시안 정답지 값은 그대로
+    expect(c.love).toBe('hidden');
+    expect(c.sal).toEqual(['도화', '화개']);
+    expect(c.dec.best.s).toBe(5);
+    expect(c.dec.strong).toBe(true);
+  });
+  it('남자는 재성(금)을 보므로 같은 사주라도 판정이 다를 수 있다', () => {
+    const c = computeChart({ y: 1989, m: 3, d: 18, time: '13:00', sex: '남자', orient: 'hetero' });
+    expect(c.love).toBe('hidden'); // 巳 속 庚金
+  });
+  it('strong은 best 점수 5 이상과 같다', () => {
+    for (const [y, m, d] of [[1990, 1, 1], [1995, 7, 2], [2001, 11, 30]]) {
+      const c = computeChart({ y, m, d, time: '09:00', sex: '여자', orient: 'hetero' });
+      expect(c.dec.strong).toBe(c.dec.best.s >= 5);
+    }
+  });
+});
+
+describe('남은 날 달력 범위 (decWindow)', () => {
+  const at = (s: string) => new Date(s + 'T12:00:00+09:00');
+  it('12월 전이면 1~31, 12월이면 오늘~31, 끝나면 31일 하루', () => {
+    expect(decWindow(at('2026-11-25'))).toEqual({ from: 1, to: 31 });
+    expect(decWindow(at('2026-12-15'))).toEqual({ from: 15, to: 31 });
+    expect(decWindow(at('2027-01-02'))).toEqual({ from: 31, to: 31 });
+  });
+  it('가장 강한 날은 항상 기준일 이후', () => {
+    for (const [y, m, d] of [[1993, 5, 2], [1989, 3, 18], [2000, 1, 1]]) {
+      const c = computeChart({ y, m, d, time: '12:00', sex: '여자', orient: 'hetero' }, at('2026-12-20'));
+      expect(c.dec.best.d).toBeGreaterThanOrEqual(20);
+      expect(c.dec.days[0].d).toBe(20);
+    }
   });
 });

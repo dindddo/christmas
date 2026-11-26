@@ -1,5 +1,5 @@
 // 입력 하나로 원국 + 분석 + 올해/12월 + 운명의 상대 기운까지 한 번에 계산한다. (시안 calc()의 계산 부분)
-import { analyze, december, doors, elG, fam, god, GAN_K, JI_K, JI_MAIN, HAP, pillars, type Pillars } from './core';
+import { analyze, december, decWindow, doors, elG, fam, god, GAN_K, JI_K, JI_MAIN, HAP, loveView, pillars, sinsal, type Pillars } from './core';
 import { sijin, toKST, toMin, type KST } from './calendar';
 
 export * from './core';
@@ -8,8 +8,9 @@ export * from './calendar';
 export type Sex = '여자' | '남자';
 export type Orient = 'hetero' | 'queer';
 export type BirthInput = { y: number; m: number; d: number; time: string | null; sex: Sex; orient: Orient };
+/** asOf: 달력 기준 날짜 (없으면 시안 정답지 범위 12/8~24). 화면·2막은 1막을 본 날짜를 넘긴다 */
 
-export function computeChart(input: BirthInput) {
+export function computeChart(input: BirthInput, asOf?: Date) {
   const male = input.sex === '남자', queer = input.orient === 'queer';
   const kst: KST = toKST(input.y, input.m, input.d, input.time);
   const sj = input.time ? sijin(kst.time) : null;
@@ -18,9 +19,11 @@ export function computeChart(input: BirthInput) {
   const A = analyze(P, male, queer);
   return {
     kst, sijin: sj, P, A,
+    love: loveView(P, A, male, queer), // 화면·2막용 연애 판정 (hidden 포함)
+    sal: sinsal(P),
     ilju: GAN_K[P.D.g] + JI_K[P.D.j],
     doors: doors(P, male, queer),
-    dec: december(P, male, queer),
+    dec: asOf ? december(P, male, queer, decWindow(asOf).from, decWindow(asOf).to) : december(P, male, queer),
     partnerAge: partnerAge(P, input.y, male, queer),
     partnerEl: partnerEl(P, male, queer),
   };

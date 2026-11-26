@@ -5,7 +5,8 @@ import { ACT1, SHAKE, VERDICT } from './act1';
 import * as reading from './reading';
 import { LOADING, LOADING_SUB, QUESTIONS } from './chat';
 import { KKUMIM } from './pricing';
-import { NOEL_CHAT, EVE } from './act2';
+import { NOEL_CHAT, EVE, ACT2, LETTER_TOC, chapters } from './act2';
+import { V2, CALENDAR } from './act1';
 
 const all = (x: unknown): string => JSON.stringify(x);
 
@@ -39,7 +40,12 @@ describe('문구 절대 규칙', () => {
     expect(all(KKUMIM)).not.toMatch(/\p{Extended_Pictographic}/u);
   });
   it('1막 풀이 문구(2026·핵심 특징·장면)에 확인형 말투("~잖아", "~지?")가 없다', () => {
-    const txt = all([VERDICT, reading.GAN_DETAIL, reading.CORE.more, reading.TXT.year, reading.TXT.scene, reading.TXT.story, reading.YEAR26, reading.CORE.loveMean, reading.CORE.heard.heavy.map(x => x[1]), reading.CORE.heard.miss.map(x => x[1])]);
+    const txt = all([VERDICT, reading.SAL, reading.CORE.bridgeClean, reading.GAN_DETAIL, reading.CORE.more, reading.TXT.year, reading.TXT.scene, reading.TXT.story, reading.YEAR26, reading.CORE.loveMean, reading.CORE.heard.heavy.map(x => x[1]), reading.CORE.heard.miss.map(x => x[1])]);
+    expect(txt).not.toMatch(/잖아|[했었였갔왔봤겠맞]지\?/);
+  });
+  it('2막 목차·문구: 비유(문 열림)·근거 없는 약속(시간대·첫마디·별자리·17일)을 쓰지 않는다 (2026-11-25)', () => {
+    const txt = all([ACT2, LETTER_TOC, CALENDAR, V2.rest, V2.letter, ...['solo', 'crush', 'breakup', 'partner', 'married'].flatMap(s => [chapters(s, true, '고민'), chapters(s, false)])]);
+    expect(txt).not.toMatch(/문이|문은|열리는 날|판결|저녁 7시|첫마디|별자리|17일|만나는 날/);
     expect(txt).not.toMatch(/잖아|[했었였갔왔봤겠맞]지\?/);
   });
 });

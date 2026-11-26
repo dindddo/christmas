@@ -1,15 +1,17 @@
 // 1막 구매 포인트 계산·그리기. 숫자는 전부 엔진 결과에서 나온다(지어낸 숫자 없음).
 import { monthFlow, type Chart } from '@/lib/saju';
-import { PARTNER } from '@/content/reading';
+import { CORE, HEARD, HEARD_LOVE, PARTNER, SAL, TXT } from '@/content/reading';
+import { FREQ } from '@/content/freq';
+import { FREQX } from '@/content/freq-extra';
 import { BLUR_DUMMY, CALENDAR, DEADLINE, V2, VERDICT } from '@/content/act1';
-import { chapters } from '@/content/act2';
+import { chapters, LETTER_TOC } from '@/content/act2';
 import { KKUMIM } from '@/content/pricing';
 import { bizLines, LEGAL_LINKS } from '@/content/legal';
 
 const fill = (t: string, v: Record<string, string | number>) => Object.entries(v).reduce((s, [k, x]) => s.split(`{${k}}`).join(String(x)), t);
 
 /** 연애 유형 카드 (2026-11-24): 게이지 대신 유형별 상세 4칸 */
-export function verdictType(c: Pick<Chart, 'A'>) { return VERDICT.types[c.A.loveState] || VERDICT.types.clean; }
+export function verdictType(c: Pick<Chart, 'love'>) { return VERDICT.types[c.love] || VERDICT.types.clean; }
 export function verdictHtml(c: Chart, nm: string, status: string) {
   const T = verdictType(c), H = VERDICT.heads;
   const together = status === 'partner' || status === 'married', grp = together ? 'together' : status;
@@ -23,6 +25,49 @@ export function verdictHtml(c: Chart, nm: string, status: string) {
   </section>`;
 }
 
+/** 타고난 핵심 (2026-11-25): 1막 화면과 2막 사실 묶음이 반드시 같은 함수를 쓴다.
+ *  핵심 특징 = 오행 넘침/없음·연애 판정 중 가장 드문 것(25% 이하). 없으면 신살 조합(2개 이상, 25% 이하), 그것도 없으면 일간. */
+export type Core = { kind: 'heavy' | 'miss' | 'love' | 'sal'; i: number; p: number };
+export function innate(c: Chart, male: boolean, queer: boolean) {
+  const { P, A } = c, dG = P.D.g, T = TXT, E = T.elName as string[];
+  const fk = (P.H ? 'H' : 'N') + (queer ? 'q' : male ? 'm' : 'f'), F = FREQ[fk], FX = FREQX[fk];
+  const cands: Core[] = [];
+  A.el.forEach((n, i) => {
+    if (n === 0) cands.push({ p: F['miss' + i], kind: 'miss', i });
+    if (n >= (P.H ? 4 : 3)) cands.push({ p: F['heavy' + i], kind: 'heavy', i });
+  });
+  if (c.love !== 'clean') cands.push({ p: (c.love === 'none' || c.love === 'hidden' ? FX : F)['love_' + c.love], kind: 'love', i: -1 });
+  let core: Core | null = cands.filter(x => x.p && x.p <= 25).sort((a, b) => a.p - b.p)[0] || null;
+  if (!core && c.sal.length >= 2) {
+    // 이 조합을 '포함하는' 사람 비율 (정확히 같은 조합만 세면 과소평가)
+    const p = Object.entries(FX).filter(([k]) => k.startsWith('sal:') && c.sal.every(s => k.slice(4).split('+').includes(s))).reduce((a, [, v]) => a + v, 0);
+    if (p <= 25) core = { kind: 'sal', i: -1, p };
+  }
+  const el = core && (core.kind === 'heavy' || core.kind === 'miss') ? core : null;
+  const salNames = c.sal.map(s => SAL.items[s].name);
+  const fact = !core ? '' : core.kind === 'miss' ? `여덟 글자 중에 ${E[core.i]} 기운이 하나도 없어.`
+    : core.kind === 'heavy' ? `${E[core.i]} 기운이 ${A.el[core.i]}개나 몰려 있어.`
+    : core.kind === 'sal' ? `${salNames.join(salNames.length === 2 ? '과 ' : ', ')}이 같이 있어.`
+    : ({ none: '인연 기운이 겉에도, 땅속 글자에도 잘 안 보여.', hidden: '인연 기운이 겉에는 없고, 깊숙이 숨어 있어.', many: '인연 기운이 여러 겹으로 깔려 있어.', mixed: '끌리는 기운이 두 갈래로 갈라져 있어.', sharp: '좋아하는 마음과 날 선 말이 한 사주에 같이 있어.' } as Record<string, string>)[c.love];
+  const h = HEARD[dG];
+  const loveH = HEARD_LOVE[c.love] || (A.el[1] === 0 ? HEARD_LOVE.fire0 : A.el[1] >= (P.H ? 4 : 3) ? HEARD_LOVE.fire4 : h[1]);
+  const hd = el ? CORE.heard[el.kind as 'heavy' | 'miss'][el.i] : [h[0], h[2]];
+  const ls = queer && (c.love === 'none' || c.love === 'hidden') ? c.love + 'Q' : male && ['none', 'hidden', 'mixed'].includes(c.love) ? c.love + 'M' : c.love;
+  const bridge = el?.kind === 'heavy' && (c.love === 'none' || c.love === 'hidden') ? CORE.bridge.replace('{기운}', E[el.i])
+    : el?.kind === 'miss' && c.love === 'clean' && CORE.bridgeClean[el.i] ? CORE.bridgeClean[el.i] : '';
+  return {
+    core, fact,
+    image: el ? CORE.img[el.kind as 'heavy' | 'miss'][el.i] : T.img[dG] as string,
+    mean: el ? (el.kind === 'heavy' ? T.heavy : T.missing)[el.i] as string
+      : core?.kind === 'love' ? CORE.loveMean[c.love] : core?.kind === 'sal' ? SAL.items[c.sal[0]].mean : T.trait[dG] as string,
+    more: el ? CORE.more[el.kind as 'heavy' | 'miss'][el.i] : '',
+    heard: { p: hd[0], l: loveH, inner: hd[1] },
+    // 연애 한 줄: 연결 문장 + (핵심이 연애 판정이 아니면) 판정 문장 + 원국 합·충. 연애 상태 장면은 화면이 붙인다
+    love: [bridge, core?.kind === 'love' ? '' : T.loveState[ls], A.natal ? T.natal[A.natal] : ''].filter(Boolean).join(' '),
+    sal: c.sal.map(s => SAL.items[s]),
+  };
+}
+
 /** 크리스마스 마감: 진짜 날짜만 쓴다 (KST 기준) */
 export function deadline(now = new Date()) {
   const kst = new Date(now.getTime() + 9 * 3600e3);
@@ -34,38 +79,34 @@ export function deadline(now = new Date()) {
   return fill(DEADLINE.during, { n: Math.round((end - today) / day) });
 }
 
-/** 12/8~12/24 달력: 열리는 날·흔들릴 날은 실제 결과, 나머지는 잠김 */
+/** 남은 날 달력 (2026-11-25): 오늘(12월 전이면 1일)~31일. 가장 강한 날·흔들릴 날은 실제 결과, 나머지는 잠김 */
 export function calendarHtml(c: Chart, hideOpen = false) {
-  const { dec } = c, open = dec.A && !hideOpen ? dec.best.d : -1, shake = dec.shake?.d ?? -1;
-  const lead = dec.days[0].wd; // 12/8 요일
+  const { dec } = c, open = dec.strong && !hideOpen ? dec.best.d : -1, shake = dec.shake?.d ?? -1;
+  const lead = dec.days[0].wd, from = dec.days[0].d, n = dec.days.length;
   const cells = [...Array(lead)].map(() => '<i class="pad"></i>').concat(dec.days.map(x => {
     const kind = x.d === open ? 'open' : x.d === shake ? 'shake' : dec.passers.includes(x.d) ? 'pass' : 'lock';
-    const mark = kind === 'open' ? '門' : kind === 'shake' ? '!' : kind === 'pass' ? '·' : '';
-    return `<div class="day ${kind}${x.d === 24 ? ' eve' : ''}"><b>${x.d}</b><em>${mark}</em></div>`;
+    const mark = kind === 'open' ? '♥' : kind === 'shake' ? '!' : kind === 'pass' ? '·' : '';
+    return `<div class="day ${kind}${x.d === 24 || x.d === 25 ? ' eve' : ''}"><b>${x.d}</b><em>${mark}</em></div>`;
   }));
   const L = CALENDAR.legend;
-  return `<section class="cal rv"><h4>${CALENDAR.title}</h4>
+  return `<section class="cal rv${hideOpen ? '' : ' full'}"><h4>${n > 1 ? fill(CALENDAR.title, { from, n }) : CALENDAR.titleLast}</h4>
     <div class="wk">${'일월화수목금토'.split('').map(w => `<span>${w}</span>`).join('')}</div>
     <div class="grid">${cells.join('')}</div>
-    <ul class="legend">${open > 0 ? `<li class="open">${L.open}</li>` : ''}${dec.shake ? `<li class="shake">${L.shake}</li>` : ''}<li class="pass">${L.pass}</li><li class="lock">${L.lock}</li></ul>
+    <ul class="legend">${open > 0 ? `<li class="open">${L.open}</li>` : ''}${dec.shake ? `<li class="shake">${L.shake}</li>` : ''}<li class="pass">${L.pass}</li>${hideOpen ? `<li class="lock">${L.lock}</li>` : ''}</ul>
   </section>`;
 }
 
-/** 2막 목차 (고민 항목 포함). 1막은 챕터 제목만 쓴다 */
-export function tocParts(c: Chart, together: boolean, ctx: Record<string, string | number>, worry: string) {
-  const chs = chapters(together).map(ch => ({ ...ch, items: [...ch.items] }));
-  if (worry) chs[3].items.push([`“${worry}”`, '네가 물어본 고민에 대한 노엘의 답']);
-  const total = chs.reduce((a, ch) => a + ch.items.length, 0);
-  void ctx; // 1막에선 챕터 제목만 보여준다(tocTitlesHtml). 2막 생성은 lib/act2/facts.ts가 같은 목차를 쓴다
-  return { chapters: chs, total };
+/** 2막 목차: 다섯 장 (고민을 골랐으면 2장 맨 앞에 그 답). 1막은 제목·힌트만, 2막 생성은 lib/act2/facts.ts가 같은 목차를 쓴다 */
+export function tocParts(c: Chart, status: string, worry: string) {
+  const chs = chapters(status, c.dec.strong, worry);
+  return { chapters: chs, total: chs.reduce((a, ch) => a + ch.items.length, 0) };
 }
 
-/** '열쇠를 꽂으면 받는 것': 챕터 제목 + 실제 결과에서 채운 한 줄 힌트 (+ 고민을 골랐으면 그 답) */
-export function tocTitlesHtml(chs: { title: string; hint: string }[], kicker: string, ctx: Record<string, string | number>, worry: string) {
-  const rows = chs.map(ch => [ch.title.replace(/<br>/g, ' '), fill(ch.hint, ctx)]);
-  if (worry) rows.push([`네가 물어본 “${worry}”`, '그 고민에 대한 노엘의 답']);
+/** '열쇠를 꽂으면 받는 것': 맨 위 = 편지, 그 아래 다섯 장 (제목 + 실제 결과에서 채운 한 줄 힌트) */
+export function tocTitlesHtml(chs: { title: string; hint: string }[], kicker: string, ctx: Record<string, string | number>) {
+  const rows = [[LETTER_TOC.title, LETTER_TOC.hint], ...chs.map(ch => [ch.title.replace(/<br>/g, ' '), fill(ch.hint, ctx)])];
   return `<section class="chap-card rv"><header><small>${kicker}</small></header>
-    <ol>${rows.map(([t, h], i) => `<li><i>${String(i + 1).padStart(2, '0')}</i><span><b>${t}</b><small class="hint">${h}</small></span></li>`).join('')}</ol>
+    <ol>${rows.map(([t, h], i) => `<li><i>${i ? String(i).padStart(2, '0') : '✉'}</i><span><b>${t}</b><small class="hint">${h}</small></span></li>`).join('')}</ol>
   </section>`;
 }
 
@@ -118,15 +159,16 @@ export function kkumimHtml(together: boolean) {
 
 const WD = '일월화수목금토';
 /** 2막 목차 미리보기의 {자리}를 채우는 값. 1막 화면과 2막 생성이 반드시 같은 값을 쓰도록 여기 한 곳에서 계산 */
-export function promiseCtx(c: Chart, sign: string, male: boolean, queer: boolean) {
+export function promiseCtx(c: Chart, sign: string, male: boolean, queer: boolean, extra: { 장소?: string; 이미지?: string } = {}) {
   const { dec } = c, PF = PARTNER[c.partnerEl];
   const flow = monthFlow(c.P, male, queer, 2027);
   const hot = [...flow].sort((a, b) => b.score - a.score || a.mo - b.mo)[0];
   return {
-    일: dec.A ? dec.best.d : '?', 요일: dec.A ? WD[dec.best.wd] : '?', 흔들: dec.shake ? dec.shake.d : '?',
+    일: dec.strong ? dec.best.d : '?', 요일: dec.strong ? WD[dec.best.wd] : '?', 흔들: dec.shake ? dec.shake.d : '?',
     나이: c.partnerAge[0], 자리: `${sign}자리`,
     인상: PF.look.split(',')[0].trim(),
     성격: PF.mind.split(' ').slice(0, 2).join(' '),
     뜨거운달: hot.mo,
+    장소: extra.장소 || '', 이미지: extra.이미지 || '',
   };
 }

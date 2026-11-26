@@ -6,11 +6,10 @@ import { PROLOGUE, DOORWAY, DOOR_HINT } from '@/content/prologue';
 import { attachStrip, renderStrip, type Beat } from '@/lib/flow/strip';
 import { JOBS, LOADING, LOADING_SUB, QUESTIONS, STATUS, TITLE, WORRIES, type Choice } from '@/content/chat';
 import { ACT1, DEADLINE, SHAKE, V2 } from '@/content/act1';
-import { bizFooterHtml, calendarHtml, deadline, letterHtml, promiseCtx, tocParts, tocTitlesHtml, verdictHtml } from '@/lib/flow/teaser';
+import { bizFooterHtml, calendarHtml, deadline, innate, letterHtml, promiseCtx, tocParts, tocTitlesHtml, verdictHtml } from '@/lib/flow/teaser';
 import { BGM_ENABLED, sound } from '@/lib/flow/sound';
-import { FREQ } from '@/content/freq';
 import {
-  CORE, GAN_COLOR, GAN_DETAIL, HEARD, PARTNER, HEARD_LOVE, JEOL_NAME, JI_ANIMAL, SIJIN_IMG, TXT, WORRY, YEAR26,
+  GAN_COLOR, GAN_DETAIL, PARTNER, SAL, JEOL_NAME, JI_ANIMAL, SIJIN_IMG, TXT, WORRY, YEAR26,
 } from '@/content/reading';
 import { priceAmount, priceArm, priceText } from '@/content/pricing';
 import { PAY_NOTICE } from '@/content/legal';
@@ -21,6 +20,7 @@ export type SavedInput = {
   name: string; sex: string; y: number; m: number; d: number; time: string; noTime: boolean;
   status: string; orient: string; job: string; wk: string; worry: string;
   email?: string; eveOptin?: boolean; // 대화 마지막 이메일(선택). 결제 서버로 넘겨 결과 링크 발송·이브 메시지에 쓴다
+  asOf?: string; // 1막을 본 시각(ISO). 남은 날 달력 범위 기준 → 2막도 같은 범위로 계산해 1막과 날짜가 어긋나지 않게
 };
 
 // 운영 빌드에서는 상수 false → 테스트 기본값·건너뛰기 버튼 코드가 번들에서 통째로 빠진다
@@ -179,34 +179,24 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
   // ---- 계산: 입력 → 사주 → 1막 문구 ----
   function calc() {
     const male = S.sex === '남자', queer = S.orient === 'queer', T = TXT;
-    const c = computeChart({ y: +S.y, m: +S.m, d: +S.d, time: S.noTime ? null : S.time, sex: S.sex, orient: S.orient || 'hetero' });
+    // 개발 모드: ?asOf=2026-12-20 으로 달력 기준 날짜를 바꿔 볼 수 있다
+    S.asOf = S.asOf || (dev && new URLSearchParams(location.search).get('asOf') ? new Date(new URLSearchParams(location.search).get('asOf') + 'T12:00:00+09:00').toISOString() : new Date().toISOString());
+    const c = computeChart({ y: +S.y, m: +S.m, d: +S.d, time: S.noTime ? null : S.time, sex: S.sex, orient: S.orient || 'hetero' }, new Date(S.asOf));
     const { P, A } = c, dG = P.D.g;
     S.adj = c.kst;
     const yr = [...T.year[elG(dG)]]; if (male && T.yearM[elG(dG)]) yr[0] = T.yearM[elG(dG)];
-    const ls = queer && A.loveState === 'none' ? 'noneQ' : male && (A.loveState === 'none' || A.loveState === 'mixed') ? A.loveState + 'M' : A.loveState;
-    // 핵심 특징 (2026-11-24): 가장 드문 특징 하나로 도입·문패·들어본 말·연애를 관통시킨다. 없으면 일간 이미지.
-    const F = FREQ[(P.H ? 'H' : 'N') + (queer ? 'q' : male ? 'm' : 'f')];
-    const cands: { p: number; kind: 'heavy' | 'miss' | 'love'; i: number }[] = [];
-    A.el.forEach((n: number, i: number) => {
-      if (n === 0) cands.push({ p: F['miss' + i], kind: 'miss', i });
-      if (n >= (P.H ? 4 : 3)) cands.push({ p: F['heavy' + i], kind: 'heavy', i });
-    });
-    if (A.loveState !== 'clean') cands.push({ p: F['love_' + A.loveState], kind: 'love', i: -1 });
-    const core = cands.filter(x => x.p && x.p <= 25).sort((a, b) => a.p - b.p)[0] || null;
-    const elCore = core && core.kind !== 'love' ? core as { p: number; kind: 'heavy' | 'miss'; i: number } : null;
-    const h = HEARD[dG];
-    const loveH = HEARD_LOVE[A.loveState] || (A.el[1] === 0 ? HEARD_LOVE.fire0 : A.el[1] >= (P.H ? 4 : 3) ? HEARD_LOVE.fire4 : h[1]);
-    const ch = elCore ? CORE.heard[elCore.kind][elCore.i] : [h[0], h[2]];
-    const bridge = elCore?.kind === 'heavy' && A.loveState === 'none' ? CORE.bridge.replace('{기운}', T.elName[elCore.i]) : '';
+    // 핵심 특징·이미지·들어본 말·연애 한 줄은 lib/flow/teaser.ts innate()에서 (2막 facts.ts와 같은 함수)
+    const IN = innate(c, male, queer), core = IN.core;
+    const elCore = core && (core.kind === 'heavy' || core.kind === 'miss') ? core : null;
     S.R = {
       ...c,
-      core,
-      image: elCore ? CORE.img[elCore.kind][elCore.i] : T.img[dG],
-      mean: elCore ? (elCore.kind === 'heavy' ? T.heavy : T.missing)[elCore.i] : core ? CORE.loveMean[A.loveState] : T.trait[dG],
+      core, fact: IN.fact, salList: IN.sal,
+      image: IN.image,
+      mean: IN.mean,
       strength: (A.ratio >= .55 || A.ratio <= .3) ? T.strength[A.strength] : '',
       // (2026-11-24) 타고난 카드 상세: 일간(중심) · 월령(사회) · 기운 균형(핵심 외 넘치거나 빈 기운)
       center: T.trait[dG], centerImg: T.img[dG], detail: GAN_DETAIL[dG],
-      more: elCore ? CORE.more[elCore.kind][elCore.i] : '',
+      more: IN.more,
       social: T.gyeok[A.gyeok],
       balance: (() => {
         const E = T.elName, miss = A.missing.filter((i: number) => !(elCore?.kind === 'miss' && elCore.i === i));
@@ -214,8 +204,9 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         const empty = miss.length ? `${miss.map((i: number) => E[i]).join('·')} 기운은 비어 있어. ${T.missing[miss[0]]}` : '';
         return [heavy, empty].filter(Boolean).join(' ');
       })(),
-      love: [bridge, core?.kind === 'love' ? '' : T.loveState[ls], A.natal ? T.natal[A.natal] : '', T.scene[S.status] || ''].filter(Boolean).join(' '),
-      heard: { p: ch[0], l: loveH, inner: ch[1] },
+      // 주의: c.love(연애 판정 값)를 덮어쓰지 않게 문장은 loveLine으로
+      loveLine: [IN.love, T.scene[S.status] || ''].filter(Boolean).join(' '),
+      heard: IN.heard,
       yearFam: fam(god(dG, 2)),
       yearLine: `${yr[0]} ${T.yearTone[A.yearGood ? 1 : 0]}`, reframe: yr[1],
     };
@@ -225,25 +216,22 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
   // ---- 문패 앞 도입: 사실(날짜·요일·절기·시진)로 믿음을 주고, 드문 특징으로 "특이한 팔자"를 짚는다 ----
   function introLines() {
-    const R = S.R, P = R.P, A = R.A, y = +S.y, m = +S.m, d = +S.d;
+    const R = S.R, P = R.P, y = +S.y, m = +S.m, d = +S.d;
     const wd = WD[new Date(y, m - 1, d).getDay()];
     const K = S.adj, JA = jeolAt(K.y, K.m, K.d, K.time ? toMin(K.time) : null), ji = JA.k, since = JA.since;
     const gwa = (w: string) => ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '과' : '와');
     const season = since <= 2 ? `${JEOL_NAME[ji]} 지나고 얼마 안 돼서` : `${JEOL_NAME[ji]}${gwa(JEOL_NAME[ji])} ${JEOL_NAME[(ji + 1) % 12]} 사이`;
     const sj = S.noTime ? null : sijin(K.time);
     const born = sj ? `${season}, ${SIJIN_IMG[sj.idx]}에 태어났어.` : `${season} 태어났어.`.replace('사이 태어났어', '사이에 태어났어');
-    const E = TXT.elName, core = R.core;
-    const fact = !core ? '' : core.kind === 'miss' ? `여덟 글자 중에 ${E[core.i]} 기운이 하나도 없어.`
-      : core.kind === 'heavy' ? `${E[core.i]} 기운이 ${A.el[core.i]}개나 몰려 있어.`
-      : ({ none: '인연 기운이 겉으로 하나도 안 드러나 있어.', many: '인연 기운이 여러 겹으로 깔려 있어.', mixed: '끌리는 기운이 두 갈래로 갈라져 있어.', sharp: '좋아하는 마음과 날 선 말이 한 사주에 같이 있어.' } as Record<string, string>)[A.loveState];
-    const rare = core ? [fact, `100명 중에 ${Math.max(1, Math.round(core.p))}명 정도만 이래.`] : [`${R.ilju} 일주는 60명 중 1명이야.`, '그중에서도 이 계절에 태어난 사람은 더 드물고.'];
+    const core = R.core;
+    const rare = core ? [R.fact, `100명 중에 ${Math.max(1, Math.round(core.p))}명 정도만 이래.`] : [`${R.ilju} 일주는 60명 중 1명이야.`, '그중에서도 이 계절에 태어난 사람은 더 드물고.'];
     const tz = !K.shift ? '' : K.shift < 0 ? `그해 여름은 서머타임이었으니까, ${K.shift === -60 ? '한 시간' : '30분'} 당겨서 봤어.` : '그땐 시계가 지금이랑 30분 달랐으니까, 그것까지 맞춰서 봤어.';
     return { tz, date: `${y}년 ${m}월 ${d}일, ${wd}요일.`, born, year: `사주로 치면 ${GAN_COLOR[P.Y.g]} ${JI_ANIMAL[P.Y.j]}의 해.`, rare };
   }
 
 
   function saved(): SavedInput {
-    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin };
+    return { name: S.name, sex: S.sex, y: +S.y, m: +S.m, d: +S.d, time: S.time, noTime: S.noTime, status: S.status, orient: S.orient, job: S.job, wk: S.wk, worry: S.worry, email: S.email, eveOptin: S.eveOptin, asOf: S.asOf };
   }
 
   const cleanups: (() => void)[] = [];
@@ -380,7 +368,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
     7() {
       calc(); logo.style.opacity = '0'; panel.innerHTML = ''; setBg(REV.r5); // 1막 뒤 배경 = 달빛의 천사
       try { sessionStorage.setItem('door:input', JSON.stringify(saved())); } catch { /* 저장 못 해도 진행 */ }
-      track('act1_view', { result: S.R.dec.A ? 'A' : 'B', status: S.status });
+      track('act1_view', { result: S.R.dec.strong ? 'A' : 'B', status: S.status });
       const R = S.R, P = R.P, nm = esc(S.name), IN = introLines();
       const k = seed() % 2;
       const together = isTogether();
@@ -399,12 +387,13 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
           ${R.more ? `<p>${R.more}</p>` : ''}
           <div class="heard"><small>${V2.heardCap}</small><q>${R.heard.p}</q><q>${R.heard.l}</q></div>
           <p class="inner">${R.heard.inner}</p>
-          <section class="ytopic"><b>${H.center}</b><p>${fill(coreEl >= 0 ? V2.centerBridge : V2.centerPlain, { 겉: R.image, 속: R.centerImg, 이야: josa(R.centerImg) })} ${R.center}</p></section>
+          <section class="ytopic"><b>${H.center}</b><p>${R.image === R.centerImg ? '' : `${fill(coreEl >= 0 ? V2.centerBridge : V2.centerPlain, { 겉: R.image, 속: R.centerImg, 이야: josa(R.centerImg) })} `}${R.center}</p></section>
           <section class="ytopic"><b>${V2.plateMore.strong}</b><p>${R.detail.strong}</p></section>
           <section class="ytopic"><b>${V2.plateMore.tired}</b><p>${R.detail.tired}</p></section>
           <section class="ytopic"><b>${V2.plateMore.hidden}</b><p>${R.detail.hidden}</p></section>
           <section class="ytopic"><b>${H.social}</b><p>${R.social}</p></section>
-          <section class="ytopic"><b>${H.love}</b><p>${R.love}</p></section>
+          <section class="ytopic"><b>${H.love}</b><p>${R.loveLine}</p></section>
+          ${R.salList.length ? `<section class="ytopic"><b>${SAL.head}</b>${R.salList.map((x: { name: string; line: string }) => `<p><b>${x.name}</b> ${x.line}</p>`).join('')}<p class="evid">${SAL.note}</p></section>` : ''}
           <section class="ytopic"><b>${H.balance}</b>
             <div class="els" aria-label="오행 분포">${R.A.el.map((c: number, i: number) => `<div class="e${i}${i === coreEl ? ' on' : ''}"><span style="--n:${c}"></span><b>${E[i]}</b><i>${c}</i></div>`).join('')}</div>
             ${[R.strength, R.balance].filter(Boolean).map(t => `<p>${t}</p>`).join('')}
@@ -433,18 +422,19 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
 
       // 구매 포인트 재료 (전부 엔진 결과에서)
       const sign = sunSign(+S.m, +S.d);
-      const ctx = promiseCtx(R, sign, S.sex === '남자', S.orient === 'queer');
+      const where = (together ? TXT.whereP : (TXT.where[S.job] || TXT.where.rest))[seed() % 4];
+      const ctx = promiseCtx(R, sign, S.sex === '남자', S.orient === 'queer', { 장소: where, 이미지: R.image });
       const worryShort = S.worry ? (S.worry.length > 24 ? S.worry.slice(0, 24) + '…' : S.worry) : '';
-      const TOC = tocParts(R, together, ctx, worryShort);
+      const TOC = tocParts(R, S.status, esc(worryShort));
       // '너'(여성 뒷모습)가 나오는 컷은 여성 이용자에게만. 그 외에는 노엘 단독 컷으로 대체
       const you = S.sex === '여자';
       // 편지 속 운명의 상대: 실제 결과의 첫 마디만 보여준다 (2막 facts.ts와 같은 계산: 장소=seed%4, 인상·속마음=PARTNER)
       const PF = PARTNER[R.partnerEl], first = (t: string, n = 2) => esc(t.split(/[ ,]+/).slice(0, n).join(' '));
-      const where = (together ? TXT.whereP : (TXT.where[S.job] || TXT.where.rest))[seed() % 4];
       const peek: Record<string, string> = together
         ? { 장소: first(where, 1), '그 사람의 속마음': first(PF.mind) }
-        : { 인상: first(PF.look), '만나는 곳': first(where, 1), '그 사람의 첫마디': '"혹시' };
-      const REST = V2.rest[R.dec.A ? (S.status || 'solo') : 'later'] || V2.rest.solo;
+        : { 인상: first(PF.look), 성격: first(PF.mind, 1), '만나는 곳': first(where, 1) };
+      const REST = V2.rest[R.dec.strong ? (S.status || 'solo') : 'later'] || V2.rest.solo;
+      const restHead = fill(REST.head, { 뜨거운달: ctx.뜨거운달 });
       // 장면 컷: ACT_IMG에 그림이 있으면 컷, 없으면 빈 배열(대사만). 영상이 준비된 장면은 영상 컷
       const cut = (key: string, p: Omit<Extract<Beat, { t: 'panel' }>, 't' | 'img' | 'vid'>): Beat[] =>
         ACT_IMG[key] ? [{ t: 'panel', img: ACT_IMG[key], vid: ACT_VID[key], ...p }] : [];
@@ -491,7 +481,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         { t: 'space', h: 60, bg: '#0c0b10' },
         chapter('日', V2.restTitle, '#1a0f12'),
         ...cut('restWindow', { ratio: 9 / 14, focus: '45% 35%', items: [{ k: 'say', text: V2.restHead[0], x: 'l', y: 74 }] }),
-        say(REST.head, 'c', 'l'),
+        say(restHead, 'c', 'l'),
         { t: 'html', html: calendarHtml(R, true) },
         // 대화에서 고른 '제일 궁금한 것'을 받아준다
         say(S.worry ? fill(V2.worryLine, { 고민: esc(S.worry) }) : S.wk === 'none' ? V2.worryAll : V2.calCaption, 'r'),
@@ -499,7 +489,7 @@ export function mountFlow(root: HTMLElement, opts: FlowOptions) {
         { t: 'space', h: 60, bg: '#0b0a10' },
         chapter('信', V2.letterTitle, '#1c1016'),
         say(V2.tocHead, 'c'),
-        { t: 'html', html: tocTitlesHtml(TOC.chapters, V2.tocKicker, ctx, esc(S.worry)) },
+        { t: 'html', html: tocTitlesHtml(TOC.chapters, V2.tocKicker, ctx) },
         { t: 'space', h: 30 },
         { t: 'space', h: 40 },
         // "그리고 이건…" → [재킷에서 편지를 꺼내 쥐여 줌] → "너한테 쓴 편지야."

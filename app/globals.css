@@ -517,6 +517,7 @@ input[type=date], input[type=time] { color-scheme: dark; min-height: 50px; }
 .day.shake { background: rgba(110,168,255,.14); border-color: rgba(110,168,255,.55); } .day.shake em { color: #8fbaff; }
 .day.open { background: var(--grad); border: 0; box-shadow: 0 0 22px rgba(255,95,126,.7); animation: beat 1.4s ease-in-out infinite; }
 .day.open b, .day.open em { color: #fff; }
+.cal.full .day b { filter: none; } /* 2막: 잠김 없이 전부 공개 */
 @keyframes beat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.12); } 30% { transform: scale(1); } 45% { transform: scale(1.08); } }
 .day.eve::before { content: "이브"; position: absolute; top: -7px; right: -4px; font: 700 9px var(--f-ui); padding: 1px 4px; border-radius: 6px; background: #fff; color: #17131d; }
 .cal .legend { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin: 14px 0 0; padding: 0; font-size: 11.5px; color: var(--dim); }
@@ -667,3 +668,31 @@ html[data-look="b"] .glass, html[data-look="b"] .verdict, html[data-look="b"] .c
   background: rgba(255,255,255,.035); box-shadow: none; }
 html[data-look="b"] .kkumim li.last { background: rgba(200,55,45,.1); border-color: rgba(200,55,45,.6); box-shadow: none; }
 html[data-look="b"] .kkumim li i, html[data-look="b"] .chap-card li i { color: var(--ink); }
+
+/* ---- 2막 (2026-11-25 v2): 편지 전문 + 다섯 장 ---- */
+.lmore { display: inline-block; margin-left: 4px; font: 700 12px var(--f-ui); color: var(--rose); text-decoration: none; white-space: nowrap; }
+.letter.open .lfate .lmore { justify-self: center; }
+.face.soft .fimg { filter: blur(6px) saturate(1.05); }
+.face.soft b { font-size: 12px; font-weight: 600; padding: 6px 10px; bottom: 12px; color: #e6e2ec; }
+.sum { margin: 6px 16px 14px; padding: 16px 18px; border-radius: 18px; background: linear-gradient(135deg, rgba(255,95,126,.16), rgba(169,139,255,.12)); border: 1px solid rgba(255,255,255,.12); }
+.sum small { display: block; font: 800 11px var(--f-ui); letter-spacing: .2em; color: var(--rose); margin-bottom: 6px; }
+.sum p { margin: 0; font: 700 17px/1.55 var(--f-cap); color: #fff; }
+.paper.items { gap: 0; }
+.paper.items .item { display: grid; gap: 10px; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.paper.items .item:first-child { padding-top: 0; } .paper.items .item:last-child { border-bottom: 0; padding-bottom: 0; }
+.paper.items h4 { margin: 0; display: flex; gap: 10px; align-items: baseline; font: 700 17px/1.45 var(--f-ui); color: #fff; }
+.paper.items h4 i { font: 800 12px var(--f-ui); font-style: normal; color: var(--rose); }
+.flow27 .bars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; align-items: end; height: 130px; }
+.flow27 .bars div { display: grid; grid-template-rows: 1fr auto; height: 100%; gap: 4px; }
+.flow27 .bars span { align-self: end; height: max(4px, var(--h)); border-radius: 6px 6px 2px 2px; background: rgba(255,255,255,.22); }
+.flow27 .bars .hot span { background: var(--grad); box-shadow: 0 0 14px rgba(255,95,126,.6); }
+.flow27 .bars .care span { background: rgba(110,168,255,.55); }
+.flow27 .bars b { text-align: center; font: 700 11px var(--f-ui); color: var(--dim); }
+.flow27 .bars .hot b { color: #fff; }
+.flow27 .fine, .paper .fine { font-size: 11.5px; color: var(--dim); text-align: center; }
+.flow27 .k { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin: 0 4px 0 8px; } .flow27 .k.hot { background: var(--rose); } .flow27 .k.care { background: #6ea8ff; }
+.fate-t dl { display: grid; grid-template-columns: auto 1fr; gap: 12px 16px; margin: 0; }
+.fate-t dt { font-size: 13px; color: var(--dim); } .fate-t dd { margin: 0; font: 700 15px/1.5 var(--f-ui); }
+.revnav.top { top: calc(12px + env(safe-area-inset-top, 0px)); }
+.act2 .psmark { height: 1px; }
+.mocknote { margin: 0; padding: 64px 20px 0; text-align: center; font: 600 12px/1.6 var(--f-ui); color: var(--dim); }
